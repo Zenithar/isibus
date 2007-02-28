@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<isibus>
+	<city>
+		<roads limit="50">
+			<road id="1" name="Boulevard Napoleon 3" type="2" len="300" axe="SN" />
+			<road id="2" name="Rue Coco" type="2" len="300" axe="WE" />
+			<road id="3" name="Rue du taur" type="2" len="300" limit="30" axe="NS" />
+			<road id="4" name="Rue d'auriaque" type="2" len="300" axe="EW" />
+			<road id="5" name="Boulevard J. Jaures" type="2" len="300" axe="NS" />
+			<road id="6" name="Avenue Foch" station="2" type="2" len="300" axe="WE" />
+			<road id="7" name="Rue du Capitaine Blazy" type="2" len="600" axe="SN" />
+			<road id="8" name="Boulevard de la Mer" type="2" len="300" axe="EW" />
+			<road id="9" name="Rue E.Poupee" type="2" len="300" axe="SN" />
+			<road id="10" name="Route de Narbonne" type="2" len="600" axe="EW" />
+			<road id="11" name="Impasse Fremond" type="2" len="900" axe="NS" />
+			<road id="12" name="Rue de la Vilette" type="2" len="600" axe="WE" />
+		</roads>
+	 
+		<graph>
+			<node roads="1,4"/>
+			<node roads="1,2"/>
+			<node roads="2,3,8"/>
+			<node roads="3,4,5"/>
+			<node roads="5,6"/>
+			<node roads="6,7"/>
+			<node roads="7,8"/>
+			<node roads="9,10"/>
+			<node roads="10,11"/>
+			<node roads="11,12"/>
+		</graph>
+	</city>
+	
+	<lines>
+		<line id="1" roads="1,2,3,4" />
+		<line id="2" roads="1,4,5,6,7,8" />
+		<line id="3" roads="3,9,10,11,12,5" />
+	</lines>
+	
+	<stations>
+		<station road="1" lines="1,2" />
+		<station road="5" lines="2" />
+		<station road="7" lines="2" />
+		<station road="10" lines="3" />
+		<station road="12" lines="3" />
+		<station road="3" lines="1,3" />
+	</stations>
+	
+	<transport>
+		<bus id="1" passengers="50" line="1" />
+		<bus id="2" passengers="20" line="2" />
+		<bus id="3" passengers="50" line="3" />
+	</transport>
+</isibus>
