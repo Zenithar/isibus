@@ -16,16 +16,21 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include <graph-c++.h>
 #include <graph-c++-comp.h>
 
+#include <road.h>
+
 using namespace graph;
 
-typedef Graph<int, std::string, false> graph_t;
-typedef Graph<int, std::string, false>::node_iterator ni_t;
-typedef Graph<int, std::string, false>::edge_iterator ei_t;
+typedef Graph<int, isibus::Road*, false> RoadGraph;
+typedef Graph<int, isibus::Road*, false>::node_iterator ni_t;
+typedef Graph<int, isibus::Road*, false>::edge_iterator ei_t;
 
+typedef std::map<int, isibus::Road*> RoadList;
+ 
 namespace isibus {
 
 /**
@@ -38,6 +43,12 @@ public:
 	~RoadMap();
     
 	bool loadMap(const std::string& filename);
+	
+private:
+	vector<string> split(const string &sep,string text);
+
+	RoadList	m_RoadList;
+	RoadGraph	m_RoadGraph;
 };
 
 }

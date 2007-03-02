@@ -25,6 +25,23 @@ RoadMap::~RoadMap()
 {
 }
 
+vector<string> RoadMap::split(const string &sep,string text)
+{
+	vector<string> words;
+	string::size_type end;
+	do
+	{
+		end = text.find(sep);
+		if (end == string::npos)
+			end = text.length() + 1;
+
+		words.push_back(text.substr(0,end));
+		text.replace(0,end+sep.length(),"");
+
+	} while (text.length());
+	return words;
+}
+
 bool RoadMap::loadMap(const std::string& filename)
 {
 	XMLNode xMainNode=XMLNode::openFileHelper(filename.c_str(), "isibus");
@@ -44,6 +61,10 @@ bool RoadMap::loadMap(const std::string& filename)
 		XMLNode xRoad = xRoads.getChildNode("road", &xmlIterator);
 		cout << "[" << xRoad.getAttribute("id") << "] " << xRoad.getAttribute("name");
 		cout << " type: " << xRoad.getAttribute("type") << " len: " << xRoad.getAttribute("len") <<"m" << endl;
+		
+		Road* temp = new Road(atoi(xRoad.getAttribute("id")), xRoad.getAttribute("name"), atoi(xRoad.getAttribute("type")), atoi(xRoad.getAttribute("len")), xRoad.getAttribute("axe")[0]);
+		
+		m_RoadList.insert(std::make_pair(atoi(xRoad.getAttribute("id")), temp));
 	}
 	
 	// Création du graphe
@@ -58,6 +79,10 @@ bool RoadMap::loadMap(const std::string& filename)
 	{
 		XMLNode xNode = xGraph.getChildNode("node", &xmlIterator);
 		cout << "Connection [" << node_id++ << "] to roads (" << xNode.getAttribute("roads") << ")" << endl;
+		
+		m_RoadGraph.insert(node_id);
+		
+		vector<string> roads = split(",", xNode.getAttribute("roads"));
 	}
 	
 	// Création des lignes de bus
@@ -71,6 +96,8 @@ bool RoadMap::loadMap(const std::string& filename)
 	{
 		XMLNode xLine = xLines.getChildNode("line", &xmlIterator);
 		cout << "[" << xLine.getAttribute("id") << "] " << xLine.getAttribute("roads") << endl;
+		
+		vector<string> roads = split(",", xLine.getAttribute("roads"));
 	}
 	
 	// Positionnement des stations de bus.
@@ -85,8 +112,10 @@ bool RoadMap::loadMap(const std::string& filename)
 	{
 		XMLNode xStation = xStations.getChildNode("station", &xmlIterator);
 		cout << "[" << station_id++ << "] road:" << xStation.getAttribute("road") << " line:" << xStation.getAttribute("lines") << endl;
+		
+		vector<string> lines = split(",", xStation.getAttribute("lines"));
 	}
-	
+
 	// Enregistrement des bus.
 	XMLNode xTransport=xMainNode.getChildNode("transport");
 	int nb_transports = xTransport.nChildNode();
