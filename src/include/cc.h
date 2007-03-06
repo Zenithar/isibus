@@ -11,38 +11,64 @@
 
 #include "roadmap.h"
 
-namespace isibus {
+#include "Ivycpp.h"
+#include "IvyApplication.h"
 
-class ControlCenter
+namespace isibus
 {
-	private:
-		bool	m_bRunning;
 
-	public:
-		ControlCenter():m_RoadMap(NULL) {}
-		~ControlCenter();
-		
-	/****************************************************************/
-	/* Accesseurs 							*/
-	/****************************************************************/
+/**
+	Classe modélisant le centre de contrôle.
+	@author Thibault Normand <thibault.normand@gmail.com>
+ */
+	class ControlCenter : public IvyApplicationCallback, public IvyMessageCallback, public IvyDirectMessageCallback
+{
+private:
+        bool	m_bRunning;
 
-		/** 
-		 * Retourne l'etat d'execution du centre de controle.
-		*/
-		inline bool isRunning() { return m_bRunning; }
-		inline bool stop() { m_bRunning = false; }
+public:
+        ControlCenter():m_RoadMap(NULL)
+        {}
 
-		/**
-		 * Démarre le centre de contrôle.
-		 * @return etat de l'execution.
-		*/
-		bool	startControl();
-		
-	private:
-		/**
-		 * Accès au reseau urbain.
-		*/
-		RoadMap*	m_RoadMap;
+        ~ControlCenter();
+
+        /****************************************************************/
+        /* Accesseurs 							*/
+        /****************************************************************/
+
+        /**
+         * Retourne l'etat d'execution du centre de controle.
+        */
+        inline bool isRunning()
+        {
+                return m_bRunning;
+        }
+        inline bool stop()
+        {
+                m_bRunning = false;
+        }
+
+        /**
+         * Démarre le centre de contrôle.
+         * @return etat de l'execution.
+        */
+        bool	startControl();
+
+	/**
+	 * Bus logiciel pour la communication inter-processus.
+	*/
+	Ivy *bus;
+	
+	void OnApplicationConnected(IvyApplication *app);
+	void OnApplicationDisconnected(IvyApplication *app);
+	void OnMessage(IvyApplication *app, int argc, const char **argv);
+	void OnDirectMessage (IvyApplication *app, int id, const char *arg );
+	
+private:
+        /**
+         * Accès au reseau urbain.
+        */
+        RoadMap*	m_RoadMap;
 };
 
 } // isibus
