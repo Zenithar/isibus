@@ -42,7 +42,7 @@ vector<string> RoadMap::split(const string &sep,string text)
 	return words;
 }
 
-bool RoadMap::loadMap(const std::string& filename)
+bool RoadMap::loadMap(const std::string& filename, bool verbose)
 {
 	XMLNode xMainNode=XMLNode::openFileHelper(filename.c_str(), "isibus");
 	
@@ -50,17 +50,22 @@ bool RoadMap::loadMap(const std::string& filename)
 	XMLNode xCity=xMainNode.getChildNode("city");
 	XMLNode xRoads=xCity.getChildNode("roads");
 	int speed_limitation = atoi(xRoads.getAttribute("limit"));
-	int nb_road = xRoads.nChildNode();
+	m_iNbRoads = xRoads.nChildNode();
 	
-	cout << "Roads (limitation " << speed_limitation << " Km/h)" << endl;
-	cout << "Processing " << nb_road << " road segment ..." << endl;
+	if(verbose) {
+		cout << "Roads (limitation " << speed_limitation << " Km/h)" << endl;
+		cout << "Processing " << m_iNbRoads << " road segment ..." << endl;
+	}
 	
 	int xmlIterator=0;
-	for(int i=0;i<nb_road;i++)
+	for(int i=0;i<m_iNbRoads;i++)
 	{
 		XMLNode xRoad = xRoads.getChildNode("road", &xmlIterator);
-		cout << "[" << xRoad.getAttribute("id") << "] " << xRoad.getAttribute("name");
-		cout << " type: " << xRoad.getAttribute("type") << " len: " << xRoad.getAttribute("len") <<"m" << endl;
+		
+		if(verbose) {
+			cout << "[" << xRoad.getAttribute("id") << "] " << xRoad.getAttribute("name");
+			cout << " type: " << xRoad.getAttribute("type") << " len: " << xRoad.getAttribute("len") <<"m" << endl;
+		}
 		
 		Road* temp = new Road(atoi(xRoad.getAttribute("id")), xRoad.getAttribute("name"), atoi(xRoad.getAttribute("type")), atoi(xRoad.getAttribute("len")), xRoad.getAttribute("axe")[0]);
 		
@@ -71,14 +76,18 @@ bool RoadMap::loadMap(const std::string& filename)
 	XMLNode xGraph=xCity.getChildNode("graph");
 	int nb_node = xGraph.nChildNode();
 	
-	cout << endl << "Building the city map with " << nb_node << " nodes." << endl;
+	if(verbose)
+		cout << endl << "Building the city map with " << nb_node << " nodes." << endl;
 	
 	xmlIterator=0;
 	int node_id = 1;
 	for(int i=0;i<nb_node;i++)
 	{
 		XMLNode xNode = xGraph.getChildNode("node", &xmlIterator);
-		cout << "Connection [" << node_id++ << "] to roads (" << xNode.getAttribute("roads") << ")" << endl;
+		
+		if(verbose) {
+			cout << "Connection [" << node_id++ << "] to roads (" << xNode.getAttribute("roads") << ")" << endl;
+		}
 		
 		m_RoadGraph.insert(node_id);
 		
@@ -87,46 +96,67 @@ bool RoadMap::loadMap(const std::string& filename)
 	
 	// Création des lignes de bus
 	XMLNode xLines=xMainNode.getChildNode("lines");
-	int nb_lines = xLines.nChildNode();
+	m_iNbLines = xLines.nChildNode();
 	
-	cout << endl << "Populating bus lines with " << nb_lines << " lines." << endl;
+	if(verbose) {
+		cout << endl << "Populating bus lines with " << m_iNbLines << " lines." << endl;
+	}
 	
 	xmlIterator=0;
-	for(int i=0;i<nb_lines;i++)
+	for(int i=0;i<m_iNbLines;i++)
 	{
 		XMLNode xLine = xLines.getChildNode("line", &xmlIterator);
-		cout << "[" << xLine.getAttribute("id") << "] " << xLine.getAttribute("roads") << endl;
+		
+		if(verbose) {
+			cout << "[" << xLine.getAttribute("id") << "] " << xLine.getAttribute("roads") << endl;
+		}
 		
 		vector<string> roads = split(",", xLine.getAttribute("roads"));
 	}
 	
 	// Positionnement des stations de bus.
 	XMLNode xStations=xMainNode.getChildNode("stations");
-	int nb_stations = xStations.nChildNode();
+	m_iNbStations = xStations.nChildNode();
 	
-	cout << endl << "Populating bus stations with " << nb_stations << " stations." << endl;
+	if(verbose) {
+		cout << endl << "Populating bus stations with " << m_iNbStations << " stations." << endl;
+	}
 	
 	xmlIterator=0;
 	int station_id = 1;
-	for(int i=0;i<nb_stations;i++)
+	for(int i=0;i<m_iNbStations;i++)
 	{
 		XMLNode xStation = xStations.getChildNode("station", &xmlIterator);
-		cout << "[" << station_id++ << "] road:" << xStation.getAttribute("road") << " line:" << xStation.getAttribute("lines") << endl;
 		
+		if(verbose) {
+			cout << "[" << station_id << "] road:" << xStation.getAttribute("road") << " line:" << xStation.getAttribute("lines") << endl;
+		}
+		
+		Station* temp = new Station(station_id, atoi(xStation.getAttribute("road")));
 		vector<string> lines = split(",", xStation.getAttribute("lines"));
+		
+		m_StationList.insert(std::make_pair(station_id++, temp));
 	}
 
 	// Enregistrement des bus.
 	XMLNode xTransport=xMainNode.getChildNode("transport");
-	int nb_transports = xTransport.nChildNode();
+	m_iNbBus = xTransport.nChildNode();
 	
-	cout << endl << "Registering " << nb_transports << " bus." << endl;
+	if(verbose) {
+		cout << endl << "Registering " << m_iNbBus << " bus." << endl;
+	}
 	
 	xmlIterator=0;
-	for(int i=0;i<nb_transports;i++)
+	for(int i=0;i<m_iNbBus;i++)
 	{
 		XMLNode xBus = xTransport.getChildNode("bus", &xmlIterator);
-		cout << "[" << xBus.getAttribute("id") << "] capacity:" << xBus.getAttribute("passengers") << " line:" << xBus.getAttribute("line") << endl;
+		
+		if(verbose) {
+			cout << "[" << xBus.getAttribute("id") << "] capacity:" << xBus.getAttribute("passengers") << " line:" << xBus.getAttribute("line") << endl;
+		}
+		
+		Bus* temp = new Bus(atoi(xBus.getAttribute("id")), atoi(xBus.getAttribute("passengers")), atoi(xBus.getAttribute("line")));
+		m_BusList.insert(std::make_pair(atoi(xBus.getAttribute("id")), temp));
 	}
 	
 	return true;

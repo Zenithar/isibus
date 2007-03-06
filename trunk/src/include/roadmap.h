@@ -22,6 +22,8 @@
 #include <graph-c++-comp.h>
 
 #include <road.h>
+#include <station.h>
+#include <bus.h>
 
 using namespace graph;
 
@@ -30,6 +32,8 @@ typedef Graph<int, isibus::Road*, false>::node_iterator ni_t;
 typedef Graph<int, isibus::Road*, false>::edge_iterator ei_t;
 
 typedef std::map<int, isibus::Road*> RoadList;
+typedef std::map<int, isibus::Station*> StationList;
+typedef std::map<int, isibus::Bus*> BusList;
  
 namespace isibus {
 
@@ -42,13 +46,29 @@ public:
 	RoadMap();
 	~RoadMap();
     
-	bool loadMap(const std::string& filename);
+	bool loadMap(const std::string& filename, bool verbose = false);
 	
 private:
 	vector<string> split(const string &sep,string text);
 
+	int		m_iNbRoads;
+	int		m_iNbBus;
+	int		m_iNbStations;
+	int		m_iNbLines;
+	
 	RoadList	m_RoadList;
+	StationList	m_StationList;
+	BusList		m_BusList;
+	
 	RoadGraph	m_RoadGraph;
+
+public:
+	inline int getNbRoads() { return m_iNbRoads; }
+	inline int getNbBus() { return m_iNbBus; }
+	inline int getNbStations() { return m_iNbStations; }
+	inline int getNbLines() { return m_iNbLines; }	
+	
+	RoadList& getRoadList() { return m_RoadList; }
 };
 
 }
