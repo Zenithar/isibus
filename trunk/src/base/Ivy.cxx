@@ -228,8 +228,9 @@ void Ivy::SetFilter(int argc, const char **argv )
  */
 void Ivy::ApplicationCb( IvyC::IvyClientPtr app, void *user_data, IvyC::IvyApplicationEvent event )
 {
-IvyApplicationCallback *callback = (IvyApplicationNullCallback *)user_data;
+IvyApplicationCallback *callback = (IvyApplicationCallback *)user_data;
 IvyApplication *appObj = new IvyApplication( app );
+
 	switch ( event )
 	{
 	case IvyC::IvyApplicationConnected:
