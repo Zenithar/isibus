@@ -25,13 +25,9 @@ class  Ivy
 public:
 
 	Ivy();
-#ifdef USE_GLFW
-	Ivy( const char *name, const char* ready, IvyApplicationCallback *callback, 
-	     bool argaFrc, GLFWmutex  _ivyCbmutex = NULL);
-#else
-	Ivy( const char *name, const char* ready, IvyApplicationCallback *callback, 
-	     bool argaFrc);
-#endif
+
+	Ivy( const char *name, const char* ready, IvyApplicationCallback *callback);
+
 	virtual ~Ivy();
 
 	static long  BindMsg (const char *regexp, IvyMessageCallback *cb );
@@ -48,10 +44,9 @@ public:
 	static void SetFilter( int argc, const char **argv );
 	static void start(const char *domain);
 	static void stop();
-#ifndef USE_GLFW        
-static void ivyMainLoop ();
-#endif
 
+	static void ivyMainLoop();
+	
 protected:
 
 	static void ApplicationCb( IvyC::IvyClientPtr app, void *user_data, 
@@ -61,13 +56,9 @@ protected:
 	static void MsgDirectCb( IvyC::IvyClientPtr app, void *user_data, int id, char *msg ) ;
         static void BindCallbackCb( IvyC::IvyClientPtr app, void *user_data, int id, char *msg,
 			            IvyC::IvyBindEvent event) ;
-#ifdef USE_GLFW
-  static void GLFWCALL ivyMainLoopInSeparateThread (void *arg);	
 
-private:
-  static GLFWmutex ivyCbmutex;
+	
 
-#endif
 };
 
 #endif // !defined(__IVY_H)

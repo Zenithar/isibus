@@ -10,24 +10,31 @@
  ***************************************************************************/
 
 #include "cc.h"
+#include <pthread.h>
 
 using namespace isibus;
 
+void* run(void* arg)
+{
+	ControlCenter* cc = (ControlCenter*)arg;
+	cc->bus->ivyMainLoop();	
+}
+
 bool ControlCenter::startControl()
 {	
-	// Initialisation du bus de communication.
-	bus = new Ivy( "isiBusCC", "isiBusCC READY", this, true);
-	
+	bus = new Ivy( "isiBusCC", "isiBusCC READY", this);
 	bus->BindMsg( "^Bus id=(.*) pos=(.*),(.*)", this );
 	bus->BindDirectMsg(this);
-	
 	bus->start(NULL);
 	
-	// Chargement de la carte
-	m_RoadMap = new RoadMap();
-	m_RoadMap->loadMap("roadmap.xml", true);
-
+	thread1 = pthread_create( &thread1, NULL, &run, (void*)this);
 }
+
+ControlCenter::ControlCenter()
+{
+	m_RoadMap = new RoadMap();
+}
+
 
 ControlCenter::~ControlCenter()
 {
