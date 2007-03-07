@@ -28,7 +28,7 @@ bool ControlCenter::startControl()
 	bus->BindDirectMsg(this);
 	
 	bus->start(NULL);
-	//thread1 = pthread_create( &thread1, NULL, &run, (void*)this);
+	thread1 = pthread_create( &thread1, NULL, &run, (void*)this);
 }
 
 ControlCenter::ControlCenter()
