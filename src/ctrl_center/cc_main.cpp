@@ -17,6 +17,7 @@ using namespace isibus;
 void* run(void* arg)
 {
 	ControlCenter* cc = (ControlCenter*)arg;
+	
 	cc->bus->ivyMainLoop();	
 }
 
@@ -25,9 +26,9 @@ bool ControlCenter::startControl()
 	bus = new Ivy( "isiBusCC", "isiBusCC READY", this);
 	bus->BindMsg( "^Bus id=(.*) pos=(.*),(.*)", this );
 	bus->BindDirectMsg(this);
-	bus->start(NULL);
 	
-	thread1 = pthread_create( &thread1, NULL, &run, (void*)this);
+	bus->start(NULL);
+	//thread1 = pthread_create( &thread1, NULL, &run, (void*)this);
 }
 
 ControlCenter::ControlCenter()
