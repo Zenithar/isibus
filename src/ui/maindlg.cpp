@@ -18,9 +18,6 @@ namespace isibus {
 MainDialog::MainDialog(QWidget *parent, const char *name):QMainWindow(parent)
 {
 	setupUi(this);
-	
-	ControlCenter cc;
-	cc.startControl();
 }
 
 MainDialog::~MainDialog()
