@@ -1,14 +1,16 @@
-#include "cc.h"
+#include <QApplication>
+#include <QtGui>
+
+#include "maindlg.h"
 
 using namespace isibus;
 
-int main(int argc, char* argv)
-{
-	ControlCenter cc;
+int main(int argc, char* argv[])
+{	
+	QApplication app(argc, argv);	
 	
-	cc.startControl();
+	MainDialog *fenetre = new MainDialog();
+	fenetre->show();
 	
-	Ivy::ivyMainLoop();
-	
-	return 0;
-} 
+	return app.exec();
+}

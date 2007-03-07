@@ -14,10 +14,7 @@
 
 #include "Ivycpp.h"
 #include "IvyApplication.h"
-
-#ifdef USE_GLFW
-GLFWmutex Ivy::ivyCbmutex = NULL;
-#endif
+#include <pthread.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -36,20 +33,11 @@ Ivy::Ivy()
 
 }
 
-#ifndef USE_GLFW
-Ivy::Ivy(const char* name, const char * ready, IvyApplicationCallback *callback,
-	 bool argaFrc)
+Ivy::Ivy(const char* name, const char * ready, IvyApplicationCallback *callback)
 {
 	IvyC::IvyInit( name, ready, ApplicationCb, callback, DieCb, callback );
 }
-#else
-Ivy::Ivy(const char* name, const char * ready, IvyApplicationCallback *callback,
-	 bool argaFrc, GLFWmutex  _ivyCbmutex)
-{
-	IvyC::IvyInit( name, ready, ApplicationCb, callback, DieCb, callback );
-	ivyCbmutex= _ivyCbmutex;
-}
-#endif
+
 /*
 #         _____         _
 #        |  __ \       | |
@@ -76,49 +64,15 @@ Ivy::~Ivy()
  */
 void Ivy::start(const char *domain)
 {
-  IvyC::IvyStart( domain );  
-
-#ifdef USE_GLFW
-  GLFWthread threadId = glfwCreateThread (ivyMainLoopInSeparateThread, NULL); 
-  if (threadId <= 0) {
-    printf ("Erreur : glfwCreateThread\n");
-    exit (-1);
-  }
-#endif
+  IvyC::IvyStart( domain );
 }
 
 
 
-#ifndef USE_GLFW
-void  Ivy::ivyMainLoop (void)
+void Ivy::ivyMainLoop ()
 {
-  // DEBUG       
-
-  IvyC::IvyMainLoop ();
+  	IvyC::IvyMainLoop ();
 }
-#else
-void GLFWCALL Ivy::ivyMainLoopInSeparateThread (void *arg)
-{
-  // DEBUG       
-
-  if (getenv ("DEBUG") != NULL) {
-    char commande[256];
-    sprintf (commande, "/usr/bin/X11/xterm -e /usr/bin/gdb -pid %d", getpid());
-    printf ("DBG> launching %s\n", commande);
-    if (fork () == 0) {
-      system (commande);
-      exit (0);
-    }
-    printf ("DBG> Sortie de sleep\n");
-    sleep (5);
-  }
-  // END DEBUG
-  
-  IvyC::IvyMainLoop ();
-}
-#endif
-
-
 
 
 
@@ -274,7 +228,7 @@ void Ivy::SetFilter(int argc, const char **argv )
  */
 void Ivy::ApplicationCb( IvyC::IvyClientPtr app, void *user_data, IvyC::IvyApplicationEvent event )
 {
-IvyApplicationCallback *callback = (IvyApplicationCallback *)user_data;
+IvyApplicationCallback *callback = (IvyApplicationNullCallback *)user_data;
 IvyApplication *appObj = new IvyApplication( app );
 	switch ( event )
 	{
@@ -339,21 +293,11 @@ delete appObj;
  */
 void Ivy::MsgCb( IvyC::IvyClientPtr app, void *user_data, int argc, char **argv )
 {
-#ifdef USE_GLFW
-  if (ivyCbmutex) 
-    glfwLockMutex (ivyCbmutex);
-#endif
- 
   IvyMessageCallback *cb = (IvyMessageCallback *)user_data;
   IvyApplication *appObj = new IvyApplication( app );
   
   cb->OnMessage( appObj, argc, (const char **)argv );
   delete appObj;
-
-#ifdef USE_GLFW
-  if (ivyCbmutex) 
-    glfwUnlockMutex (ivyCbmutex);
-#endif
 }
 
 
@@ -374,6 +318,8 @@ void Ivy::BindCallbackCb( IvyC::IvyClientPtr app, void *user_data, int id, char 
     case IvyC::IvyFilterBind :
       cb->OnFilterBind( appObj, id, msg );
     break;
+      	case IvyC::IvyChangeBind :
+	cb->OnChangeBind( appObj, id, msg );
     }
    delete appObj;
 }

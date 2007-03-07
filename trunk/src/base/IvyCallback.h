@@ -128,6 +128,7 @@ public:
 	virtual void OnAddBind (IvyApplication *app, int id, const char * regexp) = 0;
 	virtual void OnRemoveBind (IvyApplication *app, int id, const char * regexp) = 0;
 	virtual void OnFilterBind (IvyApplication *app, int id, const char * regexp) = 0;
+	virtual void OnChangeBind (IvyApplication *app, int id, const char * regexp) = 0;
 	virtual ~IvyBindingCallback()
 	{
 	}
@@ -141,6 +142,8 @@ public:
 	{};
 	virtual void OnFilterBind (IvyApplication *app, int id, const char * regexp)
 	{};
+	virtual void OnChangeBind (IvyApplication *app, int id, const char * regexp)
+	{};
 	virtual ~IvyBindingNullCallback()
 	{
 	}
@@ -152,10 +155,11 @@ public:
 	IvyBindingCallback_fun BindingAddCb;
 	IvyBindingCallback_fun BindingRemoveCb;
 	IvyBindingCallback_fun BindingFilterCb;
+	IvyBindingCallback_fun BindingChangeCb;
 
 public:
-	IvyBindingCallbackFunction ( IvyBindingCallback_fun add_cb,  IvyBindingCallback_fun remove_cb, IvyBindingCallback_fun filter_cb ) 
-		: BindingAddCb( add_cb ), BindingRemoveCb( remove_cb ), BindingFilterCb( filter_cb )
+	IvyBindingCallbackFunction ( IvyBindingCallback_fun add_cb,  IvyBindingCallback_fun remove_cb, IvyBindingCallback_fun filter_cb, IvyBindingCallback_fun change_cb ) 
+		: BindingAddCb( add_cb ), BindingRemoveCb( remove_cb ), BindingFilterCb( filter_cb ), BindingChangeCb( change_cb )
 	{
 	}
 	~IvyBindingCallbackFunction ()
@@ -169,13 +173,19 @@ public:
 	{
 	if (BindingRemoveCb) (*BindingRemoveCb) (app, id, regexp);
 	};
+	
 	virtual void OnFilterBind (IvyApplication *app, int id, const char * regexp)
 	{
 	if(BindingFilterCb ) (*BindingFilterCb) (app, id, regexp);
 	};
 	
+	virtual void OnChangeBind (IvyApplication *app, int id, const char * regexp)
+	{
+		if(BindingChangeCb ) (*BindingChangeCb) (app, id, regexp);
+	};
+	
 /* raccourci d'ecriture */
-#define BUS_BINDING_CALLBACK(  add, remove, filter ) new IvyBindingCallbackFunction(  add, remove, filter )
+#define BUS_BINDING_CALLBACK(  add, remove, filter, change ) new IvyBindingCallbackFunction(  add, remove, filter, change )
 };
 
 

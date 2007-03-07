@@ -10,9 +10,12 @@
  ***************************************************************************/
 
 #include "roadmap.h"
+#include "runnable.h"
 
 #include "Ivycpp.h"
 #include "IvyApplication.h"
+
+#include <pthread.h>
 
 namespace isibus
 {
@@ -27,8 +30,7 @@ private:
         bool	m_bRunning;
 
 public:
-        ControlCenter():m_RoadMap(NULL)
-        {}
+        ControlCenter();
 
         ~ControlCenter();
 
@@ -53,7 +55,7 @@ public:
          * @return etat de l'execution.
         */
         bool	startControl();
-
+	
 	/**
 	 * Bus logiciel pour la communication inter-processus.
 	*/
@@ -69,6 +71,11 @@ private:
          * Accès au reseau urbain.
         */
         RoadMap*	m_RoadMap;
+	
+	/**
+	 * Thread d'execution de centre de controle
+	*/
+	pthread_t thread1;
 };
 
 } // isibus
