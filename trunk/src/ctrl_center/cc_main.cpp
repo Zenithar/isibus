@@ -29,7 +29,9 @@ ControlCenter::ControlCenter()
 	
 	// Connexion aux services
 	bus->BindMsg( "^Bus Start id=(.*)", new msg::BusStartMsg(this) );
-	//bus->BindMsg( "^Station Start id=(.*)", new StationStartMsg(this) );
+	bus->BindMsg( "^Bus id=(.*) Pos=(.*),(.*)", new msg::BusPositionMsg(this) );
+	
+	bus->BindMsg( "^Station Start id=(.*)", new msg::StationStartMsg(this) );
 	
 	bus->BindDirectMsg(this);
 }
