@@ -21,20 +21,62 @@
      <number>6</number>
     </property>
     <item row="1" column="1" >
-     <widget class="QPushButton" name="pushButton" >
-      <property name="text" >
-       <string>Ajouter Bus</string>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>0</number>
       </property>
-     </widget>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" colspan="2" >
+       <widget class="QPushButton" name="pushButton_2" >
+        <property name="text" >
+         <string>Ajouter un Bus...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item row="0" column="1" >
      <widget class="QTabWidget" name="tabWidget" >
       <property name="currentIndex" >
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab" >
+      <widget class="QWidget" name="tab_etat_reseau" >
        <attribute name="title" >
-        <string>Tab 1</string>
+        <string>Etat du réseau</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QTableWidget" name="tableWidget" >
+          <column>
+           <property name="text" >
+            <string>Ligne</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Bus</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Etat</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_property" >
+       <attribute name="title" >
+        <string>Propriété du bus</string>
        </attribute>
        <layout class="QGridLayout" >
         <property name="margin" >
@@ -46,12 +88,33 @@
         <item row="0" column="0" >
          <widget class="QTreeWidget" name="treeWidget" />
         </item>
+        <item row="1" column="0" >
+         <widget class="QPushButton" name="pushButton" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Supprimer ce bus</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2" >
+      <widget class="QWidget" name="tab_historique" >
        <attribute name="title" >
-        <string>Tab 2</string>
+        <string>Historique de la session</string>
        </attribute>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QListWidget" name="listWidget" />
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -66,16 +129,22 @@
      <x>0</x>
      <y>0</y>
      <width>741</width>
-     <height>28</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File" >
     <property name="title" >
-     <string>&amp;File</string>
+     <string>&amp;Fichier</string>
     </property>
     <addaction name="action_Quit" />
    </widget>
+   <widget class="QMenu" name="menuAbout" >
+    <property name="title" >
+     <string>&amp;A propos</string>
+    </property>
+   </widget>
    <addaction name="menu_File" />
+   <addaction name="menuAbout" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="action_Quit" >
