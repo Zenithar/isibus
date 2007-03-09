@@ -8,24 +8,33 @@
  *   copyright (C) 2007                                                    *
  *   IsiBus 2007                  					   *
  ***************************************************************************/
+ 
+#ifndef __BUS_STARTMSG__
+#define __BUS_STARTMSG__
 
-#include "maindlg.h"
+#include <Ivycpp.h>
+#include <IvyApplication.h>
 
-#include "cc.h"
-
-#include "busgraphicsitem.h"
-
-namespace isibus {
-
-MainDialog::MainDialog(QWidget *parent, const char *name):QMainWindow(parent)
+namespace isibus 
 {
-	setupUi(this);
+	class ControlCenter;
 	
-	QGraphicsScene scene ;
+	namespace msg 
+	{
+		class BusStartMsg : public IvyMessageCallback {
+		public:
+			BusStartMsg(ControlCenter* cc):m_cc(cc) {}
+			
+			void OnMessage(IvyApplication *app, int argc, const char **argv)
+			{
+				cout << "Starting Bus" << argv[0] << endl;
+			}
+			
+		private:
+			ControlCenter* m_cc;	
+		};
+	}
+
 }
 
-MainDialog::~MainDialog()
-{
-}
-
-}
+#endif //__BUS_STARTMSG__

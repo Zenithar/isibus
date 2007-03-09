@@ -19,13 +19,8 @@ using namespace isibus;
 
 int main(int argc, char* argv[])
 {	
-	QApplication app(argc, argv);	
-	
-	MainDialog *fenetre = new MainDialog();
-	fenetre->show();	
-	
 	ControlCenter cc;
-	cc.startControl();
+	cc.loadMap("roadmap.xml", true);
 	
-	return app.exec();
+	return cc.mainLoop();
 }

@@ -9,11 +9,16 @@
  *   IsiBus 2007                  					   *
  ***************************************************************************/
 
+#ifndef __CC_H__
+#define __CC_H__
+
 #include "roadmap.h"
 #include "runnable.h"
 
 #include "Ivycpp.h"
 #include "IvyApplication.h"
+
+#include "msgs.h"
 
 #include <pthread.h>
 
@@ -54,7 +59,12 @@ public:
          * Démarre le centre de contrôle.
          * @return etat de l'execution.
         */
-        bool	startControl();
+        int	mainLoop();
+	
+	/**
+	 * Charge la map et les informations associées au reseau.
+	*/
+	void	loadMap(const std::string& filename, bool verbose);
 	
 	/**
 	 * Bus logiciel pour la communication inter-processus.
@@ -79,3 +89,5 @@ private:
 };
 
 } // isibus
+
+#endif 

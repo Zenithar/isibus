@@ -16,6 +16,7 @@ set(base_SRCS
 set(isibus_SRCS
 	main.cpp
 	ui/maindlg.cpp
+	ui/busgraphicsitem.cpp
 )
 
 set(controlcenter_SRCS
@@ -33,6 +34,7 @@ set(rc_SRCS
 
 set(moc_HDRS
 	ui/maindlg.h
+	ui/busgraphicsitem.h
 )
 
 add_definitions (${QT_DEFINITIONS})

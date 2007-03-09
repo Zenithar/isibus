@@ -14,26 +14,24 @@
 
 using namespace isibus;
 
-void* run(void* arg)
-{
-	ControlCenter* cc = (ControlCenter*)arg;
-	
-	cc->bus->ivyMainLoop();	
-}
-
-bool ControlCenter::startControl()
+int ControlCenter::mainLoop()
 {	
-	bus = new Ivy( "isiBusCC", "isiBusCC READY", this);
-	bus->BindMsg( "^Bus id=(.*) pos=(.*),(.*)", this );
-	bus->BindDirectMsg(this);
-	
-	bus->start(NULL);
-	thread1 = pthread_create( &thread1, NULL, &run, (void*)this);
+	bus->ivyMainLoop();
+	return 0;
 }
 
 ControlCenter::ControlCenter()
 {
 	m_RoadMap = new RoadMap();
+	
+	bus = new Ivy( "isiBusCC", "isiBusCC READY", this);
+	bus->start(NULL);
+	
+	// Connexion aux services
+	bus->BindMsg( "^Bus Start id=(.*)", new msg::BusStartMsg(this) );
+	//bus->BindMsg( "^Station Start id=(.*)", new StationStartMsg(this) );
+	
+	bus->BindDirectMsg(this);
 }
 
 
@@ -43,6 +41,11 @@ ControlCenter::~ControlCenter()
 	delete m_RoadMap;
 }
 
+void ControlCenter :: loadMap(const std::string& filename, bool verbose)
+{
+	m_RoadMap->loadMap(filename, verbose);
+}
+	
 void ControlCenter :: OnMessage(IvyApplication *app, int argc, const char **argv)
 {
 	int i;

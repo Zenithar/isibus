@@ -86,12 +86,20 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 		XMLNode xNode = xGraph.getChildNode("node", &xmlIterator);
 		
 		if(verbose) {
-			cout << "Connection [" << node_id++ << "] to roads (" << xNode.getAttribute("roads") << ")" << endl;
+			cout << "Connection [" << node_id << "] to roads (" << xNode.getAttribute("roads") << ")" << endl;
 		}
 		
-		m_RoadGraph.insert(node_id);
+		ni_t node = m_RoadGraph.insert(node_id);
 		
 		vector<string> roads = split(",", xNode.getAttribute("roads"));
+		for(int j=0; j<roads.size(); j++)
+		{
+			if(verbose) {
+				cout << " + Connection " << node_id << " to road " << m_RoadList[atoi(roads[j].c_str())]->getName() << endl;
+			}
+		}
+		
+		node_id++;
 	}
 	
 	// Création des lignes de bus
