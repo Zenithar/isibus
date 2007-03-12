@@ -4,7 +4,7 @@
 = Control Center =
 
 Messages triggered by the ControlCenter :
-* Bus Start id=(.*)   =>  BusStartMsg
-* Bus id=(.*) Pos=(.*),(.*)  =>  BusPositionMsg
+* `Bus Start id=(.*)`   =>  BusStartMsg
+* `Bus id=(.*) Pos=(.*),(.*)`  =>  BusPositionMsg
 
-* Station Start id=(.*)  =>  StationStartMsg
+* `Station Start id=(.*)`  =>  StationStartMsg
