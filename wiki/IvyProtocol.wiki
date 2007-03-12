@@ -4,8 +4,8 @@
 = Control Center =
 
 Messages triggered by the ControlCenter :
+
 || Protocol || Class ||
 || `Bus Start id=(.*)` || BusStartMsg ||
-`Bus id=(.*) Pos=(.*),(.*)`  =>  BusPositionMsg
-
-`Station Start id=(.*)`  =>  StationStartMsg
+|| `Bus id=(.*) Pos=(.*),(.*)` || BusPositionMsg ||
+|| `Station Start id=(.*)` || StationStartMsg ||
