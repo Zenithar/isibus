@@ -5,7 +5,7 @@
 
 Messages triggered by the ControlCenter :
 
-|| Protocol || Class ||
-|| `Bus Start id=(.*)` || BusStartMsg ||
-|| `Bus id=(.*) Pos=(.*),(.*)` || BusPositionMsg ||
-|| `Station Start id=(.*)` || StationStartMsg ||
+|| Protocol || Params || Class ||
+|| `Bus Start id=(.*)` || int || BusStartMsg ||
+|| `Bus id=(.*) Pos=(.*),(.*)` || int,int,int || BusPositionMsg ||
+|| `Station Start id=(.*)` || int || StationStartMsg ||
