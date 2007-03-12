@@ -1,7 +1,10 @@
 #summary Describe the protocol used to communicate between modules.
 #labels Phase-Implementation
 
-= Control Centet =
+= Control Center =
 
 Messages triggered by the ControlCenter :
-* 
+* Bus Start id=(.*)   =>  BusStartMsg
+* Bus id=(.*) Pos=(.*),(.*)  =>  BusPositionMsg
+
+* Station Start id=(.*)  =>  StationStartMsg
