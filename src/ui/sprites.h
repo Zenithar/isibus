@@ -15,29 +15,33 @@ public:
     IsiSprite( QList<QPixmap>* frames, QGraphicsScene* scene )
         : QGraphicsPixmapItem( 0, scene ), mFrames(frames), mCurrentFrame(-1),
         mXVelocity(0), mYVelocity(0)
-    {
-        setFrame(0);
-    }
-    void setFrame(int frame)
-    {
-        if( frame != mCurrentFrame && !mFrames->isEmpty() )
-        {
-            mCurrentFrame = frame % mFrames->count();
-            setPixmap( mFrames->at( mCurrentFrame ) );
-        }
-    }
-    int frame() const { return mCurrentFrame; }
-    int frameCount() const { return mFrames->count(); }
-    void setVelocity(qreal xv, qreal yv) { mXVelocity = xv; mYVelocity = yv; }
-    qreal xVelocity() const { return mXVelocity; }
-    qreal yVelocity() const { return mYVelocity; }
-    virtual void advance(int phase) 
-    { if(phase==0) return; moveBy( mXVelocity, mYVelocity ); }
+	{
+		setFrame(0);
+	}
+	void setFrame(int frame)
+	{
+		if( frame != mCurrentFrame && !mFrames->isEmpty() )
+		{
+			mCurrentFrame = frame % mFrames->count();
+			setPixmap( mFrames->at( mCurrentFrame ) );
+		}
+	}
+	int frame() const { return mCurrentFrame; }
+	int frameCount() const { return mFrames->count(); }
+	void setVelocity(qreal xv, qreal yv) { mXVelocity = xv; mYVelocity = yv; }
+	qreal xVelocity() const { return mXVelocity; }
+	qreal yVelocity() const { return mYVelocity; }
+	virtual void advance(int phase) 
+    	{ 
+		if(phase==0) return;
+		
+		moveBy( xVelocity(), yVelocity() ); 
+	}
 private:
-    QList<QPixmap>* mFrames;
-    int mCurrentFrame;
-    qreal mXVelocity;
-    qreal mYVelocity;
+	QList<QPixmap>* mFrames;
+	int mCurrentFrame;
+	qreal mXVelocity;
+	qreal mYVelocity;
 };
 
 class Bus : public IsiSprite
@@ -85,13 +89,15 @@ public:
 	int direction;
 	int idArret;
 	int segment;
+	int idRoad;
 	
 	
-	RoadCase(QList<QPixmap> *frames, QGraphicsScene *scene, int x, int y, int dir, int idArr, int seg): plainCase( frames, scene, x, y )
+	RoadCase(QList<QPixmap> *frames, QGraphicsScene *scene, int x, int y, int dir, int idArr, int seg, int idR): plainCase( frames, scene, x, y )
 	{
 		direction = dir;
 		idArret = idArr;
 		segment = seg;
+		idRoad = idR;
 	}
 };
 

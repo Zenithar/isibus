@@ -1,7 +1,7 @@
 #include "Isibus.h"
 #include "../base/xmlParser.h"
 
-#define IMG_BACKGROUND "pics/plain_case.png"
+#define IMG_BACKGROUND "pics/case_vert.png"
 
 #define BG_W 575
 #define BG_H 431
@@ -14,11 +14,11 @@ static struct
 }
 bus_animations [] =
 {
-	{ ID_BUS_LEFT_TO_RIGHT, "pics/bus_1*.png"},
+	{ ID_BUS_LEFT_TO_RIGHT, "pics/bus_*.png"},
 	{ ID_BUS_RIGHT_TO_LEFT, "pics/bus_rtol.png"},
 	{ ID_BUS_FRONT_TO_BACK, "pics/bus_ftob.png"},
 	{ ID_BUS_BACK_TO_FRONT, "pics/bus_fbof.png"},
-	{ ID_CASE_PLAIN,	"pics/plain_case.png"},
+	{ ID_CASE_PLAIN,	"pics/case_*.png"},
 	{ 0,                   0 }
 };
 
@@ -53,7 +53,7 @@ Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 	// On transforme le bg en QPixmal afin de pouvoir le manipuler
 	QPixmap pm( IMG_BACKGROUND );
 	// On associe le nouveau bg à la scene
-	//field->setBackgroundBrush( pm );
+	field->setBackgroundBrush( pm );
 
 	readSprites();
 	genererCarte(FALSE);
@@ -66,17 +66,6 @@ Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 	// connect pour le menu
 }
 
-void Isibus::timerEvent( QTimerEvent * )
-{
-    field->advance();
-
-    QLinkedList<Bus*>::iterator it;
-    for ( it = buses.begin(); it != buses.end(); ++it ) {
-        (*it)->nextFrame();
-        wrapSprite( *it );
-    }
-
-}
 /*
 vector<string> Isibus::split(const string &sep,string text)
 {
@@ -97,8 +86,11 @@ vector<string> Isibus::split(const string &sep,string text)
 
 void Isibus::genererCarte(bool verbose)
 {
-	int X = 100;
-	int Y = 100;
+	int X = BG_W/2;
+	int Y = BG_H/2;
+	int newX;
+	int newY;
+	int i;
 	XMLNode xMainNode=XMLNode::openFileHelper("roadmap.xml", "isibus");
 	
 	// Chargement des rues
@@ -107,27 +99,45 @@ void Isibus::genererCarte(bool verbose)
 	int speed_limitation = atoi(xRoads.getAttribute("limit"));
 	int m_iNbRoads = xRoads.nChildNode();
 	
-
-	
 	int xmlIterator=0;
-	for(int i=0;i<m_iNbRoads;i++)
+	RoadCase* temp;
+	for(i=0;i<m_iNbRoads;i++)
 	{
 		XMLNode xRoad = xRoads.getChildNode("road", &xmlIterator);
-		
-		for(int i = 0; i <  (atoi(xRoad.getAttribute("len")) / 100); i++){
+		int j = 0;
+		for(int i = 0; i <  ((atoi(xRoad.getAttribute("len")) / 100)); i++){
 			switch(xRoad.getAttribute("axe")[0])
-			{ 	case 'S': Y -=  27; break;
-				case 'N': Y +=  27; break;
-				case 'E': X +=  27; break;
-				default: X -=  27; break;
+			{ 	case 'S': Y +=  27; 
+					break;
+				case 'N': Y -=  27;
+ 					break;
+				case 'E': X +=  27; 
+					break;
+				default: X -=  27; 
+					break;
 			}	
-		RoadCase* temp = new RoadCase(mAnimation.value(ID_CASE_PLAIN), field, X, Y, 0, 0, i);
-		temp->setPos( X, Y );
 
-		temp->show( );
+		temp = new RoadCase(mAnimation.value(ID_CASE_PLAIN), field, X, Y, 0, 0, i,atoi(xRoad.getAttribute("id")));
+		if(i ==  ((atoi(xRoad.getAttribute("len")) / 100)-1))
+		{
+		temp ->setFrame(2);}
+		else{
+			if(xRoad.getAttribute("axe")[0] == 'S' || xRoad.getAttribute("axe")[0] == 'N')
+			{temp ->setFrame(5);} 
+			
+			if(xRoad.getAttribute("axe")[0] == 'E' || xRoad.getAttribute("axe")[0] == 'W')
+			{temp ->setFrame(4);} 
+		}
+		j ++;	
+		roadcaselist.push_back(temp);
+
+	
+		//temp->setPos( X, Y );
+
+		//temp->show( );
 		}
 		
-		//m_RoadList.insert(std::make_pair(atoi(xRoad.getAttribute("id")), temp));
+		//m_RoadCaseList.insert(std::make_pair(j, temp));
 	}
 	/*
 	// Création du graphe
@@ -149,7 +159,7 @@ void Isibus::genererCarte(bool verbose)
 		
 		ni_t node = m_RoadGraph.insert(node_id);
 		
-		vector<string> roads = split(",", xNode.getAttribute("roads"));
+		vector<string> roads = split(",", xNode.getAttrielse{temp ->setFrame(4);}bute("roads"));
 		for(int j=0; j<roads.size(); j++)
 		{
 			if(verbose) {
@@ -179,41 +189,40 @@ void Isibus::genererCarte(bool verbose)
 		
 		vector<string> roads = split(",", xLine.getAttribute("roads"));
 	}
-	
+	*/
 	// Positionnement des stations de bus.
+
 	XMLNode xStations=xMainNode.getChildNode("stations");
-	m_iNbStations = xStations.nChildNode();
+	int m_iNbStations = xStations.nChildNode();
 	
-	if(verbose) {
-		cout << endl << "Populating bus stations with " << m_iNbStations << " stations." << endl;
-	}
 	
 	xmlIterator=0;
 	int station_id = 1;
 	for(int i=0;i<m_iNbStations;i++)
 	{
 		XMLNode xStation = xStations.getChildNode("station", &xmlIterator);
-		
-		if(verbose) {
-			cout << "[" << station_id << "] road:" << xStation.getAttribute("road") << " line:" << xStation.getAttribute("lines") << endl;
-		}
-		
-		Station* temp = new Station(station_id, atoi(xStation.getAttribute("road")));
-		vector<string> lines = split(",", xStation.getAttribute("lines"));
-		
-		m_StationList.insert(std::make_pair(station_id++, temp));
-	}
+		foreach	(RoadCase * rc, roadcaselist){
+			if((rc->idRoad == atoi(xStation.getAttribute("road"))) && (rc->segment == (atoi(xStation.getAttribute("len"))/100)))
+			{
+				rc->idArret = atoi(xStation.getAttribute("id"));
+				rc->setFrame(0);
+			}
 
+		}
+
+		
+		//Station* temp = new Station(station_id, atoi(xStation.getAttribute("road")));
+		//vector<string> lines = split(",", xStation.getAttribute("lines"));
+		
+		//m_StationList.insert(std::make_pair(station_id++, temp));
+	}
+/*
 	// Enregistrement des bus.
 	XMLNode xTransport=xMainNode.getChildNode("transport");
 	m_iNbBus = xTransport.nChildNode();
 	
-	if(verbose) {
-		cout << endl << "Registering " << m_iNbBus << " bus." << endl;
-	}
-	
 	xmlIterator=0;
-	for(int i=0;i<m_iNbBus;i++)
+	 for(int i=0;i<m_iNbBus;i++)
 	{
 		XMLNode xBus = xTransport.getChildNode("bus", &xmlIterator);
 		
@@ -226,35 +235,73 @@ void Isibus::genererCarte(bool verbose)
 	}
 	*/
 
+	foreach	(RoadCase * rc, roadcaselist){
+		rc->setPos( rc->x, rc->y );
+        	rc->show( );
+		}
 
 
 }
 
+void Isibus::timerEvent( QTimerEvent * )
+{
+	field->advance();
+
+	foreach (Bus* bus ,buses){
+		wrapSprite( bus );
+	}
+
+}
 
 void Isibus::wrapSprite( IsiSprite *s )
 {
-    int x = int(s->x() + s->boundingRect().width() / 2);
-    int y = int(s->y() + s->boundingRect().height() / 2);
+	int randNb;
+	qreal coefDeplacement = 0.001;
 
-    if ( x > field->width() )
-        s->setPos( s->x() - field->width(), s->y() );
-    else if ( x < 0 )
-        s->setPos( field->width() + s->x(), s->y() );
+	int x = int(s->x() + s->boundingRect().width() / 2);
+	int y = int(s->y() + s->boundingRect().height() / 2);
 
-    if ( y > field->height() )
-        s->setPos( s->x(), s->y() - field->height() );
-    else if ( y < 0 )
-        s->setPos( s->x(), field->height() + s->y() );
+	if ( x > field->width() )
+		s->setPos( s->x() - field->width(), s->y() );
+	else if ( x < 0 )
+		s->setPos( field->width() + s->x(), s->y() );
+
+	if ( y > field->height() )
+		s->setPos( s->x(), s->y() - field->height() );
+	else if ( y < 0 )
+		s->setPos( s->x(), field->height() + s->y() );
+	
+	srand(time(NULL));
+	// Axe des ordonnées aléatoire
+	randNb = rand();
+	if (randNb>(2*(RAND_MAX/3))){s->setVelocity(s->xVelocity()+coefDeplacement,s->yVelocity());}
+	if (randNb<(RAND_MAX/3)){s->setVelocity(s->xVelocity()-coefDeplacement,s->yVelocity());}
+
+	srand(time(NULL));
+	// Axe des abscisses aléatoire
+	randNb = rand();
+	if (randNb>(2*(RAND_MAX/3))){s->setVelocity(s->xVelocity(),s->yVelocity()+coefDeplacement);}
+	if (randNb<(RAND_MAX/3)){s->setVelocity(s->xVelocity(),s->yVelocity()-coefDeplacement);}
+
+	if (s->xVelocity()==0 || s->yVelocity()==0 ) {s->setFrame(1);}
+	if (s->xVelocity()<0 || fabs(s->yVelocity()) < fabs(s->xVelocity()) ) {s->setFrame(0);}
+	if (s->yVelocity()<0 || fabs(s->xVelocity()) < fabs(s->yVelocity()) ) {s->setFrame(1);}
+	if (s->yVelocity()>0 || fabs(s->xVelocity()) < fabs(s->yVelocity()) ) {s->setFrame(2);}
+	if (s->xVelocity()>0 || fabs(s->yVelocity()) < fabs(s->xVelocity()) ) {s->setFrame(3);}
+
 }
 
 void Isibus::addBus()
 {
         Bus *newBus = new Bus( mAnimation.value(ID_BUS_LEFT_TO_RIGHT), field, ID_BUS_LEFT_TO_RIGHT, 2, 1 );
-        double dx = 2.0;
+        double dx = 0.0;
         double dy = 0.0;
         newBus->setVelocity( dx, dy );
-        newBus->setPos( 300, 90 );
+        newBus->setPos(BG_W/2, BG_H/2 );
+	newBus->setZValue(1.0);
+	newBus->setFrame(1);
 
+	buses.push_back(newBus);
 	newBus->show( );
 }
 #include "Isibus.moc"
