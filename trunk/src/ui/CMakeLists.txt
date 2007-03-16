@@ -18,6 +18,7 @@ include_directories(
 set(isibus_sources
 	main.cpp
 	Isibus.cpp
+	../base/xmlParser.cpp
 )
 set(isibus_ui
 	Isibus.ui

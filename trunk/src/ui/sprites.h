@@ -7,6 +7,7 @@
 #define ID_BUS_RIGHT_TO_LEFT           02
 #define ID_BUS_FRONT_TO_BACK           03
 #define ID_BUS_BACK_TO_FRONT           04
+#define ID_CASE_PLAIN			05
 
 class IsiSprite : public QGraphicsPixmapItem
 {
@@ -63,5 +64,36 @@ private:
     int cskip;
     int step;
 };
+
+
+class plainCase : public IsiSprite
+{
+public:
+	int x;
+	int y;
+	
+	plainCase(QList<QPixmap> *frames, QGraphicsScene *scene, int coordx, int coordy): IsiSprite( frames, scene )
+	{
+		this->x = coordx;
+		this->y = coordy;
+	}
+};
+
+class RoadCase:  public plainCase
+{
+public:
+	int direction;
+	int idArret;
+	int segment;
+	
+	
+	RoadCase(QList<QPixmap> *frames, QGraphicsScene *scene, int x, int y, int dir, int idArr, int seg): plainCase( frames, scene, x, y )
+	{
+		direction = dir;
+		idArret = idArr;
+		segment = seg;
+	}
+};
+
 
 #endif

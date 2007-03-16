@@ -1,10 +1,11 @@
 #include "Isibus.h"
+#include "../base/xmlParser.h"
 
-
-#define IMG_BACKGROUND "pics/carte.png"
+#define IMG_BACKGROUND "pics/plain_case.png"
 
 #define BG_W 575
 #define BG_H 431
+
 
 static struct
 {
@@ -17,6 +18,7 @@ bus_animations [] =
 	{ ID_BUS_RIGHT_TO_LEFT, "pics/bus_rtol.png"},
 	{ ID_BUS_FRONT_TO_BACK, "pics/bus_ftob.png"},
 	{ ID_BUS_BACK_TO_FRONT, "pics/bus_fbof.png"},
+	{ ID_CASE_PLAIN,	"pics/plain_case.png"},
 	{ 0,                   0 }
 };
 
@@ -51,10 +53,10 @@ Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 	// On transforme le bg en QPixmal afin de pouvoir le manipuler
 	QPixmap pm( IMG_BACKGROUND );
 	// On associe le nouveau bg à la scene
-	field->setBackgroundBrush( pm );
+	//field->setBackgroundBrush( pm );
 
 	readSprites();
-
+	genererCarte(FALSE);
 	// début de la simulation
         mTimerId = startTimer( 9 );
 
@@ -75,6 +77,159 @@ void Isibus::timerEvent( QTimerEvent * )
     }
 
 }
+/*
+vector<string> Isibus::split(const string &sep,string text)
+{
+	vector<string> words;
+	string::size_type end;
+	do
+	{
+		end = text.find(sep);
+		if (end == string::npos)
+			end = text.length() + 1;
+
+		words.push_back(text.substr(0,end));
+		text.replace(0,end+sep.length(),"");
+
+	} while (text.length());
+	return words;
+}*/
+
+void Isibus::genererCarte(bool verbose)
+{
+	int X = 100;
+	int Y = 100;
+	XMLNode xMainNode=XMLNode::openFileHelper("roadmap.xml", "isibus");
+	
+	// Chargement des rues
+	XMLNode xCity=xMainNode.getChildNode("city");
+	XMLNode xRoads=xCity.getChildNode("roads");
+	int speed_limitation = atoi(xRoads.getAttribute("limit"));
+	int m_iNbRoads = xRoads.nChildNode();
+	
+
+	
+	int xmlIterator=0;
+	for(int i=0;i<m_iNbRoads;i++)
+	{
+		XMLNode xRoad = xRoads.getChildNode("road", &xmlIterator);
+		
+		for(int i = 0; i <  (atoi(xRoad.getAttribute("len")) / 100); i++){
+			switch(xRoad.getAttribute("axe")[0])
+			{ 	case 'S': Y -=  27; break;
+				case 'N': Y +=  27; break;
+				case 'E': X +=  27; break;
+				default: X -=  27; break;
+			}	
+		RoadCase* temp = new RoadCase(mAnimation.value(ID_CASE_PLAIN), field, X, Y, 0, 0, i);
+		temp->setPos( X, Y );
+
+		temp->show( );
+		}
+		
+		//m_RoadList.insert(std::make_pair(atoi(xRoad.getAttribute("id")), temp));
+	}
+	/*
+	// Création du graphe
+	XMLNode xGraph=xCity.getChildNode("graph");
+	int nb_node = xGraph.nChildNode();
+	
+	if(verbose)
+		cout << endl << "Building the city map with " << nb_node << " nodes." << endl;
+	
+	xmlIterator=0;
+	int node_id = 1;
+	for(int i=0;i<nb_node;i++)
+	{
+		XMLNode xNode = xGraph.getChildNode("node", &xmlIterator);
+		
+		if(verbose) {
+			cout << "Connection [" << node_id << "] to roads (" << xNode.getAttribute("roads") << ")" << endl;
+		}
+		
+		ni_t node = m_RoadGraph.insert(node_id);
+		
+		vector<string> roads = split(",", xNode.getAttribute("roads"));
+		for(int j=0; j<roads.size(); j++)
+		{
+			if(verbose) {
+				cout << " + Connection " << node_id << " to road " << m_RoadList[atoi(roads[j].c_str())]->getName() << endl;
+			}
+		}
+		
+		node_id++;
+	}
+	
+	// Création des lignes de bus
+	XMLNode xLines=xMainNode.getChildNode("lines");
+	m_iNbLines = xLines.nChildNode();
+	
+	if(verbose) {
+		cout << endl << "Populating bus lines with " << m_iNbLines << " lines." << endl;
+	}
+	
+	xmlIterator=0;
+	for(int i=0;i<m_iNbLines;i++)
+	{
+		XMLNode xLine = xLines.getChildNode("line", &xmlIterator);
+		
+		if(verbose) {
+			cout << "[" << xLine.getAttribute("id") << "] " << xLine.getAttribute("roads") << endl;
+		}
+		
+		vector<string> roads = split(",", xLine.getAttribute("roads"));
+	}
+	
+	// Positionnement des stations de bus.
+	XMLNode xStations=xMainNode.getChildNode("stations");
+	m_iNbStations = xStations.nChildNode();
+	
+	if(verbose) {
+		cout << endl << "Populating bus stations with " << m_iNbStations << " stations." << endl;
+	}
+	
+	xmlIterator=0;
+	int station_id = 1;
+	for(int i=0;i<m_iNbStations;i++)
+	{
+		XMLNode xStation = xStations.getChildNode("station", &xmlIterator);
+		
+		if(verbose) {
+			cout << "[" << station_id << "] road:" << xStation.getAttribute("road") << " line:" << xStation.getAttribute("lines") << endl;
+		}
+		
+		Station* temp = new Station(station_id, atoi(xStation.getAttribute("road")));
+		vector<string> lines = split(",", xStation.getAttribute("lines"));
+		
+		m_StationList.insert(std::make_pair(station_id++, temp));
+	}
+
+	// Enregistrement des bus.
+	XMLNode xTransport=xMainNode.getChildNode("transport");
+	m_iNbBus = xTransport.nChildNode();
+	
+	if(verbose) {
+		cout << endl << "Registering " << m_iNbBus << " bus." << endl;
+	}
+	
+	xmlIterator=0;
+	for(int i=0;i<m_iNbBus;i++)
+	{
+		XMLNode xBus = xTransport.getChildNode("bus", &xmlIterator);
+		
+		if(verbose) {
+			cout << "[" << xBus.getAttribute("id") << "] capacity:" << xBus.getAttribute("passengers") << " line:" << xBus.getAttribute("line") << endl;
+		}
+		
+		Bus* temp = new Bus(atoi(xBus.getAttribute("id")), atoi(xBus.getAttribute("passengers")), atoi(xBus.getAttribute("line")));
+		m_BusList.insert(std::make_pair(atoi(xBus.getAttribute("id")), temp));
+	}
+	*/
+
+
+
+}
+
 
 void Isibus::wrapSprite( IsiSprite *s )
 {
