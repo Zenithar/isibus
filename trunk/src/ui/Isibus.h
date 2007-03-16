@@ -21,6 +21,7 @@
 #include <qwidget.h>
 
 #include <ui_Isibus.h>
+#include <math.h>
 
 #include "sprites.h"
 
@@ -50,6 +51,7 @@ private:
 	int  mTimerId;
 	QLinkedList<Bus*> buses;
 	Ui_Isibus widget;
+        QList<RoadCase *> roadcaselist ;
 };
 
 #endif
