@@ -24,6 +24,11 @@
 
 #include "sprites.h"
 
+//#include "../base/xmlParser.h"
+//#include "string.h"
+
+//using namespace std;
+
 class Isibus : public QMainWindow
 {
 	Q_OBJECT
@@ -33,6 +38,8 @@ public:
 	void readSprites();
 	void timerEvent(QTimerEvent * );
 	void wrapSprite( IsiSprite *s );
+	void genererCarte( bool verbose);
+	//vector<string> split(const string &sep,string text);
 
 private slots:
 	void addBus(  );
