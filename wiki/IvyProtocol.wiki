@@ -9,3 +9,4 @@ Messages triggered by the ControlCenter :
 || `Bus Start id=(.*)` || int || BusStartMsg ||
 || `Bus id=(.*) Pos=(.*),(.*)` || int,int,int || BusPositionMsg ||
 || `Station Start id=(.*)` || int || StationStartMsg ||
+|| `cc Bus start || || StationStartMsg ||
