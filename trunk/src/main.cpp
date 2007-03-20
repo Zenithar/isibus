@@ -9,18 +9,28 @@
  *   IsiBus 2007                  					   *
  ***************************************************************************/
 
-#include <QApplication>
-#include <QtGui>
-
-#include "maindlg.h"
 #include "cc.h"
 
 using namespace isibus;
 
+void printUsage()
+{
+	cout << "Usage : isibus_cc <file>" << endl;
+	cout << "\t" << "<file> : fichier xml decrivant la ville." << endl;
+	cout << endl;
+	cout << " * Par defaut roadmap.xml sera chargé." << endl;
+}
+
 int main(int argc, char* argv[])
 {	
+	if(argc < 2)
+	{
+		printUsage();
+		exit(-1);
+	}
+	
 	ControlCenter cc;
-	cc.loadMap("roadmap.xml", true);
+	cc.loadMap(argv[1], true);
 	
 	return cc.mainLoop();
 }

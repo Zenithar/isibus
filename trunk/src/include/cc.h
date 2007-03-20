@@ -18,8 +18,6 @@
 #include "Ivycpp.h"
 #include "IvyApplication.h"
 
-#include "msgs.h"
-
 #include <pthread.h>
 
 namespace isibus
@@ -71,21 +69,32 @@ public:
 	*/
 	Ivy *bus;
 	
+	/**
+	 * Accès au reseau urbain.
+	*/
+	RoadMap*	m_RoadMap;
+	
 	void OnApplicationConnected(IvyApplication *app);
 	void OnApplicationDisconnected(IvyApplication *app);
 	void OnMessage(IvyApplication *app, int argc, const char **argv);
 	void OnDirectMessage (IvyApplication *app, int id, const char *arg );
 	
-private:
-        /**
-         * Accès au reseau urbain.
-        */
-        RoadMap*	m_RoadMap;
 	
+	inline int getNbRunningBus() { return m_nbRunningBus; }
+	Bus* incBusPool(int app_id); 
+	void decBusPool(int app_id);
+	
+private:
 	/**
 	 * Thread d'execution de centre de controle
 	*/
 	pthread_t thread1;
+	
+	/**
+	 * Nombre de bus en fonctionnement
+	*/
+	int	m_nbRunningBus;
+	std::map<int,int> BusPool;
 };
 
 } // isibus

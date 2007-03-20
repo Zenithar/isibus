@@ -10,6 +10,8 @@
  ***************************************************************************/
 
 #include "cc.h"
+#include "msgs.h"
+
 #include <pthread.h>
 
 using namespace isibus;
@@ -22,16 +24,19 @@ int ControlCenter::mainLoop()
 
 ControlCenter::ControlCenter()
 {
+	m_nbRunningBus = 0;
+	BusPool.clear();
+	
 	m_RoadMap = new RoadMap();
 	
 	bus = new Ivy( "isiBusCC", "isiBusCC READY", this);
 	bus->start(NULL);
 	
 	// Connexion aux services
-	bus->BindMsg( "^Bus Start id=(.*)", new msg::BusStartMsg(this) );
-	bus->BindMsg( "^Bus id=(.*) Pos=(.*),(.*)", new msg::BusPositionMsg(this) );
+	bus->BindMsg( "^Bus_(.*) Start", new msg::BusStartMsg(this) );
+	bus->BindMsg( "^Bus_(.*) Pos=(.*),(.*)", new msg::BusPositionMsg(this) );
 	
-	bus->BindMsg( "^Station Start id=(.*)", new msg::StationStartMsg(this) );
+	bus->BindMsg( "^Station_(.*) Start", new msg::StationStartMsg(this) );
 	
 	bus->BindDirectMsg(this);
 }
@@ -48,6 +53,28 @@ void ControlCenter :: loadMap(const std::string& filename, bool verbose)
 	m_RoadMap->loadMap(filename, verbose);
 }
 	
+Bus* ControlCenter :: incBusPool(int app_id)
+{
+	Bus* temp = NULL;
+	BusList::iterator iter = m_RoadMap->getBusList().begin();
+	int i = 0;
+	for( iter; iter != m_RoadMap->getBusList().end();) {
+		if(i >= getNbRunningBus()) {
+			cout << "Bus_" << app_id << " affected to bus id=" << iter->second->getID() << endl; 
+			
+			BusPool[app_id] = iter->second->getID();
+			m_nbRunningBus++;
+			return iter->second;
+		}
+		i++; iter++;
+	}
+}
+
+void ControlCenter :: decBusPool(int app_id)
+{
+	bus->SendMsg("Bus_%d Stop", app_id);
+}
+
 void ControlCenter :: OnMessage(IvyApplication *app, int argc, const char **argv)
 {
 	int i;

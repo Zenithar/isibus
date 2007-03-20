@@ -27,7 +27,12 @@ namespace isibus
 			
 			void OnMessage(IvyApplication *app, int argc, const char **argv)
 			{
-				cout << "Starting Bus" << argv[0] << endl;
+				cout << "Starting Bus " << argv[0] << endl;
+				Bus* temp = m_cc->incBusPool(atoi(argv[0]));
+				
+				
+				// Envoie des informations à l'instance
+				m_cc->bus->SendMsg("Bus_%s id=%d passengers=%d line=%d",argv[0], temp->getID(), temp->getCapacity(), temp->getLine());
 			}
 			
 		private:
