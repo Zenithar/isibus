@@ -68,7 +68,9 @@ public:
 	inline int getNbStations() { return m_iNbStations; }
 	inline int getNbLines() { return m_iNbLines; }	
 	
-	RoadList& getRoadList() { return m_RoadList; }
+	inline RoadList& getRoadList() { return m_RoadList; }
+	inline BusList& getBusList() { return m_BusList; }
+	inline StationList& getStationList() { return m_StationList; }
 };
 
 }

@@ -8,7 +8,7 @@ SET( QT_USE_QTXML TRUE )
 
 include(${QT_USE_FILE})
 add_definitions (${QT_DEFINITIONS})
-add_definitions ( -g )
+add_definitions ( -g -Wall )
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
@@ -43,6 +43,11 @@ QT4_WRAP_CPP(isibus_moc_res
 
 qt4_automoc(${isibus_sources})
 
-add_executable(isibus_exec ${isibus_ui_res} ${isibus_sources} ${isibus_moc_classes} ${isibus_moc_files})
+add_executable(isibus_ui ${isibus_ui_res} ${isibus_sources} ${isibus_moc_classes} ${isibus_moc_files})
 
-target_link_libraries(isibus_exec ${QT_LIBRARIES})
+target_link_libraries(isibus_ui ${QT_LIBRARIES} Ivy pcre)
+
+install(TARGETS isibus_ui DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../bin)
+
+FILE(GLOB pics "${CMAKE_CURRENT_BINARY_DIR}/ui/pics/*.png")
+install(FILES ${pics} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../bin/pics) 
