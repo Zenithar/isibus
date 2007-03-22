@@ -5,8 +5,10 @@
 
 Messages triggered by the ControlCenter :
 
-|| Protocol || Params || Class ||
-|| `Bus Start id=(.*)` || int || BusStartMsg ||
-|| `Bus id=(.*) Pos=(.*),(.*)` || int,int,int || BusPositionMsg ||
-|| `Station Start id=(.*)` || int || StationStartMsg ||
-|| `cc Bus new`|| || ||
+|| Protocol || Params || Class || Description
+|| `Bus Start id=(.*)` || int || BusStartMsg || ||
+|| `Bus id=(.*) Pos=(.*),(.*)` || int,int,int || BusPositionMsg || ||
+|| `Station Start id=(.*)` || int || StationStartMsg || ||
+|| `cc Bus new`|| || || Interface => Centre control, demande creation bus
+|| `Station Info id=(.*) || int || Interface => Arret
+|| `Interface InfoArret ||  || Arret => Interface
