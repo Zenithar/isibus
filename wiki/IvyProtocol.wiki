@@ -48,4 +48,7 @@ We have 3 bus process, 3 stations, 3 lines.
 || Bus 3 Start || `B2 >> Bus_56789 Start` || || `Bus_56789 id=3 passenger=50 line=3:6,600;7,600;8,300;9,300;10,600;11,900;12,300;` || ||
 || || `B3 >> Bus id=3 line=3 pos=6,0 capacity=50` || || || ||
 || B1 arrive to S1 || `B1 >> Bus id=1 line=1 pos=1,100 capacity=37` || || || ||
-[[ B2 arrive to S1 || `B1 >> Bus id=2 line=2 pos=1,100 capacity=19` || || || ||
+|| B2 arrive to S1 || `B2 >> Bus id=2 line=2 pos=1,100 capacity=19` || || || ||
+|| B1 leave road 1 || `B1 >> Bus id=1 line=1 pos=2,0 capacity=37` || `S2 >> Station id=2 bus_id=1 len=100` || || ||
+|| B2 leave road 1 || `B2 >> Bus id=2 line=2 pos=2,0 capacity=19` || `S2 >> Station id=2 bus_id=2 len=100` || || ||
+|| 
