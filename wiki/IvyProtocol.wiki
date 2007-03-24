@@ -6,15 +6,16 @@
 Messages triggered by the ControlCenter :
 
 || Protocol || Params || Class || From || Description ||
-|| `Bus_(.*) Start` || instance_id || BusStartMsg || Bus || Sended by the bus process, give to all his instance number ||
-|| `Bus id=(.*) position=(.*),(.*) capacity=(.*)` || int, int, int, int || BusPositionMsg || Bus || Send his position by giving the road id, and the distance on it. Positive distance means the bus is going away, and negative means it's coming back. And the capacity of the bus at the moment. ||
-
+|| `Bus_([0-9]+) Start` || instance_id || BusStartMsg || Bus || Sended by the bus process, give to all its instance number ||
+|| `Bus id=([0-9]+) position=([0-9]+),([-]?[0-9]+) capacity=([0-9]+)` || int, int, int, int || BusPositionMsg || Bus || Send his position by giving the road id, and the distance on it. Positive distance means the bus is going away, and negative means it's coming back. And the capacity of the bus at the moment. ||
+|| `Station_([0-9]+) Start` || instance_id || StationStartMsg || Station || Sended by the station process, give to all its instance number. ||
 
 = Bus =
 
 || Protocol || Parameters || Callback Class || From || Description ||
-|| `Bus_(.*) id=(.*) passengers=(.*) line=([0-9]):(.*)` || instance_id,int,int,int,ligne_format || || CC || Initialise the bus process, with control center data. Send the internal bus id, its capacity, and the affected line. ||
+|| `Bus_([0-9]+) id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+;[0-9]+;)*)` || instance_id,int,int,int,string || || CC || Initialise the bus process, with control center data. Send the internal bus id, its capacity, and the affected line. ||
 
 = Station =
 
+|| `Station_([0-9]+) id=([0-9]+) road=([0-9]+) lines=([0-9]+(,[0-9]+)*)
 = GUI =
