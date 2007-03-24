@@ -51,4 +51,7 @@ We have 3 bus process, 3 stations, 3 lines.
 || B2 arrive to S1 || `B2 >> Bus id=2 line=2 pos=1,100 capacity=19` || || || ||
 || B1 leave road 1 || `B1 >> Bus id=1 line=1 pos=2,0 capacity=37` || `S2 >> Station id=2 bus_id=1 len=100` || || ||
 || B2 leave road 1 || `B2 >> Bus id=2 line=2 pos=2,0 capacity=19` || `S2 >> Station id=2 bus_id=2 len=100` || || ||
-|| 
+|| B1 arrive to S2 || `B1 >> Bus id=1 line=1 pos=2,100 capacity=32` || || || ||
+|| B2 arrive to S2 || `B2 >> Bus id=2 line=2 pos=2,100 capacity=15` || || || ||
+|| B1 leave road 2 || `B1 >> Bus id=1 line=1 pos=3,0 capacity=32` || `S3 >> Station id=3 bus_id=1 len=100` || || ||
+|| B2 leave road 2 || `B1 >> Bus id=1 line=1 pos=8,0 capacity=15` || || || ||
