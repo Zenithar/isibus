@@ -30,4 +30,4 @@ We have 3 bus process, 3 stations, 3 lines.
 || Event || Bus || Station || CC || GUI ||
 || Bus 1 Start || `B1 >> Bus_12134 Start` || || `Bus_12134 id=1 passenger=50 line=1:1,300;2,300;3,300;4,300;` || ||
 || Bus 2 Start || `B1 >> Bus_34521 Start` || || `Bus_34521 id=2 passenger=20 line=2:1,300;2,300;8,300:7,600;6,600;5,300;` || ||
-|| Bus 3 Start || `B1 >> Bus_12134 Start` || || `Bus_12134 id=1 passenger=50 line=1:1,300;2,300;3,300;4,300;` || ||
+|| Bus 3 Start || `B1 >> Bus_56789 Start` || || `Bus_56789 id=3 passenger=50 line=3:6,600;7,600;8,300;9,300;10,600;11,900;12,300;` || ||
