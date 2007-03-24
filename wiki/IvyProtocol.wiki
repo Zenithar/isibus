@@ -14,7 +14,8 @@ Messages triggered by the ControlCenter :
 
 || Protocol || Parameters || Callback Class || From || Description ||
 || `Bus_([0-9]+) id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)` || instance_id,int,int,int,string || || CC || Initialise the bus process, with control center data. Send the internal bus id, its capacity, and the affected line. ||
-
+|| `Station id=([0-9]+) bus_id=([0-9]+) len=([0-9]+)` || int, int, int || || Station || The station send his position, relative to the bus position on the common road portion. ||
+ 
 = Station =
 || Protocol || Parameters || Callback Class || From || Description ||
 || `Station_([0-9]+) id=([0-9]+) road=([0-9]+) lines=([0-9]+(,[0-9]+)*) len=([0-9]+)` || instance_id, int, int, string, int || || CC || Synchronize the station process with the control center data. ||
