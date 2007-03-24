@@ -12,7 +12,7 @@ Messages triggered by the ControlCenter :
 
 = Bus =
 
-|| Protocol || Parameters || Callback Class || Description ||
+|| Protocol || Parameters || Callback Class || From || Description ||
 || `Bus_(.*) id=(.*) passengers=(.*) line=([0-9]):(.*)` || instance_id,int,int,int,ligne_format || || CC || Initialise the bus process, with control center data. Send the internal bus id, its capacity, and the affected line. ||
 
 = Station =
