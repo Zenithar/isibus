@@ -1,9 +1,21 @@
+with Ivy;
+
+with Ada.Numerics.Discrete_Random;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+
+with GNAT.Command_Line; use GNAT.Command_Line;
+with GNAT.OS_Lib;
+
 with Text_io;
 use Text_io;
 with Ada.Calendar;
 use Ada.Calendar;
 
 procedure arret is			
+
+--Def du package utilise pour la generation d'id automatique
+package Random_Id is new Ada.Numerics.Discrete_Random (natural);
+use Random_Id;
 
 --DEFINITION DES VARIABLES
 MAX_BUS : integer := 4;
@@ -150,66 +162,101 @@ id : natural := 24;
 d : integer := 50;
 s : integer := 30;
 
+--Generateur d'id
+G : Generator;
+
+--Id du bus
+Id_station: String := "Station_";
+num_station : natural;
+
+DataBus : Unbounded_String := To_Unbounded_String(Ivy.Default_Bus);
+IvyBus : GNAT.OS_Lib.String_Access;
+
 begin
 
-i :=0;
+        
 
+	--Demarre le generateur
+	Random_Id.Reset (G);
 
---Tests
-put_line("");
+	--Genere un nombre au hazard
+	num_station := Random_Id.Random(G);
 
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(id , d , s);
-b := bus_stop.calc_time;
-put_line("");
+	put_line(Id_station);
+	put_line(natural'image(num_station));
 
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(1 , 300 , 50);
-b := bus_stop.calc_time;
-put_line("");
+	--Affichage de l'identifiant du bus	
+	put("RAAAAANNNNNNNDOOOOMMMMM -> ");
+	put_line(Id_station & natural'image(num_station)(2..natural'image(num_station)'LENGTH));
 
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(2 , 20 , 6);
-b := bus_stop.calc_time;
-put_line("");
+	IvyBus:= GNAT.OS_Lib.Getenv("IVYBUS");
+	if IvyBus.all'length /= 0 then  --| La variable existe
+	DataBus := To_Unbounded_string(IvyBus.all);
+	end if;
 
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(5 , 33 , 4);
-b := bus_stop.calc_time;
-put_line("");
+	--Identification sur IVY
+	Ivy.Configure( AppName => Id_station & natural'image(num_station)(2..natural'image(num_station)'LENGTH),
+		Ready   => "Connected",
+		Bus     => To_String(DataBus));
 
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(7 , 22 , 30);
-b := bus_stop.calc_time;
-put_line("");
-
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(id , 4000 , 300);
-b := bus_stop.calc_time;
-put_line("");
-
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(90 , d , s);
-b := bus_stop.calc_time;
-put_line("");
-
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(id , 3000 , 400);
-b := bus_stop.calc_time;
-put_line("");
-
-delay(1.0);
-bus_stop.maj;
-bus_stop.position(32 , d , s);
-b := bus_stop.calc_time;
-put_line("");
+	i :=0;
+	
+	
+	--Tests
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(id , d , s);
+	b := bus_stop.calc_time;
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(1 , 300 , 50);
+	b := bus_stop.calc_time;
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(2 , 20 , 6);
+	b := bus_stop.calc_time;
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(5 , 33 , 4);
+	b := bus_stop.calc_time;
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(7 , 22 , 30);
+	b := bus_stop.calc_time;
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(id , 4000 , 300);
+	b := bus_stop.calc_time;
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(90 , d , s);
+	b := bus_stop.calc_time;
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(id , 3000 , 400);
+	b := bus_stop.calc_time;
+	put_line("");
+	
+	delay(1.0);
+	bus_stop.maj;
+	bus_stop.position(32 , d , s);
+	b := bus_stop.calc_time;
+	put_line("");
 
 end arret;

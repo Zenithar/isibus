@@ -6,7 +6,7 @@ all: commands
 commands: $(TARGETS)
 
 bus_de_ligne: 
-	gnatmake bus_de_ligne.adb -largs -livy
+	gnatmake lanceur_bus.adb -largs -livy
 
 arret:
 	gnatmake arret.adb -largs -livy
