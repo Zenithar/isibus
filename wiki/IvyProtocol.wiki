@@ -21,3 +21,12 @@ Messages triggered by the ControlCenter :
 
 = GUI =
 || Protocol || Parameters || Callback Class || From || Description ||
+
+
+= Scenario =
+
+We have 3 bus process, 3 stations, 3 lines.
+
+* Bus 1 Start:
+ B1 >> Bus_12134 Start
+ CC >> Bus_12134 id=1 
