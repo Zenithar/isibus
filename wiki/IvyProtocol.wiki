@@ -10,5 +10,5 @@ Messages triggered by the ControlCenter :
 || `Bus id=(.*) Pos=(.*),(.*)` || int,int,int || BusPositionMsg || ||
 || `Station Start id=(.*)` || int || StationStartMsg || ||
 || `cc Bus new`|| ||Interface => Centre control, demande creation bus || ||
-|| `Station Info id=(.*) || int || Interface => Arret || ||
-|| `Interface InfoArret ||  || Arret => Interface || ||
+|| `Station Info id=(.*)` || int || Interface => Arret || ||
+|| `Interface InfoArret` ||  || Arret => Interface || ||
