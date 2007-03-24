@@ -17,7 +17,7 @@ Messages triggered by the ControlCenter :
 
 = Station =
 || Protocol || Parameters || Callback Class || From || Description ||
-|| `Station_([0-9]+) id=([0-9]+) road=([0-9]+) lines=([0-9]+(,[0-9]+)*) || instance_id, int, int, string || || CC || Synchronize the station process with the control center data. ||
+|| `Station_([0-9]+) id=([0-9]+) road=([0-9]+) lines=([0-9]+(,[0-9]+)*) len=([0-9]+)` || instance_id, int, int, string, int || || CC || Synchronize the station process with the control center data. ||
 
 = GUI =
 || Protocol || Parameters || Callback Class || From || Description ||
