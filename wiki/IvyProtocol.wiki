@@ -40,7 +40,7 @@ We have 3 bus process, 3 stations, 3 lines.
 || Station 1 Start || || `S1 >> Station_1234 Start` || `Station_1234 id=1 road=1 lines=1,2 len=100` || ||
 || Station 2 Start || || `S2 >> Station_4321 Start` ||`Station_4321 id=2 road=2 lines=1,2 len=100` || ||
 || Station 3 Start || || `S3 >> Station_5678 Start` || `Station_5678 id=3 road=3 lines=1 len=100` || ||
-|| Station 4 Start || || `S4 >> Station_1357 Start` || `Station_1357 id=4 road=5 lines=2 len=100` || ||
+|| Station 4 Start || || `S4 >> Station_1357 Start` || `Station_1357 id=4 road=8 lines=2 len=250` || ||
 || Bus 1 Start || `B1 >> Bus_12134 Start` || || `Bus_12134 id=1 passenger=50 line=1:1,300;2,300;3,300;4,300;` || ||
 || || `B1 >> Bus id=1 line=1 pos=1,0 capacity=50` || `S1 >> Station id=1 bus_id=1 len=100` || || ||
 || Bus 2 Start || `B2 >> Bus_34521 Start` || || `Bus_34521 id=2 passenger=20 line=2:1,300;2,300;8,300:7,600;6,600;5,300;` || ||
@@ -54,4 +54,6 @@ We have 3 bus process, 3 stations, 3 lines.
 || B1 arrive to S2 || `B1 >> Bus id=1 line=1 pos=2,100 capacity=32` || || || ||
 || B2 arrive to S2 || `B2 >> Bus id=2 line=2 pos=2,100 capacity=15` || || || ||
 || B1 leave road 2 || `B1 >> Bus id=1 line=1 pos=3,0 capacity=32` || `S3 >> Station id=3 bus_id=1 len=100` || || ||
-|| B2 leave road 2 || `B1 >> Bus id=1 line=1 pos=8,0 capacity=15` || || || ||
+|| B2 leave road 2 || `B2 >> Bus id=2 line=2 pos=8,0 capacity=15` || || || ||
+|| B1 arrive to S3 || `B1 >> Bus id=1 line=1 pos=3,100 capacity=50` || || || ||
+|| B2 leave road 8 || `B2 >> Bus id=2 line=2 pos=7,0 capacity=15` || `S4 >> Station id=4 bus_id=2 len=250` || || ||
