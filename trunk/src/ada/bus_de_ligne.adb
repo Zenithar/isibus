@@ -2,9 +2,11 @@ with Ivy; use Ivy;
 with Bus_Cb; use Bus_Cb;
 
 with Ada.Numerics.Discrete_Random;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+
 
 with GNAT.Command_Line; use GNAT.Command_Line;
+-- with Ada.Strings.Unbounded.Lists; use Ada.Strings.Unbounded.Lists;
+
 with GNAT.OS_Lib;
 
 with Text_io;
@@ -17,16 +19,12 @@ package body bus_de_ligne is
 task BUS is
 		entry speedUp;
 		entry speedDown;
-		--entry setLigne(	app : AppClientPtr_T; 
-		--		user_data : UserData_T; 
-		--		argc:C_Int_T;
-		--		argv:C_Char_Etoile_Etoile_T
-		--);
-		--entry setArret(ar : in arret);
+		entry init(	bus_id : in integer;
+				nb_passengers : in integer;
+				bus_line_id : in integer;
+				bus_line : in circuit);
 		entry position(	nb : in integer);
 		--entry sendPosition();
-		--entry getLastStation(num : out integer);
-		--entry getNextStation(num : out integer);
 		entry getSpeed(cs : out natural);
 		entry setSituation(situation : in boolean);
 end BUS;
@@ -35,14 +33,19 @@ end BUS;
 task body BUS is
 
 --Caracteristiques du bus
-vitesse : natural := 0;
-id_bus : natural;
-ligne : natural;
+vitesse : integer := 0;
+id_bus : integer;
+passager : integer;
+ligne : integer;
+itineraire : circuit;
+
+estInitialise : boolean := FALSE;
 
 --Position du bus
-nbCaseParcouru : integer :=0;
-nbCaseAParcourir :integer := 600;
-	
+nbCaseParcouru : integer := 0;
+portion : integer;
+nbCaseAParcourir :integer := 0;
+cpt : integer :=0;	
 
 --Historique du bus
 lastStation : integer;
@@ -54,75 +57,112 @@ situation : boolean := TRUE;
 begin
 
 	--Demarrage du bus
-	put_line("Demarrage du bus");
+	put_line("Demarrage du bus");						
 
-	while(nbCaseParcouru < nbCaseAParcourir)
-	loop							
+	while(true)
+	loop
 
 		select
 			accept position(nb : in integer ) do
 				nbCaseParcouru := nb;
-				put_line("J'ai Attttttttrapppppppéééééé la position!!!!");
-			end; 
-		else
+			end;
+			put_line("J'ai Attttttttrapppppppéééééé la position!!!!");
+		or
+			accept init(	bus_id : in integer;
+					nb_passengers : in integer;
+					bus_line_id : in integer;
+					bus_line : in circuit) do
+
+				id_bus := bus_id;
+				passager := nb_passengers;
+				ligne := bus_line_id;
+				itineraire := bus_line;
+
+				estInitialise := TRUE;
+				put_line("INNNNNIIIITIALLLLLISEEEE");
+			end init;
+
+		or
 
 			--arret1.position(nbCaseAParcourir-nbCaseParcouru,vitesse);
-
 			--le bus avance
 			delay (1.0);
 
-			--Affichage
-			put("Ancienne valeur de nbCaseParcouru: ");
-			put(integer'image(nbCaseParcouru));
-			put("/");
-			put_line(integer'image(nbCaseAParcourir));
-			
-			nbCaseParcouru := nbCaseParcouru + vitesse;
-			
-			--Affichage
-			put("Nouvelle valeur de nbCaseParcouru: ");
-			put(integer'image(nbCaseParcouru));
-			put("/");
-			put_line(integer'image(nbCaseAParcourir));
-			
-			
-			put("Ancienne Vitesse: ");
-			put_line(natural'image(vitesse));
-			
-			if (vitesse < (nbCaseAParcourir - nbCaseParcouru) and then vitesse <= 50)
+			if (estInitialise)
 			then
-				vitesse := vitesse + 5;
-				put("Nouvelle Vitesse: ");
-				put_line(natural'image(vitesse));
-				
-			else if (vitesse >= (nbCaseAParcourir - nbCaseParcouru))
+	
+				if (cpt < itineraire'length)
 				then
-					while(vitesse > (nbCaseAParcourir - nbCaseParcouru))
-					loop
-					vitesse := vitesse -1;
-					
-					put("Nouvelle Vitesse: ");
-					put_line(natural'image(vitesse));
-					
-					end loop;
-				end if;
-			end if;
-		end select;
+					if (nbCaseParcouru = nbCaseAParcourir)
+					then
+						while(vitesse > 0)
+						loop
+							vitesse := vitesse -1;
+							put("Nouvelle Vitesse: ");
+							put_line(integer'image(vitesse));
+						end loop;
+						
+						put_line("Bus arrivee a destination");
 
+						cpt := cpt + 1;
+						nbCaseParcouru := 0;
+						portion := itineraire(cpt).num;
+						nbCaseAParcourir := itineraire(cpt).length;
+					else
 		
+						--Affichage
+						put("Ancienne valeur de nbCaseParcouru: ");
+						put(integer'image(nbCaseParcouru));
+						put("/");
+						put_line(integer'image(nbCaseAParcourir));
+						
+						nbCaseParcouru := nbCaseParcouru + vitesse;
+						
+						--Affichage
+						put("Nouvelle valeur de nbCaseParcouru: ");
+						put(integer'image(nbCaseParcouru));
+						put("/");
+						put_line(integer'image(nbCaseAParcourir));
+						
+						
+						put("Ancienne Vitesse: ");
+						put_line(integer'image(vitesse));
+						
+						if (vitesse < (nbCaseAParcourir - nbCaseParcouru) and then vitesse < 50)
+						then
+							vitesse := vitesse + 5;
+							put("Nouvelle Vitesse: ");
+							put_line(integer'image(vitesse));
+							
+						elsif (vitesse >= (nbCaseAParcourir - nbCaseParcouru))
+							then
+								while(vitesse > (nbCaseAParcourir - nbCaseParcouru))
+								loop
+								vitesse := vitesse -1;
+								
+								put("Nouvelle Vitesse: ");
+								put_line(integer'image(vitesse));
+								
+								end loop;
+						end if;
+					end if;
+				else
+					put_line("Le Bus a fini son itinéraire");
+					estInitialise := FALSE;
+					cpt := 0;
+				end if;
+			else 
+				put_line("Le Bus attends ses instructions");
+			end if;
+			
 
+		end select;
 	end loop;
 	
-	while(vitesse > 0)
-	loop
-		vitesse := vitesse -1;
-		put("Nouvelle Vitesse: ");
-		put_line(natural'image(vitesse));
-	end loop;
-	
-	put_line("Bus arrivee a destination");
+
 	
 end BUS;
+
 
 procedure position(nb : in integer) is
 begin	
@@ -130,22 +170,29 @@ begin
 
 end position;
 
+
+procedure init(	bus_id : in integer;
+		nb_passengers : in integer;
+		bus_line_id : in integer;
+		bus_line : in circuit) is
+
+
+-- 	bus_id : integer;
+-- 	nb_passengers : integer;
+-- 	bus_line_id : integer;
+
+
+begin
+
+	BUS.init(bus_id, nb_passengers, bus_line_id ,bus_line);
+end init;
+
+
+
 procedure start is
 
 package Random_Id is new Ada.Numerics.Discrete_Random (natural);
 use Random_Id;
-
-
---Declarations
-maxStation : constant integer := 7;
-type carte is array(1..3,1..maxStation) of integer;
-
-type busdeligne is record
-	num : natural;
-end record;
-
-i : integer;
---arret1 : arret;
 
 --Generateur d'id
 G : Generator;
@@ -188,6 +235,12 @@ begin
 	Ivy.BindMsg( 	MsgCallback => Bus_Cb.position'access,
 			User_Data        => 0,
 			Regexp      => To_String(To_Unbounded_String("^" &  Id &	 natural'image(num_bus)(2..natural'image(num_bus)'LENGTH) & " position=(.*)"))
+		   );
+
+	delay(0.1);
+	Ivy.BindMsg( 	MsgCallback => Bus_Cb.init'access,
+			User_Data        => 0,
+			Regexp      => To_String(To_Unbounded_String("^" &  Id &	 natural'image(num_bus)(2..natural'image(num_bus)'LENGTH) & " id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)"))
 		   );
 
 	--Contacte le CC pour l'informer du départ du bus

@@ -1,11 +1,11 @@
 
-TARGETS = bus_de_ligne arret
+TARGETS = lanceur_bus arret
 
 all: commands
 
 commands: $(TARGETS)
 
-bus_de_ligne: 
+lanceur_bus: 
 	gnatmake lanceur_bus.adb -largs -livy
 
 arret:
