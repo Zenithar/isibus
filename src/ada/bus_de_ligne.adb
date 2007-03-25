@@ -29,7 +29,8 @@ task BUS is
 				line : out integer;
 				part : out integer;
 				pos : out integer; 
-				capacity : out integer);
+				capacity : out integer;
+				speed : out integer);
 		--entry sendPosition();
 		entry getSpeed(cs : out natural);
 		entry setSituation(situation : in boolean);
@@ -92,12 +93,14 @@ begin
 						line : out integer;
 						part : out integer;
 						pos : out integer; 
-						capacity : out integer) do
+						capacity : out integer;
+						speed : out integer) do
 				id := id_bus;
 				line := ligne;
 				part := portion;
 				pos := nbCaseParcouru; 
 				capacity := passager;
+				speed := vitesse;
 			end getPosition;
 		or
 			--arret1.position(nbCaseAParcourir-nbCaseParcouru,vitesse);
@@ -222,10 +225,11 @@ DataBus : Unbounded_String := To_Unbounded_String(Ivy.Default_Bus);
 IvyBus : GNAT.OS_Lib.String_Access;
 
 bus_num : integer;
-bus_line : integer;
+line : integer;
 part : integer;
-cur_pos : integer; 
+pos : integer; 
 capacity : integer;
+speed : integer;
 
 
 --BODY
@@ -273,10 +277,10 @@ begin
 	while (true)
 	loop
 		delay(3.0);
-		BUS.getposition(bus_num,bus_line,part,cur_pos,capacity);
-		if (part /= 0 and then cur_pos /= 0)
+		BUS.getposition(bus_num,line,part,pos,capacity,speed);
+		if (part /= 0 and then pos /= 0)
 		then
-			Ivy.SendMsg(Id & natural'image(num_bus)(2..natural'image(num_bus)'LENGTH) & " id=" & integer'image(bus_num) & " line=" & integer'image(bus_line) & " pos=" & integer'image(part) & "," & integer'image(cur_pos) & " capacity=" & integer'image(capacity));
+		Ivy.SendMsg(Id&natural'image(num_bus)(2..natural'image(num_bus)'LENGTH)&" id="&integer'image(bus_num)&" line="&integer'image(line)&" pos="&integer'image(part)&","&integer'image(pos)&" capacity="&integer'image(capacity)&"  speed="&integer'image(speed));
 		end if;
 	end loop;
 
