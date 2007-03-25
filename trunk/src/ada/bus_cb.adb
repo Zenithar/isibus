@@ -93,7 +93,7 @@ procedure init(		app : AppClientPtr_T;
 
 
 
-	put_line("dsqdsqdqskjdhqsjdhqsjkdhqsjkfhsdjkghjskfghsfjdkghsjdkfghsjkd");
+-- 	put_line("dsqdsqdqskjdhqsjdhqsjkdhqsjkfhsdjkghjskfghsfjdkghsjdkfghsjkd");
 
 	bus_de_ligne.init(bus_id,nb_passengers,bus_line_id,ligne);
 
