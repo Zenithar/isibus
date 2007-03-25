@@ -1,15 +1,15 @@
 
-TARGETS = lanceur_bus arret
+TARGETS = lanceur_bus lanceur_arret
 
-all: commands
+all: clean commands
 
 commands: $(TARGETS)
 
 lanceur_bus: 
 	gnatmake lanceur_bus.adb -largs -livy
 
-arret:
-	gnatmake arret.adb -largs -livy
+lanceur_arret:
+	gnatmake lanceur_arret.adb -largs -livy
 
 clean:
 	-rm -f $(TARGETS) *.o *.ali *~

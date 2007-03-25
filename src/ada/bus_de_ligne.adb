@@ -118,7 +118,7 @@ begin
 							put_line(integer'image(vitesse));
 						end loop;
 						
-						put_line("Bus arrivee a destination");
+						put_line("Bus en fin de route");
 
 						cpt := cpt + 1;
 						nbCaseParcouru := 0;
@@ -197,6 +197,7 @@ procedure init(	bus_id : in integer;
 -- 	nb_passengers : integer;
 -- 	bus_line_id : integer;
 
+-- 	id=1 passengers=50 line=2:1,100;2,200;3,300;4,100;
 
 begin
 
