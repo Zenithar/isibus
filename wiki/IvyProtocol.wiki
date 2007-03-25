@@ -7,7 +7,7 @@ Messages triggered by the ControlCenter :
 
 || Protocol || Params || Class || From || Description ||
 || `Bus_([0-9]+) Start` || instance_id || BusStartMsg || Bus || Sended by the bus process, give to all its instance number ||
-|| `Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+)` || int, int, int, int, int || BusPositionMsg || Bus || Send his position by giving the road id, and the distance on it. Positive distance means the bus is going away, and negative means it's coming back. And the capacity of the bus at the moment. ||
+|| `Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+) speed=([0-9]+)` || int, int, int, int, int, int || BusPositionMsg || Bus || Send his position by giving the road id, and the distance on it. Positive distance means the bus is going away, and negative means it's coming back. And the capacity of the bus at the moment. Finally the instant speed.||
 || `Station_([0-9]+) Start` || instance_id || StationStartMsg || Station || Sended by the station process, give to all its instance number. ||
 
 = Bus =
