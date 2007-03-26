@@ -19,21 +19,22 @@
 
 namespace isibus 
 {
-		class Isibus;
+	class Isibus;
+	class IvyWorker;
+	
 	namespace msg 
 	{
 		class UiMsg : public IvyMessageCallback {
 		private:
 			//QListWidget * qlw;
 			Isibus * isb;
-
+			IvyWorker* ivy;
 		public:
 			//UiMsg(QListWidget * _qlw): qlw(_qlw) {}
-			UiMsg(Isibus * _isb):isb(_isb) {}
+			UiMsg(IvyWorker* _ivy, Isibus * _isb):ivy(_ivy), isb(_isb) {}
 			
 			void OnMessage(IvyApplication *app, int argc, const char **argv)
-			{				
-				isb->ajouterMessage(argv[0]);
+			{
 			}
 			
 
