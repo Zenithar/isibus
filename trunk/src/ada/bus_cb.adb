@@ -45,7 +45,7 @@ procedure init(		app : AppClientPtr_T;
 
 	begin	
 
-	--id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)
+	--id=1 passengers=50 line=1:1,200;2,300;3,400;5,200;
 
 	--Recupération du bus id
 	bus_id := integer'value(Value(Tab_arg.all));

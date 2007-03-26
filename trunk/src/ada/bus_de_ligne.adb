@@ -49,8 +49,6 @@ passager : integer;
 ligne : integer;
 itineraire : circuit;
 
-estInitialise : boolean := FALSE;
-
 --Position du bus
 nbCaseParcouru : integer := 0;
 portion : integer;
@@ -69,6 +67,8 @@ begin
 
 	--Demarrage du bus
 	put_line("Demarrage du bus");						
+
+	delay(2.0);
 
 	while(true)
 	loop
@@ -210,6 +210,8 @@ begin
 							&","&integer'image(nbCaseParcouru)
 							&" capacity="&integer'image(passager)
 							&" speed="&integer'image(vitesse));
+							road_stop := FALSE;
+							
 						else
 			
 							--Affichage
@@ -356,10 +358,19 @@ begin
 
 
 	--PB AVEC bus_num
-	delay(0.5);
+
+-- 	Station id= 5 bus_id= 1 len= 100"
+	while (not estInitialise)
+	loop
+		null;
+	end loop;
+
+	BUS.getposition(bus_num,line,part,pos,capacity,speed);
+	put_line(integer'image(bus_num));
+	put_line(To_String(To_Unbounded_String("^Station id= ([0-9]+) bus_id="& integer'image(bus_num) &" len= ([0-9]+)")));
 	Ivy.BindMsg( 	MsgCallback => Bus_Cb.nextStop'access,
 			User_Data        => 0,
-			Regexp      => To_String(To_Unbounded_String("^Station id= ([0-9]+) bus_id= "& integer'image(bus_num) &" len= ([0-9]+)"))
+			Regexp      => To_String(To_Unbounded_String("^Station id= ([0-9]+) bus_id="& integer'image(bus_num) &" len= ([0-9]+)"))
 	);
 
 	while (true)

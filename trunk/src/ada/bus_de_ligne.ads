@@ -9,6 +9,8 @@ maxStation : constant integer := 7;
 Id: String := "Bus_";
 num_bus : natural; 
 
+estInitialise : boolean := FALSE;
+
 --Declaration du type circuit
 type road is record
 	num : integer;
