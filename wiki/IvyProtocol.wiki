@@ -30,7 +30,7 @@ Messages triggered by the Station :
 Messages triggered by the GUI :
 
 || Protocol || Parameters || Callback Class || From || Description ||
-
+|| `cc createBus id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)` || int,int,int,string || || CC || Ask to the command center to create a bus. ||
 
 = Scenario =
 
