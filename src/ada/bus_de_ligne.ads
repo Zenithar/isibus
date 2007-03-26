@@ -26,7 +26,8 @@ procedure position(nb : in integer);
 procedure init(	bus_id : in integer;
 		nb_passengers : in integer;
 		bus_line_id : in integer;
-		bus_line : in circuit);
+		bus_line : in circuit;
+		nb_road : in integer);
 
 procedure nextStop ( 	nextStationId : in integer;
 			pos : in integer);

@@ -20,7 +20,7 @@ package body arret is
 	
 		ENTRY position	(id : natural ; distance : integer ;cs : integer);
 		ENTRY init (id : integer ; route : integer ; bus_line : listeBus ; pos_len : integer);
-		--ENTRY remove 	(id : natural);
+		ENTRY setLignes ( liste : listeBus);
 	
 		function calc_time return boolean;
 		function isInit return boolean;
@@ -28,9 +28,12 @@ package body arret is
 		function getRoad return integer;
 		function getLen return integer;
 		function getStationId return integer;
+		function getLignes return listeBus;
+		function getListe_attente return bus_attendu;
 	
 		procedure maj;
-	
+		procedure setListe_attente (liste : in bus_attendu);
+
 		private
 
 		Station_id : integer;
@@ -45,11 +48,22 @@ package body arret is
 	
 		liste_attente : bus_attendu;
 		nb_bus_passant_par_l_arret : integer := 0;
+		arret_signale : integer := 0;
 	
 	end bus_stop;
 	
 	-- CORPS OBJET PROTEGE: arret de bus
 	protected body bus_stop is
+
+		procedure setListe_attente (liste : in bus_attendu) is
+		begin
+			liste_attente := liste;
+		end setListe_attente;
+
+		function getListe_attente return bus_attendu is
+		begin
+			return liste_attente;
+		end getListe_attente;
 
 		function isInit return boolean is 
 		begin
@@ -83,6 +97,11 @@ package body arret is
 			return Station_id;
 		end getStationId;
 
+		function getLignes return listeBus is
+		begin
+			return bus;
+		end getLignes;
+
 		procedure maj is
 	
 		i : integer := 0;
@@ -114,11 +133,16 @@ package body arret is
 		loop
 			put("Bus numero: ");
 			put(natural'image(liste_attente(i).bus_id));
-			put(" arrive dans: ");
-			--Calcul du temps
-			timeleft := liste_attente(i).dist / liste_attente(i).speed;
-			put(integer'image(timeleft));
-			put_line(" secondes");
+			if (liste_attente(i).speed /= 0)
+			then
+				put(" arrive dans: ");
+				--Calcul du temps
+				timeleft := liste_attente(i).dist / liste_attente(i).speed;
+				put(integer'image(timeleft));
+				put_line(" secondes");
+			else
+				put_line("est arrete");
+			end if;
 			--Incrementation compteur de boucle
 			i := i + 1;
 		end loop;
@@ -165,6 +189,12 @@ package body arret is
 			temp.bus_id := id;
 			temp.dist := distance;
 			temp.speed := cs;
+
+			put("Position");
+			put(integer'image(temp.bus_id));
+			put(integer'image(temp.dist));
+			put_line(integer'image(temp.speed));
+
 			liste_attente(nb_bus_passant_par_l_arret) := temp;
 			nb_bus_passant_par_l_arret := nb_bus_passant_par_l_arret + 1;	
 		-- il ne reste plus de places...
@@ -187,7 +217,13 @@ package body arret is
 		
 		isInitialized := TRUE;
 
-		end init;	
+		end init;
+
+		ENTRY setLignes ( liste : listeBus) when TRUE is
+		begin
+			bus := liste;
+			put_line("Mise a jour setLignes ( liste : listeBus)");
+		end setLignes;
 
 	end bus_stop;
 
@@ -249,67 +285,26 @@ package body arret is
 		Regexp      => To_String(To_Unbounded_String("^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+)"))
 		);
 
+		delay(0.1);
+ 		Ivy.BindMsg( 	MsgCallback => Arret_Cb.attente'access,
+			User_Data        => 0,
+			Regexp      => To_String(To_Unbounded_String("^Bus_([0-9]+) id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)"))
+		   );
+
 		while(true)
 		loop
 
 			if (bus_stop.isInit)
 			then
 				--Tests
-				put_line("");
-				
+				while(TRUE)
+				loop
 				delay(1.0);
 				bus_stop.maj;
-				bus_stop.position(id , d , s);
 				b := bus_stop.calc_time;
-				put_line("");
+				end loop;
 				
-				delay(1.0);
-				bus_stop.maj;
-				bus_stop.position(1 , 300 , 50);
-				b := bus_stop.calc_time;
-				put_line("");
-				
-				delay(1.0);
-				bus_stop.maj;
-				bus_stop.position(2 , 20 , 6);
-				b := bus_stop.calc_time;
-				put_line("");
-				
-				delay(1.0);
-				bus_stop.maj;
-				bus_stop.position(5 , 33 , 4);
-				b := bus_stop.calc_time;
-				put_line("");
-				
-				delay(1.0);
-				bus_stop.maj;
-				bus_stop.position(7 , 22 , 30);
-				b := bus_stop.calc_time;
-				put_line("");
-				
-				delay(1.0);
-				bus_stop.maj;
-				bus_stop.position(id , 4000 , 300);
-				b := bus_stop.calc_time;
-				put_line("");
-				
-				delay(1.0);
-				bus_stop.maj;
-				bus_stop.position(90 , d , s);
-				b := bus_stop.calc_time;
-				put_line("");
-				
-				delay(1.0);
-				bus_stop.maj;
-				bus_stop.position(id , 3000 , 400);
-				b := bus_stop.calc_time;
-				put_line("");
-				
-				delay(1.0);
-				bus_stop.maj;
-				bus_stop.position(32 , d , s);
-				b := bus_stop.calc_time;
-				put_line("");
+
 			else
 				delay(1.0);
 				put_line("Attente d'initialisation...");
@@ -337,21 +332,112 @@ package body arret is
 		return bus_stop.getRoad;
 	end getRoad;
 
+	function getLignes return listeBus is
+	begin
+		return bus_stop.getLignes;
+	end getLignes;
+
+	procedure setLignesCircuit (liste : in listeBus) is
+	begin
+		bus_stop.setLignes(liste);
+	end setLignesCircuit;
+
 	procedure storeInformations(	id : in integer ;
 				line : in integer ;
 				cur_road : in integer;
 				cur_pos : in integer;
 				cur_capacity : in integer;
 				cur_speed : in integer ) is
-	begin
-		if (cur_pos = 0 and then cur_road = arret.getRoad)
-		then
+	cur_line : ligne;
+	lignes_passant: listeBus;
+	bus_stop_road : integer;	
 
--- 	Station id=([0-9]+) bus_id=([0-9]+) len=([0-9]+)
-			Ivy.SendMsg(	"Station id="&natural'image(bus_stop.getStationId)
-					&" bus_id="&integer'image(id)
-					&" len="&integer'image(bus_stop.getLen));
-		end if;
+	dist : integer := 0;
+	liste_bus : bus_attendu;
+	cpt : integer := 1;
+	ptr : integer;
+
+
+	begin
+		put_line("DEBUT");
+-- 		liste_bus := bus_stop.getListe_attente;
+-- 		for I in 0..liste_bus'LENGTH-1
+-- 		loop
+-- 			if (liste_bus(I).bus_id = id)
+-- 			then
+-- 				ptr := I;
+-- 			end if;
+-- 		end loop;
+-- 		put_line("DEBUT");
+-- 		if (not liste_bus(ptr).stop_signaled)
+-- 		then
+-- 			put_line("FALSE");
+-- 		end if;
+-- 		put_line("DEBUT");
+		
+			if ((cur_road = arret.getRoad) and then (cur_pos = 0))
+			then
+-- 				if (liste_bus(ptr).stop_signaled)
+-- 				then
+-- 					null;
+-- 				else
+-- 					liste_bus(ptr).stop_signaled := TRUE;
+-- 					if (liste_bus(ptr).stop_signaled)
+-- 					then
+-- 						put_line("TRUE");
+-- 					end if;
+-- 					put_line(boolean'image(liste_bus(ptr).stop_signaled));
+-- 					bus_stop.setListe_attente(liste_bus);
+-- 					put_line("SET");
+		-- 			Station id=([0-9]+) bus_id=([0-9]+) len=([0-9]+)
+					Ivy.SendMsg(	"Station id="&natural'image(bus_stop.getStationId)
+							&" bus_id="&integer'image(id)
+							&" len="&integer'image(bus_stop.getLen - cur_pos));
+				--end if;
+			end if;
+-- 			PB HERE
+
+			lignes_passant := getLignes;
+
+
+
+			for I in 1..lignes_passant'LENGTH
+			loop
+				if (lignes_passant(I).num = line)
+				then
+					cur_line := lignes_passant(I);
+				end if;
+			end loop;
+
+			while((cpt <= cur_line.prog'LENGTH) and then (cur_line.prog(cpt).num /= cur_road))
+			loop
+				cpt := cpt + 1;
+			end loop;
+
+			bus_stop_road := getRoad;
+
+			dist := dist - cur_pos;
+			while((cpt <= cur_line.prog'LENGTH) and then (cur_line.prog(cpt).num /= bus_stop_road))
+			loop
+				dist := dist + cur_line.prog(cpt).length;
+				cpt := cpt + 1;
+			end loop;
+
+			dist := dist + bus_stop.getLen;
+			
+-- 			put("HEEEY ");
+-- 			put(integer'image(dist));
+-- 			put_line(integer'image(cur_speed));
+
+ 			bus_stop.position(id , dist , cur_speed);
 	end storeInformations;
+
+	procedure storeBus (id : in natural ;
+			distance : in integer ;
+			cs : in integer) is
+	begin
+		bus_stop.position(id , distance , cs);
+	end storeBus;
+
 
 end arret;
