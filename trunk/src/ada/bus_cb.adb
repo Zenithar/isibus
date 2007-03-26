@@ -33,7 +33,8 @@ procedure init(		app : AppClientPtr_T;
 	nb_passengers : integer;
 	bus_line_id : integer;
 	bus_line : Unbounded_String;
-	
+	nb_route : integer := 0;	
+
 	ligne : circuit;
  	tmp : road;
 	buffer : Unbounded_String;
@@ -84,6 +85,7 @@ procedure init(		app : AppClientPtr_T;
 				put("Length : ");
 				put_line(integer'image(tmp.length));
 				Delete (buffer,1,Length(buffer));
+				nb_route := nb_route +1;
 			else
 				buffer := buffer & cur_char;
 				--put_line(To_String(buffer));
@@ -95,7 +97,7 @@ procedure init(		app : AppClientPtr_T;
 
 -- 	put_line("dsqdsqdqskjdhqsjdhqsjkdhqsjkfhsdjkghjskfghsfjdkghsjdkfghsjkd");
 
-	bus_de_ligne.init(bus_id,nb_passengers,bus_line_id,ligne);
+	bus_de_ligne.init(bus_id,nb_passengers,bus_line_id,ligne,nb_route);
 
 end init;
 
@@ -127,5 +129,6 @@ procedure speed(	app : AppClientPtr_T;
 begin
 	bus_de_ligne.Speed(integer'value(Value(Tab_arg.all)));
 end speed;
+
 
 end Bus_Cb;

@@ -21,7 +21,8 @@ task BUS is
 		entry init(	bus_id : in integer;
 				nb_passengers : in integer;
 				bus_line_id : in integer;
-				bus_line : in circuit);
+				bus_line : in circuit;
+				nb_road : in integer);
 		entry position(	nb : in integer);
 		entry getPosition 
 			  (	id : out integer;
@@ -43,6 +44,8 @@ task body BUS is
 
 --Caracteristiques du bus
 vitesse : integer := 0;
+sens : integer := 1;
+
 id_bus : integer;
 passager : integer;
 ligne : integer;
@@ -54,10 +57,12 @@ portion : integer;
 nbCaseAParcourir :integer := 0;
 cpt : integer :=0;	
 
-road_stop : boolean := FALSE;
+nb_roads : integer;
+road_stop : boolean := false;
 nextStationId : integer;
 nextStationPos : integer;
 
+noStop : boolean := TRUE;
 
 --Incidents
 situation : boolean := TRUE;
@@ -81,13 +86,14 @@ begin
 			accept init(	bus_id : in integer;
 					nb_passengers : in integer;
 					bus_line_id : in integer;
-					bus_line : in circuit) do
+					bus_line : in circuit;
+					nb_road : in integer) do
 
 				id_bus := bus_id;
 				passager := nb_passengers;
 				ligne := bus_line_id;
 				itineraire := bus_line;
-
+				nb_roads := nb_road;
 				estInitialise := TRUE;
 				put_line("INNNNNIIIITIALLLLLISEEEE");
 			end init;
@@ -112,7 +118,7 @@ begin
 				then
 					for I in 1..change
 					loop
-						if (vitesse+1 > 50)
+						if (vitesse+1 > 14)--50km/h ~ 14m/S
 						then
 							exit;
 						else
@@ -144,23 +150,15 @@ begin
 			if (estInitialise)
 			then
 	
-				if (cpt < itineraire'length)
+				if (cpt <= nb_roads)
 				then
-
-					if (not road_stop)
+					if (road_stop = false)
 					then
-						if (nbCaseParcouru = nbCaseAParcourir)
-						then
-							while(vitesse > 0)
-							loop
-								vitesse := vitesse -1;
-								put("Nouvelle Vitesse: ");
-								put_line(integer'image(vitesse));
-							end loop;
-							
+						if ((nbCaseParcouru + vitesse) = nbCaseAParcourir)
+						then	
 							put_line("Bus en fin de route");
-	
 							cpt := cpt + 1;
+
 							nbCaseParcouru := 0;
 							portion := itineraire(cpt).num;
 							nbCaseAParcourir := itineraire(cpt).length;
@@ -173,12 +171,14 @@ begin
 							&" speed="&integer'image(vitesse));
 	
 							select
+								when noStop =>
 								accept setNextStop ( 
 									Station_Id : in integer;
-									Station_pos : in integer) do
+									Station_pos : in integer)do
 								nextStationId := Station_Id;
 								nextStationPos := Station_pos;
 								road_stop := TRUE;
+								noStop := FALSE;
 								end setNextStop;
 							or
 								delay(0.2);
@@ -203,18 +203,17 @@ begin
 							put("Ancienne Vitesse: ");
 							put_line(integer'image(vitesse));
 							
-							if (vitesse < (nbCaseAParcourir - nbCaseParcouru) and then vitesse < 50)
+ 							if (vitesse < (nbCaseAParcourir - nbCaseParcouru) and then vitesse < 14)--50km/h ~ 14m/S
 							then
-								vitesse := vitesse + 5;
+								vitesse := vitesse + 1 * sens;
 								put("Nouvelle Vitesse: ");
 								put_line(integer'image(vitesse));
 								
-							elsif (vitesse >= (nbCaseAParcourir - nbCaseParcouru))
+							elsif (vitesse > (nbCaseAParcourir - nbCaseParcouru))
 								then
 									while(vitesse > (nbCaseAParcourir - nbCaseParcouru))
 									loop
 									vitesse := vitesse -1;
-									
 									put("Nouvelle Vitesse: ");
 									put_line(integer'image(vitesse));
 									
@@ -231,6 +230,7 @@ begin
 								put_line(integer'image(vitesse));
 							end loop;
 							
+
 							put("Bus arrivee a la station");
 							put_line(integer'image(nextStationId));
 
@@ -241,6 +241,8 @@ begin
 							&" capacity="&integer'image(passager)
 							&" speed="&integer'image(vitesse));
 							road_stop := FALSE;
+							noStop := TRUE;
+
 							
 						else
 			
@@ -262,9 +264,9 @@ begin
 							put("Ancienne Vitesse: ");
 							put_line(integer'image(vitesse));
 							
-							if (vitesse < (nextStationPos - nbCaseParcouru) and then vitesse < 50)
+							if (vitesse < (nextStationPos - nbCaseParcouru) and then vitesse < 14)--50km/h ~ 14m/S
 							then
-								vitesse := vitesse + 5;
+								vitesse := vitesse + 1 * sens;
 								put("Nouvelle Vitesse: ");
 								put_line(integer'image(vitesse));
 								
@@ -310,11 +312,12 @@ end position;
 procedure init(	bus_id : in integer;
 		nb_passengers : in integer;
 		bus_line_id : in integer;
-		bus_line : in circuit) is
+		bus_line : in circuit;
+		nb_road : in integer) is
 
 begin
 
-	BUS.init(bus_id, nb_passengers, bus_line_id ,bus_line);
+	BUS.init(bus_id, nb_passengers, bus_line_id ,bus_line,nb_road);
 end init;
 
 procedure nextStop ( 	nextStationId : in integer;
@@ -391,9 +394,6 @@ begin
 	--Contacte le CC pour l'informer du départ du bus
 	delay(0.1);
 	Ivy.SendMsg(Id & natural'image(num_bus)(2..natural'image(num_bus)'LENGTH) & " Start");
-
-
-	--PB AVEC bus_num
 
 -- 	Station id= 5 bus_id= 1 len= 100"
 	while (not estInitialise)
