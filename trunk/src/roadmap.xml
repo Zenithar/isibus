@@ -39,13 +39,13 @@
 	</lines>
 	
 	<stations>
-		<station road="1" lines="1,2" len="100"/>
-		<station road="2" lines="1,2" len="200"/>
-		<station road="3" lines="1" len="200"/>
-		<station road="5" lines="2" len="100"/>
-		<station road="6" lines="2,3" len="400"/>
-		<station road="7" lines="2,3" len="500"/>
-		<station road="10" lines="3" len="500"/>
+		<station id="1" road="1" lines="1,2" len="100"/>
+		<station id="2" road="2" lines="1,2" len="100"/>
+		<station id="3" road="3" lines="1" len="200"/>
+		<station id="4" road="5" lines="2" len="100"/>
+		<station id="5" road="6" lines="2,3" len="400"/>
+		<station id="6" road="7" lines="2,3" len="500"/>
+		<station id="7" road="10" lines="3" len="500"/>
 	</stations>
 	
 	<transport>

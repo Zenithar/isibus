@@ -57,7 +57,8 @@ public:
 	void OnApplicationDisconnected(IvyApplication *app);
 	void OnMessage(IvyApplication *app, int argc, const char **argv);
 	void OnDirectMessage (IvyApplication *app, int id, const char *arg );
-	void ajouterMessage(QString message);
+	
+	void ajouterMessage(const char* message);
 
 private slots:
 	void addBus(  );
@@ -69,6 +70,8 @@ private:
 	QLinkedList<BusSprite*> buses;
 	Ui_Isibus widget;
         QList<RoadCase *> roadcaselist ;
+	
+	pthread_mutex_t verrou;
 };
 }
 #endif
