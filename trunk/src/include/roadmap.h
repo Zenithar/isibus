@@ -14,6 +14,7 @@
 
 #include <map>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -34,6 +35,8 @@ typedef Graph<int, isibus::Road*, false>::edge_iterator ei_t;
 typedef std::map<int, isibus::Road*> RoadList;
 typedef std::map<int, isibus::Station*> StationList;
 typedef std::map<int, isibus::Bus*> BusList;
+
+typedef std::map<int, std::vector<isibus::Road*> > LinesList;
  
 namespace isibus {
 
@@ -59,10 +62,13 @@ private:
 	RoadList	m_RoadList;
 	StationList	m_StationList;
 	BusList		m_BusList;
+	LinesList	m_LineList;
 	
 	RoadGraph	m_RoadGraph;
 
 public:
+	string createLinePath(const int line);
+			
 	inline int getNbRoads() { return m_iNbRoads; }
 	inline int getNbBus() { return m_iNbBus; }
 	inline int getNbStations() { return m_iNbStations; }
@@ -71,6 +77,7 @@ public:
 	inline RoadList& getRoadList() { return m_RoadList; }
 	inline BusList& getBusList() { return m_BusList; }
 	inline StationList& getStationList() { return m_StationList; }
+	inline LinesList& getLineList() { return m_LineList; }
 };
 
 }

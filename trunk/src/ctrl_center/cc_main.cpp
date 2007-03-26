@@ -33,10 +33,10 @@ ControlCenter::ControlCenter()
 	bus->start(NULL);
 	
 	// Connexion aux services
-	bus->BindMsg( "^Bus_(.*) Start", new msg::BusStartMsg(this) );
-	bus->BindMsg( "^Bus_(.*) Pos=(.*),(.*)", new msg::BusPositionMsg(this) );
+	bus->BindMsg( "^Bus_([0-9]+) Start", new msg::BusStartMsg(this) );
+	bus->BindMsg( "^Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+) speed=([0-9]+)", new msg::BusPositionMsg(this) );
 	
-	bus->BindMsg( "^Station_(.*) Start", new msg::StationStartMsg(this) );
+	bus->BindMsg( "^Station_([0-9]+) Start", new msg::StationStartMsg(this) );
 	
 	bus->BindDirectMsg(this);
 }
@@ -52,7 +52,12 @@ void ControlCenter :: loadMap(const std::string& filename, bool verbose)
 {
 	m_RoadMap->loadMap(filename, verbose);
 }
-	
+
+const char* ControlCenter :: createLinePath(const int line)
+{
+	return m_RoadMap->createLinePath(line).c_str();
+}
+
 Bus* ControlCenter :: incBusPool(int app_id)
 {
 	Bus* temp = NULL;

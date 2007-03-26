@@ -42,6 +42,22 @@ vector<string> RoadMap::split(const string &sep,string text)
 	return words;
 }
 
+string RoadMap :: createLinePath(const int line)
+{
+	std::vector<isibus::Road*> rl;
+	stringstream ret;
+	
+	rl = m_LineList[line];
+	
+	ret << line << ":";
+	for(int i=0; i<rl.size(); i++)
+	{
+		ret << rl[i]->getID() << "," << rl[i]->getLen() << ";";
+	}
+	
+	return ret.str();	
+}
+
 bool RoadMap::loadMap(const std::string& filename, bool verbose)
 {
 	XMLNode xMainNode=XMLNode::openFileHelper(filename.c_str(), "isibus");
@@ -112,7 +128,8 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 	
 	xmlIterator=0;
 	for(int i=0;i<m_iNbLines;i++)
-	{
+	{		
+		std::vector<isibus::Road*> rl;
 		XMLNode xLine = xLines.getChildNode("line", &xmlIterator);
 		
 		if(verbose) {
@@ -120,6 +137,13 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 		}
 		
 		vector<string> roads = split(",", xLine.getAttribute("roads"));
+		
+		for(int j=0; j < roads.size(); j++) 
+		{
+			rl.push_back(m_RoadList[atoi(roads[j].c_str())]);
+		}
+		
+		m_LineList[atoi(xLine.getAttribute("id"))] = rl;
 	}
 	
 	// Positionnement des stations de bus.
@@ -160,13 +184,15 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 		XMLNode xBus = xTransport.getChildNode("bus", &xmlIterator);
 		
 		if(verbose) {
-			cout << "[" << xBus.getAttribute("id") << "] capacity:" << xBus.getAttribute("passengers") << " line:" << xBus.getAttribute("line") << endl;
+			cout << "[" << xBus.getAttribute("id") << "] capacity:" << xBus.getAttribute("passengers") << " line:" << createLinePath(atoi(xBus.getAttribute("line"))) << endl;
 		}
 		
 		Bus* temp = new Bus(atoi(xBus.getAttribute("id")), atoi(xBus.getAttribute("passengers")), atoi(xBus.getAttribute("line")));
+		
 		m_BusList.insert(std::make_pair(atoi(xBus.getAttribute("id")), temp));
 	}
 	
 	return true;
 }
+
 } // isibus
