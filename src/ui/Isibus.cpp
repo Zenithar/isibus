@@ -8,6 +8,8 @@
 
 #define BG_W 1024
 #define BG_H 1024
+#define RTE_H 27
+#define RTE_W 33
 
 using namespace isibus;
 
@@ -80,7 +82,7 @@ Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 	initIvy();
 
 	// connect pour l'ajout d'un bus
-	connect(widget.addBusButton, SIGNAL( pressed() ), SLOT( addBus() ));
+	//connect(widget.addBusButton, SIGNAL( pressed() ), SLOT( addBus() ));
 	// connect pour la suppression d'un bus
 	// connect pour le menu
 }
@@ -126,13 +128,13 @@ void Isibus::genererCarte(bool verbose)
 		int j = 0;
 		for(int i = 0; i <  ((atoi(xRoad.getAttribute("len")) / 50)); i++){
 			switch(xRoad.getAttribute("axe")[0])
-			{ 	case 'S': Y +=  27; 
+			{ 	case 'S': Y +=  RTE_H; 
 					break;
-				case 'N': Y -=  27;
+				case 'N': Y -=  RTE_H;
  					break;
-				case 'E': X +=  33; 
+				case 'E': X +=  RTE_W; 
 					break;
-				default: X -=  33; 
+				default: X -=  RTE_W; 
 					break;
 			}	
 
@@ -171,7 +173,7 @@ void Isibus::genererCarte(bool verbose)
 		foreach	(RoadCase * rc, roadcaselist){
 			int X = rc->x;
 			int Y = rc->y;
-			if((rc->idRoad == atoi(xStation.getAttribute("road"))) && (rc->segment == (atoi(xStation.getAttribute("len"))/100)))
+			if((rc->idRoad == atoi(xStation.getAttribute("road"))) && (rc->segment == (atoi(xStation.getAttribute("len"))/50)))
 			{
 				rc->idArret = atoi(xStation.getAttribute("id"));
 				if((rc->direction == 'E') || (rc->direction == 'W'))
@@ -219,8 +221,8 @@ void Isibus::genererCarte(bool verbose)
 		rc->setPos( rc->x, rc->y );
         	rc->show( );
 		}
-
-
+//Bus_121055978 id=2 passengers=50 line=1:1,300;2,300;3,300;4,300;
+//Bus_823281091 id=3 passengers=50 line=1:1,300;2,300;9,300;10,600;11,900;
 }
 
 void Isibus::timerEvent( QTimerEvent * )
@@ -285,23 +287,17 @@ void Isibus::wrapSprite( IsiSprite *s )
 */
 }
 
-void Isibus::addBus()
+void Isibus::addBus(int id)
 {
         // Création de l'objet graphique
-	BusSprite *newBus = new BusSprite( mAnimation.value(ID_BUS_LEFT_TO_RIGHT), field, ID_BUS_LEFT_TO_RIGHT, 2, 1 );
+	BusSprite *newBus = new BusSprite( mAnimation.value(ID_BUS_LEFT_TO_RIGHT), field, ID_BUS_LEFT_TO_RIGHT, 2, 1, id );
         double dx = 0.0;
         double dy = 0.0;
         newBus->setVelocity( dx, dy );
         newBus->setPos(BG_W/2, BG_H/2 );
 	newBus->setZValue(1.0);
 	newBus->setFrame(1);
-	
-	// Envoie du message de création au centre de commande.
-	//worker->bus->SendMsg("cc createBus id=%d passengers=%d line=%d", 10,30,1);
-	worker->bus->SendMsg("");
-
-//Bus_%s id=%d passengers=%d line=%d",argv[0], temp->getID(), temp->getCapacity(), temp->getLine()
-	
+		
 	buses.push_back(newBus);
 	newBus->show( );
 }
@@ -313,7 +309,67 @@ void Isibus::ajouterMessage(const QString& message)
 
 void Isibus::bougerBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse)
 {
-	cout<<"coucou2"<<endl;
+	int flag = 0;
+	int x=0;
+	int y=0;
+	widget.lcdn_ligne->display(ligne);
+	widget.lcdn_numero->display(id);
+	widget.lcdn_capacite->display(capacite);
+	widget.lcdn_vitesse->display(vitesse);
+	widget.lcdn_route->display(route);
+	widget.lcdn_segment->display(segment);
+	widget.slowBusButton->setEnabled(true);
+	widget.accelBusButton->setEnabled(true);
+	widget.delBusButton->setEnabled(true);
+
+	foreach	(BusSprite * bs, buses){
+			if(id == bs->id)
+			{
+				flag = 1;
+				foreach	(RoadCase * rc, roadcaselist){
+				cout<<"le bus X:"<< rc->x <<" Y:"<<rc->y<<"segment1:"<<(segment/50)-1<<"segment2:"<<rc->segment<<endl;
+				if(rc->idRoad == route)
+				{
+					if(flag == 1)
+					{
+						x = rc->x;
+						y = rc->y;
+						switch(rc->direction)
+						{ 	case 'S': y = y+segment*0.54+18; 
+								  x += 8;
+
+								bs->setFrame(1);
+							break;
+							case 'N': y = y-segment*0.54+18;
+								bs->setFrame(2);
+ 								x += 8;
+ 							break;
+							case 'E': x = x+segment*0.66+27; 
+								bs->setFrame(0);
+							break;
+							default: x = x-segment*0.66+27; 
+								bs->setFrame(3);
+							break;
+						}
+						flag = 2;
+
+//Bus_121055978 id=2 passengers=50 line=1:1,300;2,300;3,300;4,300;
+					}
+				}
+
+				bs->setPos(x,y);
+
+
+
+				}
+			}
+
+		}
+	if(flag == 0)
+	{
+		addBus(id);
+	}
+	
 
 }
 
@@ -334,14 +390,14 @@ IvyWorker::IvyWorker(QObject * parent):QThread(parent)
 ;
 }
 
+
 void IvyWorker::run()
 {
 	IvyC::IvyMainLoop ();
 }
 	
 void IvyWorker :: MoveBus (const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse)
-{
-	emit sigMoveBus(id, ligne, route, segment, capacite, vitesse);
+{	emit sigMoveBus(id, ligne, route, segment, capacite, vitesse);
 }
 
 void IvyWorker :: OnMessage(IvyApplication *app, int argc, const char **argv)

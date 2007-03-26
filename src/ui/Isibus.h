@@ -80,7 +80,7 @@ public:
 	void initIvy();
 	
 private slots:
-	void addBus(  );
+	void addBus(int id);
 	void ajouterMessage(const QString &message);
 	void bougerBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse);
 	

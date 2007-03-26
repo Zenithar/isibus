@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>699</width>
-    <height>480</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -20,10 +20,13 @@
     <property name="spacing" >
      <number>6</number>
     </property>
+    <item rowspan="2" row="0" column="0" >
+     <widget class="QGraphicsView" name="mainView" />
+    </item>
     <item row="0" column="1" >
      <widget class="QTabWidget" name="tabWidget" >
       <property name="currentIndex" >
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_etat_reseau" >
        <attribute name="title" >
@@ -68,20 +71,60 @@
         <property name="spacing" >
          <number>6</number>
         </property>
-        <item row="0" column="0" >
-         <widget class="QTreeWidget" name="treeWidget" />
-        </item>
-        <item row="2" column="0" >
-         <widget class="QPushButton" name="slowBusButton" >
-          <property name="enabled" >
-           <bool>false</bool>
+        <item row="1" column="0" >
+         <widget class="QGroupBox" name="groupBox_2" >
+          <property name="title" >
+           <string>Piloter le bus</string>
           </property>
-          <property name="text" >
-           <string>Faire ralentir ce bus</string>
-          </property>
+          <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item row="0" column="0" >
+            <widget class="QPushButton" name="slowBusButton" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>Faire ralentir ce bus</string>
+             </property>
+             <property name="icon" >
+              <iconset>../../build/ui/pics/bus_Slow.png</iconset>
+             </property>
+             <property name="iconSize" >
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QPushButton" name="accelBusButton" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>Faire accelerer ce bus</string>
+             </property>
+             <property name="icon" >
+              <iconset>../../build/ui/pics/bus_Accel.png</iconset>
+             </property>
+             <property name="iconSize" >
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item row="3" column="0" >
+        <item row="2" column="0" >
          <widget class="QPushButton" name="delBusButton" >
           <property name="enabled" >
            <bool>false</bool>
@@ -89,16 +132,91 @@
           <property name="text" >
            <string>Supprimer ce bus</string>
           </property>
+          <property name="icon" >
+           <iconset>../../build/ui/pics/bus_delete.png</iconset>
+          </property>
+          <property name="iconSize" >
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QPushButton" name="accelBusButton" >
-          <property name="enabled" >
-           <bool>false</bool>
+        <item row="0" column="0" >
+         <widget class="QGroupBox" name="groupBox_3" >
+          <property name="title" >
+           <string>Information sur le bus selectionné</string>
           </property>
-          <property name="text" >
-           <string>Faire accelerer ce bus</string>
-          </property>
+          <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item row="3" column="0" >
+            <widget class="QLabel" name="label_4" >
+             <property name="text" >
+              <string>Vitesse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_3" >
+             <property name="text" >
+              <string>Capacité</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" >
+            <widget class="QLCDNumber" name="lcdn_vitesse" />
+           </item>
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label" >
+             <property name="text" >
+              <string>Ligne</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QLCDNumber" name="lcdn_capacite" />
+           </item>
+           <item row="0" column="1" >
+            <widget class="QLCDNumber" name="lcdn_ligne" />
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_2" >
+             <property name="text" >
+              <string>Numéro du bus</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QLCDNumber" name="lcdn_numero" />
+           </item>
+           <item row="5" column="0" colspan="2" >
+            <widget class="QGroupBox" name="groupBox_4" >
+             <property name="title" >
+              <string>Route / Segment</string>
+             </property>
+             <layout class="QGridLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item row="0" column="1" >
+               <widget class="QLCDNumber" name="lcdn_segment" />
+              </item>
+              <item row="0" column="0" >
+               <widget class="QLCDNumber" name="lcdn_route" />
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
@@ -164,12 +282,18 @@
         <property name="text" >
          <string>Ajouter un Bus...</string>
         </property>
+        <property name="icon" >
+         <iconset>pics/bus_new.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
        </widget>
       </item>
      </layout>
-    </item>
-    <item rowspan="2" row="0" column="0" >
-     <widget class="QGraphicsView" name="mainView" />
     </item>
    </layout>
   </widget>
@@ -178,7 +302,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>699</width>
+     <width>800</width>
      <height>29</height>
     </rect>
    </property>
