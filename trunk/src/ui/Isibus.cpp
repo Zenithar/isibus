@@ -3,10 +3,10 @@
 //#include "msgs.h"
 #include "../include/msg/ui/ui_msg.h"
 
-#define IMG_BACKGROUND "pics/case_vert.png"
+#define IMG_BACKGROUND "pics/route_herbe.png"
 
-#define BG_W 575
-#define BG_H 431
+#define BG_W 1024
+#define BG_H 1024
 
 using namespace isibus;
 
@@ -21,7 +21,7 @@ bus_animations [] =
 	{ ID_BUS_RIGHT_TO_LEFT, "pics/bus_rtol.png"},
 	{ ID_BUS_FRONT_TO_BACK, "pics/bus_ftob.png"},
 	{ ID_BUS_BACK_TO_FRONT, "pics/bus_fbof.png"},
-	{ ID_CASE_PLAIN,	"pics/case_*.png"},
+	{ ID_CASE_ROUTE,	"pics/route_*.png"},
 	{ 0,                   0 }
 };
 
@@ -126,22 +126,24 @@ void Isibus::genererCarte(bool verbose)
 					break;
 				case 'N': Y -=  27;
  					break;
-				case 'E': X +=  27; 
+				case 'E': X +=  33; 
 					break;
-				default: X -=  27; 
+				default: X -=  33; 
 					break;
 			}	
 
-		temp = new RoadCase(mAnimation.value(ID_CASE_PLAIN), field, X, Y, xRoad.getAttribute("axe")[0], 0, i,atoi(xRoad.getAttribute("id")));
+		temp = new RoadCase(mAnimation.value(ID_CASE_ROUTE), field, X, Y, xRoad.getAttribute("axe")[0], 0, i,atoi(xRoad.getAttribute("id")));
 		if(i ==  ((atoi(xRoad.getAttribute("len")) / 50)-1))
 		{
-		temp ->setFrame(2);}
+			
+			temp ->setFrame(2);
+		}
 		else{
 			if(xRoad.getAttribute("axe")[0] == 'S' || xRoad.getAttribute("axe")[0] == 'N')
-			{temp ->setFrame(5);} 
+			{temp ->setFrame(9);} 
 			
 			if(xRoad.getAttribute("axe")[0] == 'E' || xRoad.getAttribute("axe")[0] == 'W')
-			{temp ->setFrame(4);} 
+			{temp ->setFrame(7);} 
 		}
 		j ++;	
 		roadcaselist.push_back(temp);
@@ -163,10 +165,23 @@ void Isibus::genererCarte(bool verbose)
 	{
 		XMLNode xStation = xStations.getChildNode("station", &xmlIterator);
 		foreach	(RoadCase * rc, roadcaselist){
+			int X = rc->x;
+			int Y = rc->y;
 			if((rc->idRoad == atoi(xStation.getAttribute("road"))) && (rc->segment == (atoi(xStation.getAttribute("len"))/100)))
 			{
 				rc->idArret = atoi(xStation.getAttribute("id"));
-				rc->setFrame(0);
+				if((rc->direction == 'E') || (rc->direction == 'W'))
+				{
+					rc->translate(0.0,-11.0);
+					rc->setFrame(0);
+				} 
+			
+				if((rc->direction == 'S') || (rc->direction == 'N'))
+				{
+					rc->translate(-13.0,0.0);
+					rc->setFrame(1);
+					
+				} 
 			}
 
 		}
@@ -217,7 +232,7 @@ void Isibus::timerEvent( QTimerEvent * )
 void Isibus::wrapSprite( IsiSprite *s )
 {
 	int randNb;
-	qreal coefDeplacement = 0.01;
+	qreal coefDeplacement = 0.001;
 	RoadCase* rc;
 
 	if (field->itemAt(s->x(),s->y())){
@@ -229,7 +244,7 @@ void Isibus::wrapSprite( IsiSprite *s )
 	/*********************************************************************/
 	/*              Déplacement automatique du bus			     */
 	/*********************************************************************/
-
+/*
 	// Si le bus atteint un bord il est recréé sur le bord opposé
 	int x = int(s->x() + s->boundingRect().width() / 2);
 	int y = int(s->y() + s->boundingRect().height() / 2);
@@ -243,8 +258,8 @@ void Isibus::wrapSprite( IsiSprite *s )
 		s->setPos( s->x(), s->y() - field->height() );
 	else if ( y < 0 )
 		s->setPos( s->x(), field->height() + s->y() );
-
-
+*/
+/*
 	srand(time(NULL));
 	// Axe des ordonnées aléatoire
 	randNb = rand();
@@ -263,24 +278,31 @@ void Isibus::wrapSprite( IsiSprite *s )
 	if (s->yVelocity()<0 || fabs(s->xVelocity()) < fabs(s->yVelocity()) ) {s->setFrame(1);}
 	if (s->yVelocity()>0 || fabs(s->xVelocity()) < fabs(s->yVelocity()) ) {s->setFrame(2);}
 	if (s->xVelocity()>0 || fabs(s->yVelocity()) < fabs(s->xVelocity()) ) {s->setFrame(3);}
-
+*/
 }
 
 void Isibus::addBus()
 {
-        BusSprite *newBus = new BusSprite( mAnimation.value(ID_BUS_LEFT_TO_RIGHT), field, ID_BUS_LEFT_TO_RIGHT, 2, 1 );
-        double dx = 1.0;
+        // Création de l'objet graphique
+	BusSprite *newBus = new BusSprite( mAnimation.value(ID_BUS_LEFT_TO_RIGHT), field, ID_BUS_LEFT_TO_RIGHT, 2, 1 );
+        double dx = 0.0;
         double dy = 0.0;
         newBus->setVelocity( dx, dy );
         newBus->setPos(BG_W/2, BG_H/2 );
 	newBus->setZValue(1.0);
 	newBus->setFrame(1);
+	
+	// Envoie du message de création au centre de commande.
+	//worker->bus->SendMsg("cc createBus id=%d passengers=%d line=%d", 10,30,1);
+worker->bus->SendMsg("");
 
+//Bus_%s id=%d passengers=%d line=%d",argv[0], temp->getID(), temp->getCapacity(), temp->getLine()
+	
 	buses.push_back(newBus);
 	newBus->show( );
 }
 
-void Isibus ::ajouterMessage(const QString& message)
+void Isibus::ajouterMessage(const QString& message)
 {
 	widget.lw_historique->addItem(message);
 }

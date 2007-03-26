@@ -68,6 +68,13 @@ public:
 	void genererCarte( bool verbose);
 	//vector<string> split(const string &sep,string text);
 
+	void accelererBus(int coef);
+	void ralenirBus(int coef);
+	void supprimerBus(int IdBus);
+
+	void ajoutPassagers(int NbPassagers);
+
+
 	void initIvy();
 	
 private slots:
