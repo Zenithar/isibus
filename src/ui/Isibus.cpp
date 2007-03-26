@@ -45,10 +45,10 @@ void Isibus::initIvy()
 {
 	worker = new IvyWorker(this);
 	
-	connect(worker, SIGNAL(addMessage(const QString &)),
+	connect(worker, SIGNAL(sigAddMessage(const QString &)),
 		 this, SLOT(ajouterMessage(const QString &)));
 
-	connect(worker, SIGNAL(moveBus(const int &, const int &, const int &, const int &, const int &, const int &)),
+	connect(worker, SIGNAL(sigMoveBus(const int &, const int &, const int &, const int &, const int &, const int &)),
 		 this, SLOT(bougerBus(const int &, const int &, const int &, const int &, const int &, const int &)));
 	
 	worker->start();
@@ -298,7 +298,7 @@ void Isibus::addBus()
 	
 	// Envoie du message de création au centre de commande.
 	//worker->bus->SendMsg("cc createBus id=%d passengers=%d line=%d", 10,30,1);
-worker->bus->SendMsg("");
+	worker->bus->SendMsg("");
 
 //Bus_%s id=%d passengers=%d line=%d",argv[0], temp->getID(), temp->getCapacity(), temp->getLine()
 	
@@ -326,10 +326,9 @@ IvyWorker::IvyWorker(QObject * parent):QThread(parent)
 	bus = new Ivy( "isiBusUI", "isiBusUI READY", this);
 	bus->start(NULL);
 	
-bus->BindMsg("^Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+) speed=([0-9]+)", new msg::uiMvBus( this, qobject_cast<Isibus*>(parent) ));
-
 	bus->BindMsg("(.*)", this);
 	
+	bus->BindMsg("^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+)", new msg::uiMvBus( this, qobject_cast<Isibus*>(parent) ));	
 	bus->BindMsg("(.*)", new msg::UiMsg( this, qobject_cast<Isibus*>(parent) ));
 
 ;
@@ -339,10 +338,15 @@ void IvyWorker::run()
 {
 	IvyC::IvyMainLoop ();
 }
-		
+	
+void IvyWorker :: MoveBus (const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse)
+{
+	emit sigMoveBus(id, ligne, route, segment, capacite, vitesse);
+}
+
 void IvyWorker :: OnMessage(IvyApplication *app, int argc, const char **argv)
 {
-	emit addMessage(QString(argv[0]));
+	emit sigAddMessage(QString(argv[0]));
 }
 
 void IvyWorker :: OnApplicationConnected (IvyApplication *app)

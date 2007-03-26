@@ -23,8 +23,10 @@ namespace isibus
 class Bus
 {
 public:
-        Bus(int id, int capacity, int line):m_iBus_id(id), m_iCapacity(capacity), m_iLine_id(line)
+        Bus(int id, int capacity, int line, int roadid):m_iBus_id(id), m_iCapacity(capacity), m_iLine_id(line), m_iRoadID(roadid)
 	{
+		m_iSpeed = 0;
+		m_iRoadDistance = 0;
 	};
 
         ~Bus();
@@ -60,10 +62,49 @@ public:
 	{
 		system("bus_de_ligne &");
 	}
+
+	void setRoadDistance(int theValue)
+	{
+	        m_iRoadDistance = theValue;
+	}
+	
+
+	int getRoadDistance() const
+	{
+	        return m_iRoadDistance;
+	}
+
+	void setRoadID(int theValue)
+	{
+	        m_iRoadID = theValue;
+	}
+	
+
+	int getRoadID() const
+	{
+	        return m_iRoadID;
+	}
+
+	void setSpeed(int theValue)
+	{
+	        m_iSpeed = theValue;
+	}
+	
+
+	int getSpeed() const
+	{
+	        return m_iSpeed;
+	}
+	
+	
+	
 private:
         int m_iBus_id;
         int m_iLine_id;
         int m_iCapacity;
+	int m_iSpeed;
+	int m_iRoadID;
+	int m_iRoadDistance;
 };
 
 }
