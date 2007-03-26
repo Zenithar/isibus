@@ -8,7 +8,8 @@
 #define ID_BUS_FRONT_TO_BACK           03
 #define ID_BUS_BACK_TO_FRONT           04
 #define ID_CASE_PLAIN			05
-
+namespace isibus
+{
 class IsiSprite : public QGraphicsPixmapItem
 {
 public:
@@ -34,7 +35,6 @@ public:
 	virtual void advance(int phase) 
     	{ 
 		if(phase==0) return;
-		
 		moveBy( xVelocity(), yVelocity() ); 
 	}
 private:
@@ -44,10 +44,10 @@ private:
 	qreal mYVelocity;
 };
 
-class Bus : public IsiSprite
+class BusSprite : public IsiSprite
 {
 public:
-    Bus (QList<QPixmap> *frames, QGraphicsScene *scene, int t, int sk, int st) 
+    BusSprite (QList<QPixmap> *frames, QGraphicsScene *scene, int t, int sk, int st) 
         : IsiSprite( frames, scene ), myType(t), skip(sk), cskip(sk), step(st)
         { }
 
@@ -86,7 +86,7 @@ public:
 class RoadCase:  public plainCase
 {
 public:
-	int direction;
+	char direction;
 	int idArret;
 	int segment;
 	int idRoad;
@@ -100,6 +100,6 @@ public:
 		idRoad = idR;
 	}
 };
-
+}
 
 #endif

@@ -20,10 +20,10 @@
     <property name="spacing" >
      <number>6</number>
     </property>
-    <item row="1" column="1" >
+    <item row="0" column="1" >
      <widget class="QTabWidget" name="tabWidget" >
       <property name="currentIndex" >
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab_etat_reseau" >
        <attribute name="title" >
@@ -71,13 +71,63 @@
         <item row="0" column="0" >
          <widget class="QTreeWidget" name="treeWidget" />
         </item>
-        <item row="1" column="0" >
+        <item row="2" column="0" >
+         <widget class="QPushButton" name="slowBusButton" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Faire ralentir ce bus</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" >
          <widget class="QPushButton" name="delBusButton" >
           <property name="enabled" >
            <bool>false</bool>
           </property>
           <property name="text" >
            <string>Supprimer ce bus</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QPushButton" name="accelBusButton" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Faire accelerer ce bus</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_arret" >
+       <attribute name="title" >
+        <string>Arret</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QTreeWidget" name="treeWidget_2" />
+        </item>
+        <item row="1" column="0" >
+         <widget class="QGroupBox" name="groupBox" >
+          <property name="title" >
+           <string>Pasager</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QPushButton" name="pushButton" >
+          <property name="text" >
+           <string>Ajouter un passager à cet arret</string>
           </property>
          </widget>
         </item>
@@ -95,13 +145,13 @@
          <number>6</number>
         </property>
         <item row="0" column="0" >
-         <widget class="QListWidget" name="listWidget" />
+         <widget class="QListWidget" name="lw_historique" />
         </item>
        </layout>
       </widget>
      </widget>
     </item>
-    <item row="2" column="1" >
+    <item row="1" column="1" >
      <layout class="QGridLayout" >
       <property name="margin" >
        <number>0</number>
@@ -118,7 +168,7 @@
       </item>
      </layout>
     </item>
-    <item rowspan="2" row="1" column="0" >
+    <item rowspan="2" row="0" column="0" >
      <widget class="QGraphicsView" name="mainView" />
     </item>
    </layout>
@@ -143,13 +193,37 @@
      <string>&amp;A propos</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menu_Gestion_d_v_nements" >
+    <property name="title" >
+     <string>&amp;Gestion d'évènements</string>
+    </property>
+    <addaction name="actionProvoquer_la_panne_d_un_bus" />
+    <addaction name="actionProvoquer_une_m_eute_dans_un_bus" />
+    <addaction name="actionCr_er_un_bouchon_sur_le_r_seau_routier" />
+   </widget>
    <addaction name="menu_File" />
+   <addaction name="menu_Gestion_d_v_nements" />
    <addaction name="menuAbout" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="action_Quit" >
    <property name="text" >
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionProvoquer_la_panne_d_un_bus" >
+   <property name="text" >
+    <string>Provoquer la &amp;panne d'un bus</string>
+   </property>
+  </action>
+  <action name="actionProvoquer_une_m_eute_dans_un_bus" >
+   <property name="text" >
+    <string>Provoquer une ém&amp;eute dans un bus</string>
+   </property>
+  </action>
+  <action name="actionCr_er_un_bouchon_sur_le_r_seau_routier" >
+   <property name="text" >
+    <string>Créer un &amp;bouchon sur le réseau routier</string>
    </property>
   </action>
  </widget>

@@ -12,13 +12,17 @@ add_definitions ( -g -Wall )
 
 include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}/pics
+	${CMAKE_CURRENT_SOURCE_DIR}/pics
+	${CMAKE_CURRENT_SOURCE_DIR}/../base
+	${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
 set(isibus_sources
 	main.cpp
 	Isibus.cpp
 	../base/xmlParser.cpp
+	../base/IvyApplication.cxx
+	../base/Ivy.cxx
 )
 set(isibus_ui
 	Isibus.ui
@@ -45,7 +49,7 @@ qt4_automoc(${isibus_sources})
 
 add_executable(isibus_ui ${isibus_ui_res} ${isibus_sources} ${isibus_moc_classes} ${isibus_moc_files})
 
-target_link_libraries(isibus_ui ${QT_LIBRARIES} Ivy pcre)
+target_link_libraries(isibus_ui ${QT_LIBRARIES} ivy pcre)
 
 install(TARGETS isibus_ui DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../bin)
 
