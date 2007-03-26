@@ -42,14 +42,13 @@ void Isibus::readSprites()
 
 void Isibus::initIvy()
 {
-	bus = new Ivy( "isiBusUI", "isiBusUI READY", this);
-	bus->start(NULL);
+	worker = new IvyWorker(this);
 	
-	bus->BindMsg("(.*)", new msg::UiMsg(this) );
+	connect(worker, SIGNAL(addMessage(const QString &)),
+		 this, SLOT(ajouterMessage(const QString &)));
+	
+	worker->start();
 }
-
-
-
 
 Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 {
@@ -279,19 +278,38 @@ void Isibus::addBus()
 
 	buses.push_back(newBus);
 	newBus->show( );
-	bus->SendMsg("coucou");
 }
 
-void Isibus :: OnMessage(IvyApplication *app, int argc, const char **argv)
+void Isibus ::ajouterMessage(const QString& message)
 {
-	int i;
-	printf ("%s sent ",app->GetName());
-	for  (i = 0; i < argc; i++)
-		printf(" '%s'",argv[i]);
-	printf("\n");
+	widget.lw_historique->addItem(message);
 }
 
-void Isibus :: OnApplicationConnected (IvyApplication *app)
+/**********************************************************************************************
+ * IvyWorker
+***********************************************************************************************/
+
+IvyWorker::IvyWorker(QObject * parent):QThread(parent)
+{
+	bus = new Ivy( "isiBusUI", "isiBusUI READY", this);
+	bus->start(NULL);
+	
+	bus->BindMsg("(.*)", this);
+	
+	bus->BindMsg("(.*)", new msg::UiMsg( this, qobject_cast<Isibus*>(parent) ));
+}
+
+void IvyWorker::run()
+{
+	IvyC::IvyMainLoop ();
+}
+		
+void IvyWorker :: OnMessage(IvyApplication *app, int argc, const char **argv)
+{
+	emit addMessage(QString(argv[0]));
+}
+
+void IvyWorker :: OnApplicationConnected (IvyApplication *app)
 {
 	const char *appname;
 	const char *host;
@@ -301,7 +319,7 @@ void Isibus :: OnApplicationConnected (IvyApplication *app)
 	printf("%s connected from %s\n", appname,  host);
 
 }
-void Isibus :: OnApplicationDisconnected (IvyApplication *app)
+void IvyWorker :: OnApplicationDisconnected (IvyApplication *app)
 {
 	const char *appname;
 	const char *host;
@@ -311,18 +329,9 @@ void Isibus :: OnApplicationDisconnected (IvyApplication *app)
 	printf("%s disconnected from %s\n", appname,  host);
 }
 
-void Isibus :: OnDirectMessage (IvyApplication *app, int id, const char *arg )
+void IvyWorker :: OnDirectMessage (IvyApplication *app, int id, const char *arg )
 {
 	printf ("%s direct sent %d %s",app->GetName(), id, arg);
 }
 
-void Isibus ::ajouterMessage(const char* message)
-{
-	pthread_mutex_lock (&verrou);
-	
-	cout << "[MSG] " << message << endl;
-	widget.lw_historique->addItem(message);
-	
-	pthread_mutex_unlock (&verrou);
-}
 #include "Isibus.moc"

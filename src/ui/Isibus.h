@@ -27,7 +27,6 @@
 #include "Ivycpp.h"
 #include "IvyApplication.h"
 #include "roadmap.h"
-#include "runnable.h"
 
 #include <pthread.h>
 
@@ -37,7 +36,27 @@
 //using namespace std;
 namespace isibus
 {
-class Isibus : public QMainWindow, public IvyApplicationCallback, public IvyMessageCallback, public IvyDirectMessageCallback
+class IvyWorker : public QThread, public IvyApplicationCallback, public IvyMessageCallback, public IvyDirectMessageCallback {
+	Q_OBJECT
+	public:
+		IvyWorker( QObject * parent = 0 );
+		void run();
+		
+	signals:
+		void addMessage(const QString &message);
+
+	public:
+		void OnApplicationConnected(IvyApplication *app);
+		void OnApplicationDisconnected(IvyApplication *app);
+		void OnMessage(IvyApplication *app, int argc, const char **argv);
+		void OnDirectMessage (IvyApplication *app, int id, const char *arg );
+
+	public:
+		Ivy *bus;	
+
+};
+	
+class Isibus : public QMainWindow
 {
 	Q_OBJECT
 public:
@@ -50,19 +69,11 @@ public:
 	//vector<string> split(const string &sep,string text);
 
 	void initIvy();
-
-	Ivy *bus;
-
-	void OnApplicationConnected(IvyApplication *app);
-	void OnApplicationDisconnected(IvyApplication *app);
-	void OnMessage(IvyApplication *app, int argc, const char **argv);
-	void OnDirectMessage (IvyApplication *app, int id, const char *arg );
 	
-	void ajouterMessage(const char* message);
-
 private slots:
 	void addBus(  );
-
+	void ajouterMessage(const QString &message);
+	
 private:
 	QHash<int, QList<QPixmap>* > mAnimation;
 	QGraphicsScene *field;
@@ -71,7 +82,9 @@ private:
 	Ui_Isibus widget;
         QList<RoadCase *> roadcaselist ;
 	
+	IvyWorker* worker;
 	pthread_mutex_t verrou;
 };
+
 }
 #endif
