@@ -65,6 +65,11 @@ public:
 	void	loadMap(const std::string& filename, bool verbose);
 	
 	/**
+	 * Retourne une chaine décrivant la ligne du bus.
+	*/
+	const char* createLinePath(const int line);
+	
+	/**
 	 * Bus logiciel pour la communication inter-processus.
 	*/
 	Ivy *bus;
