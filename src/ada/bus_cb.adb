@@ -99,4 +99,24 @@ procedure init(		app : AppClientPtr_T;
 
 end init;
 
+procedure nextStop(	app : AppClientPtr_T;
+		user_data : UserData_T;
+		argc : C_Int_T;
+		argv : C_Char_Etoile_Etoile_T) is
+
+	nextStationId : integer;
+	pos : integer;
+	Tab_arg :  C_Char_Etoile_Etoile_T :=  argv;
+
+begin
+	nextStationId := integer'value(Value(Tab_arg.all));
+        Chars_ptr_pointers.Increment(Tab_arg);
+
+	pos := integer'value(Value(Tab_arg.all));
+        Chars_ptr_pointers.Increment(Tab_arg);
+
+	bus_de_ligne.nextStop(nextStationId,pos);
+
+end nextStop;
+
 end Bus_Cb;

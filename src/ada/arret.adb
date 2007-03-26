@@ -24,6 +24,10 @@ package body arret is
 	
 		function calc_time return boolean;
 		function isInit return boolean;
+		function hasThis(line : in integer) return boolean;
+		function getRoad return integer;
+		function getLen return integer;
+		function getStationId return integer;
 	
 		procedure maj;
 	
@@ -46,12 +50,39 @@ package body arret is
 	
 	-- CORPS OBJET PROTEGE: arret de bus
 	protected body bus_stop is
-		
+
 		function isInit return boolean is 
 		begin
 			return isInitialized;
 		end isInit;
+
+		function hasThis(line : in  integer) return boolean is
+		result : boolean := FALSE;
+		begin
+			for I in 1..bus'LENGTH loop
+				if (bus(I).num = line)
+				then
+					result := TRUE;
+				end if;
+			end loop;
+			return result;
+		end hasThis;
 		
+		function getRoad return integer is
+		begin
+			return road;
+		end getRoad;
+
+		function getLen return integer is
+		begin
+			return len;
+		end getLen;
+
+		function getStationId return integer is
+		begin
+			return Station_id;
+		end getStationId;
+
 		procedure maj is
 	
 		i : integer := 0;
@@ -176,10 +207,6 @@ package body arret is
 	--Generateur d'id
 	G : Generator;
 	
-	--Id du bus
-	Id_station: String := "Station_";
-	num_station : natural;
-	
 	DataBus : Unbounded_String := To_Unbounded_String(Ivy.Default_Bus);
 	IvyBus : GNAT.OS_Lib.String_Access;
 	
@@ -210,11 +237,17 @@ package body arret is
 	
 -- 		Station_([0-9]+) id=([0-9]+) road=([0-9]+) lines=([0-9]+(,[0-9]+)*) len=([0-9]+)
 		delay(0.1);
-		Ivy.BindMsg( 	MsgCallback => Arret_Cb.init'access,
+		Ivy.BindMsg( MsgCallback => Arret_Cb.init'access,
 		User_Data        => 0,
 		Regexp      => To_String(To_Unbounded_String("^" &  Id_station &	 natural'image(num_station)(2..natural'image(num_station)'LENGTH) & " id=([0-9]+) road=([0-9]+) lines=([0-9]+(,[0-9]+)*) len=([0-9]+)"))
 		);
-		
+
+-- 		Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+) speed=([0-9]+)
+		delay(0.1);
+		Ivy.BindMsg( MsgCallback => Arret_Cb.position'access,
+		User_Data        => 0,
+		Regexp      => To_String(To_Unbounded_String("^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+)"))
+		);
 
 		while(true)
 		loop
@@ -279,6 +312,7 @@ package body arret is
 				put_line("");
 			else
 				delay(1.0);
+				put_line("Attente d'initialisation...");
 			end if;
 
 		end loop;
@@ -291,6 +325,33 @@ package body arret is
 		len : in integer) is
 	begin
 		bus_stop.init(Station_id,road,bus,len);
-	end;
+	end init;
+
+	function hasThis (line : integer) return boolean is
+	begin
+		return bus_stop.hasThis(line);
+	end hasThis;
+
+	function getRoad return integer is
+	begin
+		return bus_stop.getRoad;
+	end getRoad;
+
+	procedure storeInformations(	id : in integer ;
+				line : in integer ;
+				cur_road : in integer;
+				cur_pos : in integer;
+				cur_capacity : in integer;
+				cur_speed : in integer ) is
+	begin
+		if (cur_pos = 0 and then cur_road = arret.getRoad)
+		then
+
+-- 	Station id=([0-9]+) bus_id=([0-9]+) len=([0-9]+)
+			Ivy.SendMsg(	"Station id="&natural'image(bus_stop.getStationId)
+					&" bus_id="&integer'image(id)
+					&" len="&integer'image(bus_stop.getLen));
+		end if;
+	end storeInformations;
 
 end arret;

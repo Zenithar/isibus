@@ -7,7 +7,11 @@ maxBus : constant integer := 7;
 
 --DEFINITION DES VARIABLES
 MAX_BUS : integer := 4;
-	
+
+--Id de la station
+Id_station: String := "Station_";
+num_station : natural;
+
 --DECLARATION DES TYPES
 	
 --type ligne permettant de stocker les bus afin de calculer le temps restant d'attente
@@ -38,5 +42,16 @@ procedure init (Station_id : in integer ;
 		road : in integer;
 		bus : in listeBus;
 		len : in integer);
+
+function hasThis (line : integer) return boolean;
+function getRoad return integer;
+
+procedure storeInformations(	id : in integer ;
+				line : in integer ;
+				cur_road : in integer;
+				cur_pos : in integer;
+				cur_capacity : in integer;
+				cur_speed : in integer );
+
 
 end arret;
