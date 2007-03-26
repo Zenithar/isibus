@@ -235,7 +235,7 @@ package body arret is
 			Ready   => "Connected",
 			Bus     => To_String(DataBus));
 	
--- 		Station_([0-9]+) id=([0-9]+) road=([0-9]+) lines=([0-9]+(,[0-9]+)*) len=([0-9]+)
+-- 		Station_([0-9]+) id=5 road=3 lines=1,2 len=100
 		delay(0.1);
 		Ivy.BindMsg( MsgCallback => Arret_Cb.init'access,
 		User_Data        => 0,
