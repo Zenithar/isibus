@@ -43,7 +43,8 @@ class IvyWorker : public QThread, public IvyApplicationCallback, public IvyMessa
 		void run();
 		
 	signals:
-		void addMessage(const QString &message);
+		void sigAddMessage(const QString &message);
+		void sigMoveBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse);
 
 	public:
 		void OnApplicationConnected(IvyApplication *app);
@@ -51,6 +52,7 @@ class IvyWorker : public QThread, public IvyApplicationCallback, public IvyMessa
 		void OnMessage(IvyApplication *app, int argc, const char **argv);
 		void OnDirectMessage (IvyApplication *app, int id, const char *arg );
 
+		void MoveBus (const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse);
 	public:
 		Ivy *bus;	
 

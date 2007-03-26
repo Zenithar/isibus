@@ -27,11 +27,24 @@ namespace isibus
 			
 				void OnMessage(IvyApplication *app, int argc, const char **argv)
 				{
-					cout << "[GPS] Bus[" << argv[0] << "] (" << argv[1] << ":" << argv[2] << ")" <<  endl;
+					cout << "[GPS] Bus[" << argv[0] << "] line: " << argv[1] << " pos:(" << argv[2] << ":" << argv[3] << ") capacity: " << argv[4] << " speed: " << argv[5] <<  endl;
+					
+					Bus* temp = m_cc->m_RoadMap->getBusList()[atoi(argv[0])];
+					
+					pthread_mutex_lock(&verrou);
+					
+					temp->setLine(atoi(argv[1]));
+					temp->setRoadID(atoi(argv[2]));
+					temp->setRoadDistance(atoi(argv[3]));
+					temp->setCapacity(atoi(argv[4]));
+					temp->setSpeed(atoi(argv[5]));
+					
+					pthread_mutex_unlock(&verrou);
 				}
 			
 			private:
-				ControlCenter* m_cc;	
+				ControlCenter* m_cc;
+				pthread_mutex_t verrou;
 		};
 	}
 }

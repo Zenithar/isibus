@@ -187,7 +187,7 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 			cout << "[" << xBus.getAttribute("id") << "] capacity:" << xBus.getAttribute("passengers") << " line:" << createLinePath(atoi(xBus.getAttribute("line"))) << endl;
 		}
 		
-		Bus* temp = new Bus(atoi(xBus.getAttribute("id")), atoi(xBus.getAttribute("passengers")), atoi(xBus.getAttribute("line")));
+		Bus* temp = new Bus(atoi(xBus.getAttribute("id")), atoi(xBus.getAttribute("passengers")), atoi(xBus.getAttribute("line")), m_LineList[atoi(xBus.getAttribute("line"))][0]->getID());
 		
 		m_BusList.insert(std::make_pair(atoi(xBus.getAttribute("id")), temp));
 	}

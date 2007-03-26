@@ -30,17 +30,13 @@ namespace isibus
 			Isibus * isb;
 			IvyWorker* ivy;
 		public:
-		signals:
-		void moveBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse);
 
-		public:
 			//UiMsg(QListWidget * _qlw): qlw(_qlw) {}
 			uiMvBus(IvyWorker* _ivy, Isibus * _isb):ivy(_ivy), isb(_isb) {}
 			
 			void OnMessage(IvyApplication *app, int argc, const char **argv)
 			{
-				cout<<"coucou"<<endl;
-				emit moveBus(1,1,1,1,1,1);
+				ivy->MoveBus(atoi(argv[0]), atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
 			}
 
 			
