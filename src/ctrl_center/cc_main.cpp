@@ -80,6 +80,28 @@ void ControlCenter :: decBusPool(int app_id)
 	bus->SendMsg("Bus_%d Stop", app_id);
 }
 
+Station* ControlCenter :: incStationPool(int app_id)
+{
+	Station* temp;
+	StationList::iterator iter = m_RoadMap->getStationList().begin();
+	int i = 0;
+	for( iter; iter != m_RoadMap->getStationList().end();) {
+		if(i >= getNbRunningBus()) {
+			cout << "Station_" << app_id << " affected to Station id=" << iter->second->getID() << endl; 
+			
+			StationPool[app_id] = iter->second->getID();
+			m_nbRunningStation++;
+			return iter->second;
+		}
+		i++; iter++;
+	}
+}
+
+void ControlCenter :: decStationPool(int app_id)
+{
+	bus->SendMsg("Station_%d Stop", app_id);
+}
+
 void ControlCenter :: OnMessage(IvyApplication *app, int argc, const char **argv)
 {
 	int i;
