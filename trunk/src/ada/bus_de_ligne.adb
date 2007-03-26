@@ -17,8 +17,7 @@ use Ada.Calendar;
 package body bus_de_ligne is
 
 task BUS is
--- 		entry speedUp;
--- 		entry speedDown;
+		entry setSpeed ( change : in integer );
 		entry init(	bus_id : in integer;
 				nb_passengers : in integer;
 				bus_line_id : in integer;
@@ -106,6 +105,37 @@ begin
 				capacity := passager;
 				speed := vitesse;
 			end getPosition;
+		or
+			accept setSpeed ( change : in integer ) do
+				put_line("Speed Control");
+				if (change > 0)
+				then
+					for I in 1..change
+					loop
+						if (vitesse+1 > 50)
+						then
+							exit;
+						else
+						vitesse := vitesse + 1;
+						put("Nouvelle Vitesse: ");
+						put_line(integer'image(vitesse));
+						end if;
+					end loop;
+				elsif (change < 0)
+				then
+					for I in 1..-change
+					loop
+						if (vitesse-1 < 0)
+						then
+							exit;
+						else
+							vitesse := vitesse - 1;
+							put("Nouvelle Vitesse: ");
+							put_line(integer'image(vitesse));
+						end if;
+					end loop;
+				end if;
+			end setSpeed;
 		or
 			--arret1.position(nbCaseAParcourir-nbCaseParcouru,vitesse);
 			--le bus avance
@@ -294,6 +324,11 @@ begin
 	BUS.setNextStop(nextStationId,pos);
 end nextStop;
 
+procedure Speed (	change : in integer)is
+begin
+	BUS.setSpeed(change);
+end Speed;
+
 
 procedure start is
 
@@ -352,6 +387,7 @@ begin
 			Regexp      => To_String(To_Unbounded_String("^" &  Id &	 natural'image(num_bus)(2..natural'image(num_bus)'LENGTH) & " id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)"))
 		   );
 
+
 	--Contacte le CC pour l'informer du départ du bus
 	delay(0.1);
 	Ivy.SendMsg(Id & natural'image(num_bus)(2..natural'image(num_bus)'LENGTH) & " Start");
@@ -372,6 +408,13 @@ begin
 			User_Data        => 0,
 			Regexp      => To_String(To_Unbounded_String("^Station id= ([0-9]+) bus_id="& integer'image(bus_num) &" len= ([0-9]+)"))
 	);
+
+	delay(0.1);
+-- 	Bus id= 1 speed=+20
+	Ivy.BindMsg( 	MsgCallback => Bus_Cb.speed'access,
+			User_Data        => 0,
+			Regexp      => To_String(To_Unbounded_String("^Bus id="& integer'image(bus_num) &" speed=([+|-][0-9]+)"))
+		);
 
 	while (true)
 	loop

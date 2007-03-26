@@ -31,4 +31,6 @@ procedure init(	bus_id : in integer;
 procedure nextStop ( 	nextStationId : in integer;
 			pos : in integer);
 
+procedure Speed (	change : in integer);
+
 end bus_de_ligne;
