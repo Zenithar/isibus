@@ -46,9 +46,10 @@ private:
 
 class BusSprite : public IsiSprite
 {
+public:	int id;
 public:
-    BusSprite (QList<QPixmap> *frames, QGraphicsScene *scene, int t, int sk, int st) 
-        : IsiSprite( frames, scene ), myType(t), skip(sk), cskip(sk), step(st)
+    BusSprite (QList<QPixmap> *frames, QGraphicsScene *scene, int t, int sk, int st,int i) 
+        : IsiSprite( frames, scene ), myType(t), skip(sk), cskip(sk), step(st),id(i)
         { }
 
     void nextFrame()

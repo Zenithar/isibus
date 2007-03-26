@@ -72,7 +72,7 @@ begin
 	--Demarrage du bus
 	put_line("Demarrage du bus");						
 
-	delay(2.0);
+	delay(0.1);
 
 	while(true)
 	loop
