@@ -2,6 +2,7 @@
 #include "../base/xmlParser.h"
 //#include "msgs.h"
 #include "../include/msg/ui/ui_msg.h"
+#include "../include/msg/ui/ui_move_bus.h"
 
 #define IMG_BACKGROUND "pics/route_herbe.png"
 
@@ -46,6 +47,9 @@ void Isibus::initIvy()
 	
 	connect(worker, SIGNAL(addMessage(const QString &)),
 		 this, SLOT(ajouterMessage(const QString &)));
+
+	connect(worker, SIGNAL(moveBus(const int &, const int &, const int &, const int &, const int &, const int &)),
+		 this, SLOT(bougerBus(const int &, const int &, const int &, const int &, const int &, const int &)));
 	
 	worker->start();
 }
@@ -307,6 +311,12 @@ void Isibus::ajouterMessage(const QString& message)
 	widget.lw_historique->addItem(message);
 }
 
+void Isibus::bougerBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse)
+{
+	cout<<"coucou2"<<endl;
+
+}
+
 /**********************************************************************************************
  * IvyWorker
 ***********************************************************************************************/
@@ -316,9 +326,13 @@ IvyWorker::IvyWorker(QObject * parent):QThread(parent)
 	bus = new Ivy( "isiBusUI", "isiBusUI READY", this);
 	bus->start(NULL);
 	
+bus->BindMsg("^Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+) speed=([0-9]+)", new msg::uiMvBus( this, qobject_cast<Isibus*>(parent) ));
+
 	bus->BindMsg("(.*)", this);
 	
 	bus->BindMsg("(.*)", new msg::UiMsg( this, qobject_cast<Isibus*>(parent) ));
+
+;
 }
 
 void IvyWorker::run()

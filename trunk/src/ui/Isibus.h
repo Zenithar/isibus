@@ -80,6 +80,7 @@ public:
 private slots:
 	void addBus(  );
 	void ajouterMessage(const QString &message);
+	void bougerBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse);
 	
 private:
 	QHash<int, QList<QPixmap>* > mAnimation;
