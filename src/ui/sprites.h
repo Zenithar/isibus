@@ -7,7 +7,7 @@
 #define ID_BUS_RIGHT_TO_LEFT           02
 #define ID_BUS_FRONT_TO_BACK           03
 #define ID_BUS_BACK_TO_FRONT           04
-#define ID_CASE_PLAIN			05
+#define ID_CASE_ROUTE			05
 namespace isibus
 {
 class IsiSprite : public QGraphicsPixmapItem
