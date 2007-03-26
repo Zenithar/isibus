@@ -83,4 +83,48 @@ procedure init(		app : AppClientPtr_T;
 
 end init;
 
+procedure position(	app : AppClientPtr_T;
+                	user_data : UserData_T;
+                	argc : C_Int_T;
+                	argv : C_Char_Etoile_Etoile_T)is
+
+Tab_arg :  C_Char_Etoile_Etoile_T :=  argv;
+
+id : integer;
+line : integer;
+cur_road : integer;
+cur_pos : integer;
+cur_capacity : integer;
+cur_speed : integer;
+
+begin
+-- 	Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+) speed=([0-9]+)
+	
+	id := integer'value(Value(Tab_arg.all));
+	Chars_ptr_pointers.Increment(Tab_arg);
+
+	line := integer'value(Value(Tab_arg.all));
+	Chars_ptr_pointers.Increment(Tab_arg);
+
+	if (arret.hasThis(line))
+	then
+		cur_road := integer'value(Value(Tab_arg.all));
+		Chars_ptr_pointers.Increment(Tab_arg);
+
+		cur_pos := integer'value(Value(Tab_arg.all));
+		Chars_ptr_pointers.Increment(Tab_arg);
+
+		cur_capacity := integer'value(Value(Tab_arg.all));
+		Chars_ptr_pointers.Increment(Tab_arg);
+	
+		cur_speed := integer'value(Value(Tab_arg.all));
+		Chars_ptr_pointers.Increment(Tab_arg);
+
+		arret.storeInformations(id,line,cur_road,cur_pos,cur_capacity,cur_speed);
+	end if;
+
+	
+
+end position;
+
 end Arret_Cb;
