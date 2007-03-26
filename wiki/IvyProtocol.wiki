@@ -57,3 +57,4 @@ We have 3 bus process, 3 stations, 3 lines.
 || B2 leave road 2 || `B2 >> Bus id=2 line=2 pos=8,0 capacity=15 speed=30` || || || ||
 || B1 arrive to S3 || `B1 >> Bus id=1 line=1 pos=3,100 capacity=50 speed=0` || || || ||
 || B2 leave road 8 || `B2 >> Bus id=2 line=2 pos=7,0 capacity=15 speed=90` || `S4 >> Station id=4 bus_id=2 len=250` || || ||
+|| || || || ||
