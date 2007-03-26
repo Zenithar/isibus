@@ -12,6 +12,8 @@
 #ifndef BUS_H
 #define BUS_H
 
+#include <stdlib.h>
+
 namespace isibus
 {
 /**
@@ -21,7 +23,9 @@ namespace isibus
 class Bus
 {
 public:
-        Bus(int id, int capacity, int line):m_iBus_id(id), m_iCapacity(capacity), m_iLine_id(line) {};
+        Bus(int id, int capacity, int line):m_iBus_id(id), m_iCapacity(capacity), m_iLine_id(line)
+	{
+	};
 
         ~Bus();
 
@@ -52,6 +56,10 @@ public:
                 return m_iLine_id;
         }
 
+	void Start()
+	{
+		system("bus_de_ligne &");
+	}
 private:
         int m_iBus_id;
         int m_iLine_id;

@@ -44,7 +44,8 @@ void Isibus::initIvy()
 {
 	bus = new Ivy( "isiBusUI", "isiBusUI READY", this);
 	bus->start(NULL);
-	bus->BindMsg("coucou", new msg::UiMsg(this) );
+	
+	bus->BindMsg("(.*)", new msg::UiMsg(this) );
 }
 
 
@@ -315,11 +316,13 @@ void Isibus :: OnDirectMessage (IvyApplication *app, int id, const char *arg )
 	printf ("%s direct sent %d %s",app->GetName(), id, arg);
 }
 
-void Isibus ::ajouterMessage(QString message)
+void Isibus ::ajouterMessage(const char* message)
 {
-cout << "avant" << endl;
-	widget.lw_historique->addItem("dfkjnflk");
-cout << "apres" << endl;
-
+	pthread_mutex_lock (&verrou);
+	
+	cout << "[MSG] " << message << endl;
+	widget.lw_historique->addItem(message);
+	
+	pthread_mutex_unlock (&verrou);
 }
 #include "Isibus.moc"

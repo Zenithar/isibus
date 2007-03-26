@@ -32,12 +32,8 @@ namespace isibus
 			UiMsg(Isibus * _isb):isb(_isb) {}
 			
 			void OnMessage(IvyApplication *app, int argc, const char **argv)
-			{
-				cout << "On a recup un message " << endl;
-			//	qlw->addItem("coucou");
-				
-				isb->ajouterMessage("coucou");
-
+			{				
+				isb->ajouterMessage(argv[0]);
 			}
 			
 
