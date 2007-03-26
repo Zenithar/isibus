@@ -58,5 +58,5 @@ We have 3 bus process, 3 stations, 3 lines.
 || B1 arrive to S3 || `B1 >> Bus id=1 line=1 pos=3,100 capacity=50 speed=0` || || || ||
 || B2 leave road 8 || `B2 >> Bus id=2 line=2 pos=7,0 capacity=15 speed=90` || `S4 >> Station id=4 bus_id=2 len=250` || || ||
 || || || || || ||
-|| B4 is created || 2 `Bus_15678 Start` || || 3 `Bus_15678 id=4 passengers=50 line=2:1,300;2,300;8,300;7,600;6,600;5,300;` || 1 `UI Bus line=2 capacity=50`||
+|| B4 is created || 2 `Bus_15678 Start` || || 3 `Bus_15678 id=4 passengers=50 line=2:1,300;2,300;8,300;7,600;6,600;5,300;` || 1 `gui createBus line=2 capacity=50`||
 || || `B4 >> Bus id=4 line=2 pos=1,0 capacity=50` || `S1 >> Station id=1 bus_id=4 len=100` || || ||
