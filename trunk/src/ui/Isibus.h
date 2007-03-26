@@ -24,13 +24,20 @@
 #include <math.h>
 
 #include "sprites.h"
+#include "Ivycpp.h"
+#include "IvyApplication.h"
+#include "roadmap.h"
+#include "runnable.h"
+
+#include <pthread.h>
 
 //#include "../base/xmlParser.h"
 //#include "string.h"
 
 //using namespace std;
-
-class Isibus : public QMainWindow
+namespace isibus
+{
+class Isibus : public QMainWindow, public IvyApplicationCallback, public IvyMessageCallback, public IvyDirectMessageCallback
 {
 	Q_OBJECT
 public:
@@ -42,6 +49,16 @@ public:
 	void genererCarte( bool verbose);
 	//vector<string> split(const string &sep,string text);
 
+	void initIvy();
+
+	Ivy *bus;
+
+	void OnApplicationConnected(IvyApplication *app);
+	void OnApplicationDisconnected(IvyApplication *app);
+	void OnMessage(IvyApplication *app, int argc, const char **argv);
+	void OnDirectMessage (IvyApplication *app, int id, const char *arg );
+	void ajouterMessage(QString message);
+
 private slots:
 	void addBus(  );
 
@@ -49,9 +66,9 @@ private:
 	QHash<int, QList<QPixmap>* > mAnimation;
 	QGraphicsScene *field;
 	int  mTimerId;
-	QLinkedList<Bus*> buses;
+	QLinkedList<BusSprite*> buses;
 	Ui_Isibus widget;
         QList<RoadCase *> roadcaselist ;
 };
-
+}
 #endif

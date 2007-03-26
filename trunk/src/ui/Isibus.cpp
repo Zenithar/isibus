@@ -1,11 +1,14 @@
 #include "Isibus.h"
 #include "../base/xmlParser.h"
+//#include "msgs.h"
+#include "../include/msg/ui/ui_msg.h"
 
 #define IMG_BACKGROUND "pics/case_vert.png"
 
 #define BG_W 575
 #define BG_H 431
 
+using namespace isibus;
 
 static struct
 {
@@ -37,6 +40,15 @@ void Isibus::readSprites()
 
 }
 
+void Isibus::initIvy()
+{
+	bus = new Ivy( "isiBusUI", "isiBusUI READY", this);
+	bus->start(NULL);
+	bus->BindMsg("coucou", new msg::UiMsg(this) );
+}
+
+
+
 
 Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 {
@@ -59,6 +71,9 @@ Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 	genererCarte(FALSE);
 	// début de la simulation
         mTimerId = startTimer( 9 );
+
+	// initialisation du bus
+	initIvy();
 
 	// connect pour l'ajout d'un bus
 	connect(widget.addBusButton, SIGNAL( pressed() ), SLOT( addBus() ));
@@ -105,7 +120,7 @@ void Isibus::genererCarte(bool verbose)
 	{
 		XMLNode xRoad = xRoads.getChildNode("road", &xmlIterator);
 		int j = 0;
-		for(int i = 0; i <  ((atoi(xRoad.getAttribute("len")) / 100)); i++){
+		for(int i = 0; i <  ((atoi(xRoad.getAttribute("len")) / 50)); i++){
 			switch(xRoad.getAttribute("axe")[0])
 			{ 	case 'S': Y +=  27; 
 					break;
@@ -117,8 +132,8 @@ void Isibus::genererCarte(bool verbose)
 					break;
 			}	
 
-		temp = new RoadCase(mAnimation.value(ID_CASE_PLAIN), field, X, Y, 0, 0, i,atoi(xRoad.getAttribute("id")));
-		if(i ==  ((atoi(xRoad.getAttribute("len")) / 100)-1))
+		temp = new RoadCase(mAnimation.value(ID_CASE_PLAIN), field, X, Y, xRoad.getAttribute("axe")[0], 0, i,atoi(xRoad.getAttribute("id")));
+		if(i ==  ((atoi(xRoad.getAttribute("len")) / 50)-1))
 		{
 		temp ->setFrame(2);}
 		else{
@@ -130,66 +145,12 @@ void Isibus::genererCarte(bool verbose)
 		}
 		j ++;	
 		roadcaselist.push_back(temp);
-
-	
-		//temp->setPos( X, Y );
-
-		//temp->show( );
 		}
 		
 		//m_RoadCaseList.insert(std::make_pair(j, temp));
 	}
-	/*
-	// Création du graphe
-	XMLNode xGraph=xCity.getChildNode("graph");
-	int nb_node = xGraph.nChildNode();
-	
-	if(verbose)
-		cout << endl << "Building the city map with " << nb_node << " nodes." << endl;
-	
-	xmlIterator=0;
-	int node_id = 1;
-	for(int i=0;i<nb_node;i++)
-	{
-		XMLNode xNode = xGraph.getChildNode("node", &xmlIterator);
-		
-		if(verbose) {
-			cout << "Connection [" << node_id << "] to roads (" << xNode.getAttribute("roads") << ")" << endl;
-		}
-		
-		ni_t node = m_RoadGraph.insert(node_id);
-		
-		vector<string> roads = split(",", xNode.getAttrielse{temp ->setFrame(4);}bute("roads"));
-		for(int j=0; j<roads.size(); j++)
-		{
-			if(verbose) {
-				cout << " + Connection " << node_id << " to road " << m_RoadList[atoi(roads[j].c_str())]->getName() << endl;
-			}
-		}
-		
-		node_id++;
-	}
-	
-	// Création des lignes de bus
-	XMLNode xLines=xMainNode.getChildNode("lines");
-	m_iNbLines = xLines.nChildNode();
-	
-	if(verbose) {
-		cout << endl << "Populating bus lines with " << m_iNbLines << " lines." << endl;
-	}
-	
-	xmlIterator=0;
-	for(int i=0;i<m_iNbLines;i++)
-	{
-		XMLNode xLine = xLines.getChildNode("line", &xmlIterator);
-		
-		if(verbose) {
-			cout << "[" << xLine.getAttribute("id") << "] " << xLine.getAttribute("roads") << endl;
-		}
-		
-		vector<string> roads = split(",", xLine.getAttribute("roads"));
-	}
-	*/
+
+
 	// Positionnement des stations de bus.
 
 	XMLNode xStations=xMainNode.getChildNode("stations");
@@ -247,7 +208,7 @@ void Isibus::timerEvent( QTimerEvent * )
 {
 	field->advance();
 
-	foreach (Bus* bus ,buses){
+	foreach (BusSprite* bus ,buses){
 		wrapSprite( bus );
 	}
 
@@ -256,8 +217,20 @@ void Isibus::timerEvent( QTimerEvent * )
 void Isibus::wrapSprite( IsiSprite *s )
 {
 	int randNb;
-	qreal coefDeplacement = 0.001;
+	qreal coefDeplacement = 0.01;
+	RoadCase* rc;
 
+	if (field->itemAt(s->x(),s->y())){
+		//rc = field->itemAt(s->xVelocity(),s->yVelocity());
+		//int y = field->itemAt(s->xVelocity(),s->yVelocity());
+		//printf("Le bus est sur la route! Direction de la route\n");// : %c\n", rc->direction);
+	}
+
+	/*********************************************************************/
+	/*              Déplacement automatique du bus			     */
+	/*********************************************************************/
+
+	// Si le bus atteint un bord il est recréé sur le bord opposé
 	int x = int(s->x() + s->boundingRect().width() / 2);
 	int y = int(s->y() + s->boundingRect().height() / 2);
 
@@ -270,7 +243,8 @@ void Isibus::wrapSprite( IsiSprite *s )
 		s->setPos( s->x(), s->y() - field->height() );
 	else if ( y < 0 )
 		s->setPos( s->x(), field->height() + s->y() );
-	
+
+
 	srand(time(NULL));
 	// Axe des ordonnées aléatoire
 	randNb = rand();
@@ -283,6 +257,7 @@ void Isibus::wrapSprite( IsiSprite *s )
 	if (randNb>(2*(RAND_MAX/3))){s->setVelocity(s->xVelocity(),s->yVelocity()+coefDeplacement);}
 	if (randNb<(RAND_MAX/3)){s->setVelocity(s->xVelocity(),s->yVelocity()-coefDeplacement);}
 
+	// ajuste dynamiquement l'apparence du bus
 	if (s->xVelocity()==0 || s->yVelocity()==0 ) {s->setFrame(1);}
 	if (s->xVelocity()<0 || fabs(s->yVelocity()) < fabs(s->xVelocity()) ) {s->setFrame(0);}
 	if (s->yVelocity()<0 || fabs(s->xVelocity()) < fabs(s->yVelocity()) ) {s->setFrame(1);}
@@ -293,8 +268,8 @@ void Isibus::wrapSprite( IsiSprite *s )
 
 void Isibus::addBus()
 {
-        Bus *newBus = new Bus( mAnimation.value(ID_BUS_LEFT_TO_RIGHT), field, ID_BUS_LEFT_TO_RIGHT, 2, 1 );
-        double dx = 0.0;
+        BusSprite *newBus = new BusSprite( mAnimation.value(ID_BUS_LEFT_TO_RIGHT), field, ID_BUS_LEFT_TO_RIGHT, 2, 1 );
+        double dx = 1.0;
         double dy = 0.0;
         newBus->setVelocity( dx, dy );
         newBus->setPos(BG_W/2, BG_H/2 );
@@ -303,5 +278,48 @@ void Isibus::addBus()
 
 	buses.push_back(newBus);
 	newBus->show( );
+	bus->SendMsg("coucou");
+}
+
+void Isibus :: OnMessage(IvyApplication *app, int argc, const char **argv)
+{
+	int i;
+	printf ("%s sent ",app->GetName());
+	for  (i = 0; i < argc; i++)
+		printf(" '%s'",argv[i]);
+	printf("\n");
+}
+
+void Isibus :: OnApplicationConnected (IvyApplication *app)
+{
+	const char *appname;
+	const char *host;
+	appname = app->GetName();
+	host = app->GetHost();
+
+	printf("%s connected from %s\n", appname,  host);
+
+}
+void Isibus :: OnApplicationDisconnected (IvyApplication *app)
+{
+	const char *appname;
+	const char *host;
+	appname = app->GetName ();
+	host = app->GetHost();
+
+	printf("%s disconnected from %s\n", appname,  host);
+}
+
+void Isibus :: OnDirectMessage (IvyApplication *app, int id, const char *arg )
+{
+	printf ("%s direct sent %d %s",app->GetName(), id, arg);
+}
+
+void Isibus ::ajouterMessage(QString message)
+{
+cout << "avant" << endl;
+	widget.lw_historique->addItem("dfkjnflk");
+cout << "apres" << endl;
+
 }
 #include "Isibus.moc"

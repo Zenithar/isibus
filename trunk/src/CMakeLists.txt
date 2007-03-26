@@ -52,7 +52,7 @@ include_directories (
 
 add_executable(isibus_cc ${base_SRCS} ${controlcenter_SRCS} ${isibus_RC_SRCS} ${isibus_SRCS} ${isibus_UIS_H} ${isibus_MOC_HDRS} )
 
-target_link_libraries(isibus_cc ${QT_LIBRARIES} Ivy pcre)
+target_link_libraries(isibus_cc ${QT_LIBRARIES} ivy pcre)
 
 install(TARGETS isibus_cc DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin)
 install(FILES roadmap.xml DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin)
