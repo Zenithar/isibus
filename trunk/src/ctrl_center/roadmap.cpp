@@ -164,8 +164,13 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 			cout << "[" << station_id << "] road:" << xStation.getAttribute("road") << " line:" << xStation.getAttribute("lines") << endl;
 		}
 		
-		Station* temp = new Station(station_id, atoi(xStation.getAttribute("road")));
+		Station* temp = new Station(station_id, atoi(xStation.getAttribute("road")), atoi(xStation.getAttribute("len")));
+		
 		vector<string> lines = split(",", xStation.getAttribute("lines"));
+		for(int j=0; j < lines.size(); j++) 
+		{
+			temp->getLines().push_back(atoi(lines[j].c_str()));
+		}
 		
 		m_StationList.insert(std::make_pair(station_id++, temp));
 	}

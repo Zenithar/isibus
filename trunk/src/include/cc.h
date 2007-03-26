@@ -13,7 +13,6 @@
 #define __CC_H__
 
 #include "roadmap.h"
-#include "runnable.h"
 
 #include "Ivycpp.h"
 #include "IvyApplication.h"
@@ -89,6 +88,10 @@ public:
 	Bus* incBusPool(int app_id); 
 	void decBusPool(int app_id);
 	
+	inline int getNbRunningStation() { return m_nbRunningStation; }
+	Station* incStationPool(int app_id); 
+	void decStationPool(int app_id);
+	
 private:
 	/**
 	 * Thread d'execution de centre de controle
@@ -100,6 +103,9 @@ private:
 	*/
 	int	m_nbRunningBus;
 	std::map<int,int> BusPool;
+	
+	int	m_nbRunningStation;
+	std::map<int,int> StationPool;
 };
 
 } // isibus

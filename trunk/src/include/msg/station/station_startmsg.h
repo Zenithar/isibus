@@ -28,6 +28,12 @@ namespace isibus
 				void OnMessage(IvyApplication *app, int argc, const char **argv)
 				{
 					cout << "Starting Station" << argv[0] << endl;
+					
+					Station* temp = m_cc->incStationPool(atoi(argv[0]));
+					
+					// Envoie des informations à l'instance
+					// Station_1234 id=1 road=1 lines=1,2 len=100
+					m_cc->bus->SendMsg("Station_%s id=%d road=%d lines=%s len=%d",argv[0], temp->getID(), temp->getRoadID(), temp->createLineString(), temp->getRoadDistance());
 				}
 			
 			private:
