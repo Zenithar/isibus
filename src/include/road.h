@@ -30,6 +30,8 @@ private:
         int		m_type;
         int		m_len;
         char		m_axe;
+	
+	std::vector<int> m_nodes;
 
 public:
         Road(int id, const char* name, int type, int len, char axe):m_id(id),m_name(name),m_type(type),m_len(len),m_axe(axe)
@@ -85,6 +87,8 @@ public:
         {
                 return m_type;
         }
+	
+	std::vector<int>& getNodes() { return m_nodes; }
 
 };
 
