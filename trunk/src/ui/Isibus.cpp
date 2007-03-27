@@ -3,6 +3,7 @@
 //#include "msgs.h"
 #include "../include/msg/ui/ui_msg.h"
 #include "../include/msg/ui/ui_move_bus.h"
+#include "../include/msg/ui/ui_station_info.h"
 
 #define IMG_BACKGROUND "pics/route_herbe.png"
 
@@ -50,6 +51,9 @@ void Isibus::initIvy()
 	connect(worker, SIGNAL(sigAddMessage(const QString &)),
 		 this, SLOT(ajouterMessage(const QString &)));
 
+	connect(worker, SIGNAL(sigRefreshStationInfo(const int &,const int &,const int &,const QString &,const int &,const int &,const QString &,const int &,const int &,const QString & )),
+		 this, SLOT(rafraichirArretInfo(const int &,const int &,const int &,const QString &,const int &,const int &,const QString &,const int &,const int &,const QString & )));
+
 	connect(worker, SIGNAL(sigMoveBus(const int &, const int &, const int &, const int &, const int &, const int &)),
 		 this, SLOT(bougerBus(const int &, const int &, const int &, const int &, const int &, const int &)));
 	
@@ -76,15 +80,39 @@ Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 	readSprites();
 	genererCarte(FALSE);
 	// début de la simulation
-        mTimerId = startTimer( 9 );
+        mTimerId = startTimer( 1000 );
 
 	// initialisation du bus
 	initIvy();
 
+	iDBusSelected = -1;
+	iDarretSelected = -1;
+	// Général
+	connect(widget.action_Quit, SIGNAL( triggered() ), SLOT( close() ));
+
+	// Propriétés du bus
 	// connect pour l'ajout d'un bus
-	//connect(widget.addBusButton, SIGNAL( pressed() ), SLOT( addBus() ));
+	connect(widget.addBusButton, SIGNAL( pressed() ), SLOT( addBus() ));
 	// connect pour la suppression d'un bus
-	// connect pour le menu
+	connect(widget.delBusButton, SIGNAL( pressed() ), SLOT( delBus() ));
+	// connect pour ralentir le bus 
+	connect(widget.slowBusButton, SIGNAL( pressed() ), SLOT( slowBus() ));
+	// connect pour accelerer le bus 
+	connect(widget.accelBusButton, SIGNAL( pressed() ), SLOT( accelBus() ));
+	// connect pour afficher les informations du bus 
+	connect(widget.button_viewbus, SIGNAL( pressed() ), SLOT( viewBusInfo() ));
+
+	// Propriétés de l'arret
+	// connect pour afficher les informations de l'arret 
+	connect(widget.button_viewarret, SIGNAL( pressed() ), SLOT( viewStationInfo() ));
+
+	// Menu évènements
+	// Connect pour provoquer une émeute
+	connect(widget.actionProvoquer_une_m_eute_dans_un_bus, SIGNAL( triggered() ), SLOT( actionEmeute() ));
+	// Connect pour provoquer un bouchon
+	connect(widget.actionCr_er_un_bouchon_sur_le_r_seau_routier, SIGNAL( triggered() ), SLOT( actionBouchon() ));
+	// Connect pour provoquer une panne
+	connect(widget.actionProvoquer_la_panne_d_un_bus, SIGNAL( triggered() ), SLOT( actionPanne() ));
 }
 
 /*
@@ -104,6 +132,8 @@ vector<string> Isibus::split(const string &sep,string text)
 	} while (text.length());
 	return words;
 }*/
+
+
 
 void Isibus::genererCarte(bool verbose)
 {
@@ -176,6 +206,9 @@ void Isibus::genererCarte(bool verbose)
 			if((rc->idRoad == atoi(xStation.getAttribute("road"))) && (rc->segment == (atoi(xStation.getAttribute("len"))/50)))
 			{
 				rc->idArret = atoi(xStation.getAttribute("id"));
+				nomarret.push_back(xStation.getAttribute("nameA"));
+				widget.cb_arret->insertItem(xStation.getAttribute("nameA"),atoi(xStation.getAttribute("id")));
+				rc->setZValue(1.0);
 				if((rc->direction == 'E') || (rc->direction == 'W'))
 				{
 					rc->translate(0.0,-11.0);
@@ -235,6 +268,7 @@ void Isibus::timerEvent( QTimerEvent * )
 
 }
 
+
 void Isibus::wrapSprite( IsiSprite *s )
 {
 	int randNb;
@@ -246,46 +280,11 @@ void Isibus::wrapSprite( IsiSprite *s )
 		//int y = field->itemAt(s->xVelocity(),s->yVelocity());
 		//printf("Le bus est sur la route! Direction de la route\n");// : %c\n", rc->direction);
 	}
-
-	/*********************************************************************/
-	/*              Déplacement automatique du bus			     */
-	/*********************************************************************/
-/*
-	// Si le bus atteint un bord il est recréé sur le bord opposé
-	int x = int(s->x() + s->boundingRect().width() / 2);
-	int y = int(s->y() + s->boundingRect().height() / 2);
-
-	if ( x > field->width() )
-		s->setPos( s->x() - field->width(), s->y() );
-	else if ( x < 0 )
-		s->setPos( field->width() + s->x(), s->y() );
-
-	if ( y > field->height() )
-		s->setPos( s->x(), s->y() - field->height() );
-	else if ( y < 0 )
-		s->setPos( s->x(), field->height() + s->y() );
-*/
-/*
-	srand(time(NULL));
-	// Axe des ordonnées aléatoire
-	randNb = rand();
-	if (randNb>(2*(RAND_MAX/3))){s->setVelocity(s->xVelocity()+coefDeplacement,s->yVelocity());}
-	if (randNb<(RAND_MAX/3)){s->setVelocity(s->xVelocity()-coefDeplacement,s->yVelocity());}
-
-	srand(time(NULL));
-	// Axe des abscisses aléatoire
-	randNb = rand();
-	if (randNb>(2*(RAND_MAX/3))){s->setVelocity(s->xVelocity(),s->yVelocity()+coefDeplacement);}
-	if (randNb<(RAND_MAX/3)){s->setVelocity(s->xVelocity(),s->yVelocity()-coefDeplacement);}
-
-	// ajuste dynamiquement l'apparence du bus
-	if (s->xVelocity()==0 || s->yVelocity()==0 ) {s->setFrame(1);}
-	if (s->xVelocity()<0 || fabs(s->yVelocity()) < fabs(s->xVelocity()) ) {s->setFrame(0);}
-	if (s->yVelocity()<0 || fabs(s->xVelocity()) < fabs(s->yVelocity()) ) {s->setFrame(1);}
-	if (s->yVelocity()>0 || fabs(s->xVelocity()) < fabs(s->yVelocity()) ) {s->setFrame(2);}
-	if (s->xVelocity()>0 || fabs(s->yVelocity()) < fabs(s->xVelocity()) ) {s->setFrame(3);}
-*/
 }
+
+
+
+/* Slots */
 
 void Isibus::addBus(int id)
 {
@@ -295,39 +294,111 @@ void Isibus::addBus(int id)
         double dy = 0.0;
         newBus->setVelocity( dx, dy );
         newBus->setPos(BG_W/2, BG_H/2 );
-	newBus->setZValue(1.0);
+	newBus->setZValue(2.0);
 	newBus->setFrame(1);
 		
 	buses.push_back(newBus);
+	QString numbus;
+	numbus.setNum(id);
+	widget.cbBus->insertItem("Bus numero" + numbus,id);
 	newBus->show( );
+
 }
+void Isibus::delBus(){
+	
+}
+void Isibus::slowBus(){
+
+}
+void Isibus::accelBus(){
+}
+void Isibus::viewBusInfo(){
+	// recupération de l'id du bus courant
+
+	// envoie du message
+}
+
+void Isibus::viewStationInfo(){
+	// recupération de l'id de l'arret courant
+
+	// envoie du message
+}
+
+void Isibus::actionEmeute(){
+}
+void Isibus::actionBouchon(){
+}
+void Isibus::actionPanne(){
+}
+
+
+/* Ivy */
 
 void Isibus::ajouterMessage(const QString& message)
 {
 	widget.lw_historique->addItem(message);
 }
 
+void Isibus::rafraichirArretInfo(const int &id,const int &id1,const int &h1,const QString &s1,const int &id2,const int &h2,const QString &s2,const int &id3,const int &h3,const QString &s3 )
+{
+	if(id1 != 0)
+	{
+		widget.gbBus1->setTitle("Bus numero" + id1);
+	}
+	else
+	{
+		widget.gbBus1->setTitle("Pas de bus");
+	}
+	if(id2 != 0)
+	{
+		widget.gbBus1->setTitle("Bus numero" + id2);
+	}
+	else
+	{
+		widget.gbBus1->setTitle("Pas de bus");
+	}
+	if(id3 != 0)
+	{
+		widget.gbBus1->setTitle("Bus numero" + id3);
+	}
+	else
+	{
+		widget.gbBus1->setTitle("Pas de bus");
+	}
+
+	widget.lcdArretBus1->display(h1);	
+	widget.lcdArretBus2->display(h2);	
+	widget.lcdArretBus3->display(h3);
+	widget.lcdArretBusStatus1->setText(s1);
+	widget.lcdArretBusStatus2->setText(s2);
+	widget.lcdArretBusStatus3->setText(s3);
+}
+
 void Isibus::bougerBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse)
 {
+
 	int flag = 0;
 	int x=0;
 	int y=0;
+	int vitessekh = (int)((vitesse * 3600 )/100);
+	if(iDBusSelected == id)
+	{
 	widget.lcdn_ligne->display(ligne);
 	widget.lcdn_numero->display(id);
 	widget.lcdn_capacite->display(capacite);
-	widget.lcdn_vitesse->display(vitesse);
+	widget.lcdn_vitesse->display(vitessekh);
 	widget.lcdn_route->display(route);
 	widget.lcdn_segment->display(segment);
 	widget.slowBusButton->setEnabled(true);
 	widget.accelBusButton->setEnabled(true);
 	widget.delBusButton->setEnabled(true);
-
+	}
 	foreach	(BusSprite * bs, buses){
 			if(id == bs->id)
 			{
 				flag = 1;
 				foreach	(RoadCase * rc, roadcaselist){
-				cout<<"le bus X:"<< rc->x <<" Y:"<<rc->y<<"segment1:"<<(segment/50)-1<<"segment2:"<<rc->segment<<endl;
+				cout<<"le bus X:"<< rc->x <<" Y:"<<rc->y<<"segment1:"<<(segment/50)<<"segment2:"<<rc->segment<<endl;
 				if(rc->idRoad == route)
 				{
 					if(flag == 1)
@@ -335,24 +406,24 @@ void Isibus::bougerBus(const int &id, const int &ligne,const int &route,const in
 						x = rc->x;
 						y = rc->y;
 						switch(rc->direction)
-						{ 	case 'S': y = y+segment*0.54+18; 
+						{ 	case 'S': y = y+(segment*0.54)-18; 
 								  x += 8;
 
 								bs->setFrame(1);
 							break;
-							case 'N': y = y-segment*0.54+18;
+							case 'N': y = y-(segment*0.54)+18;
 								bs->setFrame(2);
  								x += 8;
  							break;
-							case 'E': x = x+segment*0.66+27; 
+							case 'E': x = x+(segment*0.66)-27; 
 								bs->setFrame(0);
 							break;
-							default: x = x-segment*0.66+27; 
+							case 'W': x = x-(segment*0.66)+27; 
 								bs->setFrame(3);
 							break;
 						}
 						flag = 2;
-
+						
 //Bus_121055978 id=2 passengers=50 line=1:1,300;2,300;3,300;4,300;
 					}
 				}
@@ -365,11 +436,12 @@ void Isibus::bougerBus(const int &id, const int &ligne,const int &route,const in
 			}
 
 		}
+
 	if(flag == 0)
 	{
 		addBus(id);
 	}
-	
+
 
 }
 
@@ -385,9 +457,12 @@ IvyWorker::IvyWorker(QObject * parent):QThread(parent)
 	bus->BindMsg("(.*)", this);
 	
 	bus->BindMsg("^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+)", new msg::uiMvBus( this, qobject_cast<Isibus*>(parent) ));	
+
+	bus->BindMsg("^Station id= ([0-9]+) time=(( [0-9]+, [0-9]+;)*) status=(( [0-9]+, [0-9]+;)*)", new msg::uiInfoStation( this, qobject_cast<Isibus*>(parent) ));	
+
 	bus->BindMsg("(.*)", new msg::UiMsg( this, qobject_cast<Isibus*>(parent) ));
 
-;
+
 }
 
 
@@ -404,6 +479,12 @@ void IvyWorker :: OnMessage(IvyApplication *app, int argc, const char **argv)
 {
 	emit sigAddMessage(QString(argv[0]));
 }
+
+void IvyWorker :: RefreshStationInfo(const int &id,const int &id1,const int &h1,const QString &s1,const int &id2,const int &h2,const QString &s2,const int &id3,const int &h3,const QString &s3 )
+{
+	emit sigRefreshStationInfo(id,id1,h1,s1,id2,h2,s2,id3,h3,s3);
+}
+
 
 void IvyWorker :: OnApplicationConnected (IvyApplication *app)
 {

@@ -91,6 +91,7 @@ public:
 	int idArret;
 	int segment;
 	int idRoad;
+	QString nom;
 	
 	
 	RoadCase(QList<QPixmap> *frames, QGraphicsScene *scene, int x, int y, int dir, int idArr, int seg, int idR): plainCase( frames, scene, x, y )

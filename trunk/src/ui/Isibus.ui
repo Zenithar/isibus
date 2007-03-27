@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1015</width>
+    <height>578</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -20,13 +20,10 @@
     <property name="spacing" >
      <number>6</number>
     </property>
-    <item rowspan="2" row="0" column="0" >
-     <widget class="QGraphicsView" name="mainView" />
-    </item>
     <item row="0" column="1" >
      <widget class="QTabWidget" name="tabWidget" >
       <property name="currentIndex" >
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_etat_reseau" >
        <attribute name="title" >
@@ -62,7 +59,7 @@
       </widget>
       <widget class="QWidget" name="tab_property" >
        <attribute name="title" >
-        <string>Propriété du bus</string>
+        <string>Propriétés du bus</string>
        </attribute>
        <layout class="QGridLayout" >
         <property name="margin" >
@@ -71,8 +68,16 @@
         <property name="spacing" >
          <number>6</number>
         </property>
-        <item row="1" column="0" >
+        <item row="2" column="0" colspan="2" >
          <widget class="QGroupBox" name="groupBox_2" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="title" >
            <string>Piloter le bus</string>
           </property>
@@ -89,7 +94,7 @@
               <bool>false</bool>
              </property>
              <property name="text" >
-              <string>Faire ralentir ce bus</string>
+              <string>Faire &amp;ralentir ce bus</string>
              </property>
              <property name="icon" >
               <iconset>../../build/ui/pics/bus_Slow.png</iconset>
@@ -108,7 +113,7 @@
               <bool>false</bool>
              </property>
              <property name="text" >
-              <string>Faire accelerer ce bus</string>
+              <string>Faire &amp;accelerer ce bus</string>
              </property>
              <property name="icon" >
               <iconset>../../build/ui/pics/bus_Accel.png</iconset>
@@ -124,13 +129,13 @@
           </layout>
          </widget>
         </item>
-        <item row="2" column="0" >
+        <item row="4" column="0" colspan="2" >
          <widget class="QPushButton" name="delBusButton" >
           <property name="enabled" >
            <bool>false</bool>
           </property>
           <property name="text" >
-           <string>Supprimer ce bus</string>
+           <string>&amp;Supprimer ce bus</string>
           </property>
           <property name="icon" >
            <iconset>../../build/ui/pics/bus_delete.png</iconset>
@@ -143,8 +148,39 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="0" colspan="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QPushButton" name="button_viewbus" >
+          <property name="text" >
+           <string>Afficher ce bus</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0" >
+         <widget class="QComboBox" name="cbBus" />
+        </item>
+        <item row="1" column="0" colspan="2" >
          <widget class="QGroupBox" name="groupBox_3" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="title" >
            <string>Information sur le bus selectionné</string>
           </property>
@@ -155,47 +191,7 @@
            <property name="spacing" >
             <number>6</number>
            </property>
-           <item row="3" column="0" >
-            <widget class="QLabel" name="label_4" >
-             <property name="text" >
-              <string>Vitesse</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0" >
-            <widget class="QLabel" name="label_3" >
-             <property name="text" >
-              <string>Capacité</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1" >
-            <widget class="QLCDNumber" name="lcdn_vitesse" />
-           </item>
-           <item row="0" column="0" >
-            <widget class="QLabel" name="label" >
-             <property name="text" >
-              <string>Ligne</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1" >
-            <widget class="QLCDNumber" name="lcdn_capacite" />
-           </item>
-           <item row="0" column="1" >
-            <widget class="QLCDNumber" name="lcdn_ligne" />
-           </item>
-           <item row="1" column="0" >
-            <widget class="QLabel" name="label_2" >
-             <property name="text" >
-              <string>Numéro du bus</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1" >
-            <widget class="QLCDNumber" name="lcdn_numero" />
-           </item>
-           <item row="5" column="0" colspan="2" >
+           <item row="4" column="0" colspan="2" >
             <widget class="QGroupBox" name="groupBox_4" >
              <property name="title" >
               <string>Route / Segment</string>
@@ -216,6 +212,46 @@
              </layout>
             </widget>
            </item>
+           <item row="1" column="1" >
+            <widget class="QLCDNumber" name="lcdn_numero" />
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_2" >
+             <property name="text" >
+              <string>Numéro du bus</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QLCDNumber" name="lcdn_ligne" />
+           </item>
+           <item row="2" column="1" >
+            <widget class="QLCDNumber" name="lcdn_capacite" />
+           </item>
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label" >
+             <property name="text" >
+              <string>Ligne</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" >
+            <widget class="QLCDNumber" name="lcdn_vitesse" />
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_3" >
+             <property name="text" >
+              <string>Capacité</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QLabel" name="label_4" >
+             <property name="text" >
+              <string>Vitesse (km/h)</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -223,7 +259,7 @@
       </widget>
       <widget class="QWidget" name="tab_arret" >
        <attribute name="title" >
-        <string>Arret</string>
+        <string>Arrêt</string>
        </attribute>
        <layout class="QGridLayout" >
         <property name="margin" >
@@ -232,21 +268,121 @@
         <property name="spacing" >
          <number>6</number>
         </property>
-        <item row="0" column="0" >
-         <widget class="QTreeWidget" name="treeWidget_2" />
+        <item row="0" column="2" colspan="2" >
+         <widget class="QPushButton" name="button_viewarret" >
+          <property name="text" >
+           <string>Afficher l'arret</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2" >
+         <widget class="QComboBox" name="cb_arret" />
         </item>
         <item row="1" column="0" >
+         <widget class="QGroupBox" name="gbBus1" >
+          <property name="title" >
+           <string>Bus Arrivant 1</string>
+          </property>
+          <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="lcdArretBusStatus1" >
+             <property name="text" >
+              <string>Status</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" >
+            <widget class="QLCDNumber" name="lcdArretBus1" />
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="4" >
          <widget class="QGroupBox" name="groupBox" >
           <property name="title" >
            <string>Pasager</string>
           </property>
+          <widget class="QPushButton" name="pushButton" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="geometry" >
+            <rect>
+             <x>11</x>
+             <y>93</y>
+             <width>451</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Ajouter un passager à cet arret</string>
+           </property>
+          </widget>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QPushButton" name="pushButton" >
-          <property name="text" >
-           <string>Ajouter un passager à cet arret</string>
+        <item row="1" column="1" colspan="2" >
+         <widget class="QGroupBox" name="gbBus2" >
+          <property name="title" >
+           <string>Bus Arrivant 2</string>
           </property>
+          <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="lcdArretBusStatus2" >
+             <property name="text" >
+              <string>Status</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" >
+            <widget class="QLCDNumber" name="lcdArretBus2" />
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="3" >
+         <widget class="QGroupBox" name="gbBus3" >
+          <property name="title" >
+           <string>Bus Arrivant 3</string>
+          </property>
+          <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="lcdArretBusStatus3" >
+             <property name="text" >
+              <string>Status</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" >
+            <widget class="QLCDNumber" name="lcdArretBus3" />
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
@@ -270,30 +406,23 @@
      </widget>
     </item>
     <item row="1" column="1" >
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>0</number>
+     <widget class="QPushButton" name="addBusButton" >
+      <property name="text" >
+       <string>Ajouter un &amp;Bus...</string>
       </property>
-      <property name="spacing" >
-       <number>6</number>
+      <property name="icon" >
+       <iconset>pics/bus_new.png</iconset>
       </property>
-      <item row="0" column="0" colspan="2" >
-       <widget class="QPushButton" name="addBusButton" >
-        <property name="text" >
-         <string>Ajouter un Bus...</string>
-        </property>
-        <property name="icon" >
-         <iconset>pics/bus_new.png</iconset>
-        </property>
-        <property name="iconSize" >
-         <size>
-          <width>30</width>
-          <height>30</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      <property name="iconSize" >
+       <size>
+        <width>30</width>
+        <height>30</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item rowspan="2" row="0" column="0" >
+     <widget class="QGraphicsView" name="mainView" />
     </item>
    </layout>
   </widget>
@@ -302,20 +431,20 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1015</width>
      <height>29</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuAbout" >
+    <property name="title" >
+     <string>&amp;A propos</string>
+    </property>
+   </widget>
    <widget class="QMenu" name="menu_File" >
     <property name="title" >
      <string>&amp;Fichier</string>
     </property>
     <addaction name="action_Quit" />
-   </widget>
-   <widget class="QMenu" name="menuAbout" >
-    <property name="title" >
-     <string>&amp;A propos</string>
-    </property>
    </widget>
    <widget class="QMenu" name="menu_Gestion_d_v_nements" >
     <property name="title" >
