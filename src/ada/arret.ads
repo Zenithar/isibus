@@ -33,6 +33,8 @@ type a_bus is record
 	speed : integer;
 	--
 	stop_signaled : boolean := FALSE;
+	--
+	stat : integer;
 end record;
 	
 --type bus_aendu permettant de stocker l'ensemble des bus passants par l'arret
@@ -64,11 +66,13 @@ procedure storeInformations(	id : in integer ;
 				cur_road : in integer;
 				cur_pos : in integer;
 				cur_capacity : in integer;
-				cur_speed : in integer );
+				cur_speed : in integer ;
+				cur_status : in integer);
 
 procedure storeBus	(id : in natural ;
 			distance : in integer ;
-			cs : in integer);
+			cs : in integer;
+			status : in integer);
 
 procedure setLignesCircuit (liste : in listeBus);
 

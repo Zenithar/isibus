@@ -10,6 +10,8 @@ Id: String := "Bus_";
 num_bus : natural; 
 
 estInitialise : boolean := FALSE;
+--Incidents
+situation : integer;
 
 --Declaration du type circuit
 type road is record

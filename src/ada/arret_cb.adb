@@ -94,6 +94,7 @@ cur_road : integer;
 cur_pos : integer;
 cur_capacity : integer;
 cur_speed : integer;
+status : integer;
 
 begin
 -- 	Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+) speed=([0-9]+)
@@ -118,8 +119,11 @@ begin
 		cur_speed := integer'value(Value(Tab_arg.all));
 		Chars_ptr_pointers.Increment(Tab_arg);
 
+		status := integer'value(Value(Tab_arg.all));
+		Chars_ptr_pointers.Increment(Tab_arg);
+
 -- 		put_line("Avant storeInformations");
-		arret.storeInformations(id,line,cur_road,cur_pos,cur_capacity,cur_speed);
+		arret.storeInformations(id,line,cur_road,cur_pos,cur_capacity,cur_speed,status);
 	end if;
 
 end position;

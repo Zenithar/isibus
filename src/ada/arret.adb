@@ -18,7 +18,7 @@ package body arret is
 	-- DECLARATION OBJET PROTEGE: arret de bus
 	protected bus_stop is
 	
-		ENTRY position	(id : natural ; distance : integer ;cs : integer);
+		ENTRY position	(id : natural ; distance : integer ;cs : integer; status : integer);
 		ENTRY init (id : integer ; route : integer ; bus_line : listeBus ; pos_len : integer);
 		ENTRY setLignes ( liste : listeBus);
 		ENTRY getAttente;	
@@ -162,37 +162,45 @@ package body arret is
 		i : integer := 0;
 		timeleft : integer;
 		buffer : Unbounded_String;
+		tmp : Unbounded_String;
 
 		begin
--- 			Station id= ([0-9]+) time=(( [0-9]+, [0-9]+;)*)
+-- 			Station id= ([0-9]+) time=(( [0-9]+, [0-9]+;)*) status=(( [0-9]+, [0-9]+;)*)
 			buffer := To_Unbounded_String("Station id=" & integer'image(Station_id) & " time=");
+			tmp := To_Unbounded_String(" status=");
 			while ( i < nb_bus_passant_par_l_arret)
 			loop
 
 			if (liste_attente(i).dist >= 0)
 			then
 				buffer := To_Unbounded_String(To_String(buffer) & natural'image(liste_attente(i).bus_id) & ",");
-				if (liste_attente(i).speed /= 0)
+				tmp := To_Unbounded_String(To_String(tmp) & natural'image(liste_attente(i).bus_id) & ",");
+
+				if ((liste_attente(i).speed = 0) and then (liste_attente(i).stat = 0))
 				then
 					--Calcul du temps
-					timeleft := liste_attente(i).dist / liste_attente(i).speed;
-					buffer := To_Unbounded_String(To_String(buffer) & integer'image(timeleft) & ";");
-				else
 					timeleft := liste_attente(i).dist / 14;
 					buffer := To_Unbounded_String(To_String(buffer) & integer'image(timeleft) & ";");
+
+					tmp  := To_Unbounded_String(To_String(buffer) & integer'image(liste_attente(i).stat) & ";");
+				else
+					timeleft := liste_attente(i).dist / liste_attente(i).speed;
+					buffer := To_Unbounded_String(To_String(buffer) & integer'image(timeleft) & ";");
+
+					tmp  := To_Unbounded_String(To_String(tmp) & integer'image(liste_attente(i).stat) & ";");
 				end if;
 				--Incrementation compteur de boucle
 				i := i + 1;
 			end if;
 			end loop;
 
-			Ivy.SendMsg(To_String(buffer));
+			Ivy.SendMsg(To_String(buffer & tmp));
 
 		end getAttente;
 
 
 
-		ENTRY position(id : natural ; distance : integer ;cs : integer) when TRUE is
+		ENTRY position(id : natural ; distance : integer ;cs : integer ; status : integer) when TRUE is
 		
 		temp : a_bus;
 		flag : integer := 0;	
@@ -218,6 +226,7 @@ package body arret is
 			temp.bus_id := id;
 			temp.dist := distance;
 			temp.speed := cs;
+			temp.stat := status;
 			liste_attente(cpt-1) := temp;
 		-- sinon si il n'est pas inscrit mais qu'il reste des place
 		elsif ( cpt <= MAX_BUS )
@@ -225,6 +234,7 @@ package body arret is
 			temp.bus_id := id;
 			temp.dist := distance;
 			temp.speed := cs;
+			temp.stat := status;
 
 			put("Position");
 			put(integer'image(temp.bus_id));
@@ -318,7 +328,7 @@ package body arret is
 		delay(0.1);
 		Ivy.BindMsg( MsgCallback => Arret_Cb.position'access,
 		User_Data        => 0,
-		Regexp      => To_String(To_Unbounded_String("^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+)"))
+		Regexp      => To_String(To_Unbounded_String("^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+) status= ([0-9]+)"))
 		);
 
 		delay(0.1);
@@ -336,8 +346,7 @@ package body arret is
 				delay(0.1);
  				Ivy.BindMsg( MsgCallback => Arret_Cb.getAttente'access,
 					User_Data        => 0,
-					Regexp      => To_String(To_Unbounded_String("^gui getTimes station id="
-							& integer'image(bus_stop.getStationId)))
+					Regexp      => To_String(To_Unbounded_String("^gui getTimes station id="& integer'image(bus_stop.getStationId)))
 			);
 				--Tests
 				while(TRUE)
@@ -390,7 +399,8 @@ package body arret is
 				cur_road : in integer;
 				cur_pos : in integer;
 				cur_capacity : in integer;
-				cur_speed : in integer ) is
+				cur_speed : in integer ;
+				cur_status : in integer) is
 	cur_line : ligne;
 	lignes_passant: listeBus;
 	bus_stop_road : integer;	
@@ -471,14 +481,15 @@ package body arret is
 -- 			put(integer'image(dist));
 -- 			put_line(integer'image(cur_speed));
 
- 			bus_stop.position(id , dist , cur_speed);
+ 			bus_stop.position(id , dist , cur_speed , cur_status);
 	end storeInformations;
 
 	procedure storeBus (id : in natural ;
 			distance : in integer ;
-			cs : in integer) is
+			cs : in integer;
+			status : in integer) is
 	begin
-		bus_stop.position(id , distance , cs);
+		bus_stop.position(id , distance , cs , status);
 	end storeBus;
 
 	procedure getAttente is
