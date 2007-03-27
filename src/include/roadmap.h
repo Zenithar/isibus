@@ -68,6 +68,7 @@ private:
 
 public:
 	string createLinePath(const int line);
+	void dijkstra(int src, int dest);
 			
 	inline int getNbRoads() { return m_iNbRoads; }
 	inline int getNbBus() { return m_iNbBus; }
