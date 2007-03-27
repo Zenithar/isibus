@@ -26,7 +26,10 @@ namespace isibus
 				BusEolMsg(ControlCenter* cc):m_cc(cc) {}
 			
 				void OnMessage(IvyApplication *app, int argc, const char **argv)
-				{					
+				{
+					Bus* temp = m_cc->m_RoadMap->getBusList()[atoi(argv[0])];
+					
+					m_cc->bus->SendMsg("%s id=%d passengers=%d line=%s",temp->getAppName().c_str(), temp->getID(), temp->getCapacity(), m_cc->createLinePath(temp->getLine()));
 				}
 			
 			private:
