@@ -30,6 +30,13 @@ namespace isibus
 				cout << "Starting Bus " << argv[0] << endl;
 				Bus* temp = m_cc->incBusPool(atoi(argv[0]));
 				
+				if(temp == NULL)
+				{
+					cout << "Bus can't be registred, no pool available !" << endl;
+					app->Die();
+					return;
+				}
+				
 				// Envoie des informations à l'instance
 				// Bus_12134 id=1 passenger=50 line=1:1,300;2,300;3,300;4,300;
 				m_cc->bus->SendMsg("Bus_%s id=%d passengers=%d line=%s",argv[0], temp->getID(), temp->getCapacity(), m_cc->createLinePath(temp->getLine()));

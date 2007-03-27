@@ -28,6 +28,7 @@ public:
 public:
 	const char *GetName(void);
 	const char *GetHost(void);
+	void  Die(void);
 
 
 

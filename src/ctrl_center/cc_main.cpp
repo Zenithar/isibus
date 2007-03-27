@@ -38,6 +38,8 @@ ControlCenter::ControlCenter()
 	
 	bus->BindMsg( "^Station_([0-9]+) Start", new msg::StationStartMsg(this) );
 	
+	bus->BindMsg( "^gui createBus passengers=([0-9]+) line=([0-9]+)", new msg::BusCreateMsg(this));
+	
 	bus->BindDirectMsg(this);
 }
 
@@ -100,6 +102,18 @@ Station* ControlCenter :: incStationPool(int app_id)
 void ControlCenter :: decStationPool(int app_id)
 {
 	bus->SendMsg("Station_%d Stop", app_id);
+}
+
+Bus* ControlCenter :: registerBus(int capacity, int line)
+{
+	Bus* b = NULL;
+	
+	b = new Bus(getNbRunningBus()+1, capacity, line, m_RoadMap->getLineList()[line][0]->getID());
+		
+	m_RoadMap->getBusList().insert(std::make_pair(b->getID(), b));
+	b->Start();
+	
+	return b;
 }
 
 void ControlCenter :: OnMessage(IvyApplication *app, int argc, const char **argv)
