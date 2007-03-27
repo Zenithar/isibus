@@ -7,7 +7,9 @@ maxStation : constant integer := 7;
 
 --Id du bus
 Id: String := "Bus_";
-num_bus : natural; 
+num_bus : natural;
+
+id_bus : integer;
 
 estInitialise : boolean := FALSE;
 --Incidents
@@ -35,5 +37,10 @@ procedure nextStop ( 	nextStationId : in integer;
 			pos : in integer);
 
 procedure Speed (	change : in integer);
+
+procedure emeute;
+procedure panne;
+procedure bouchon;
+procedure ok;
 
 end bus_de_ligne;

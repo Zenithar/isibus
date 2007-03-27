@@ -46,7 +46,6 @@ task body BUS is
 vitesse : integer := 0;
 sens : integer := 1;
 
-id_bus : integer;
 passager : integer;
 ligne : integer;
 itineraire : circuit;
@@ -149,155 +148,190 @@ begin
 
 			if (estInitialise)
 			then
-	
-				if (cpt <= nb_roads)
+				if (situation = 0 or situation = 1)
 				then
-					if (road_stop = false)
+					if (cpt <= nb_roads)
 					then
-						if ((nbCaseParcouru + vitesse) = nbCaseAParcourir)
-						then	
-							put_line("Bus en fin de route");
-							cpt := cpt + 1;
-
-							nbCaseParcouru := 0;
-							portion := itineraire(cpt).num;
-							nbCaseAParcourir := itineraire(cpt).length;
-	
-							Ivy.SendMsg("Bus id="&integer'image(id_bus)
-							&" line="&integer'image(ligne)
-							&" pos="&integer'image(portion)
-							&","&integer'image(nbCaseParcouru)
-							&" capacity="&integer'image(passager)
-							&" speed="&integer'image(vitesse)
-							&" status="&integer'image(situation));
-	
-							select
-								when noStop =>
-								accept setNextStop ( 
-									Station_Id : in integer;
-									Station_pos : in integer)do
-								nextStationId := Station_Id;
-								nextStationPos := Station_pos;
-								road_stop := TRUE;
-								noStop := FALSE;
-								end setNextStop;
-							or
-								delay(0.2);
-							end select;
-						else
-			
-							--Affichage
-							put("Ancienne valeur de nbCaseParcouru: ");
-							put(integer'image(nbCaseParcouru));
-							put("/");
-							put_line(integer'image(nbCaseAParcourir));
-							
-							nbCaseParcouru := nbCaseParcouru + vitesse;
-							
-							--Affichage
-							put("Nouvelle valeur de nbCaseParcouru: ");
-							put(integer'image(nbCaseParcouru));
-							put("/");
-							put_line(integer'image(nbCaseAParcourir));
-							
-							
-							put("Ancienne Vitesse: ");
-							put_line(integer'image(vitesse));
-							
- 							if (vitesse < (nbCaseAParcourir - nbCaseParcouru) and then vitesse < 14)--50km/h ~ 14m/S
-							then
-								vitesse := vitesse + 1 * sens;
-								put("Nouvelle Vitesse: ");
-								put_line(integer'image(vitesse));
-								
-							elsif (vitesse > (nbCaseAParcourir - nbCaseParcouru))
-								then
-									while(vitesse > (nbCaseAParcourir - nbCaseParcouru))
-									loop
-									vitesse := vitesse -1;
-									put("Nouvelle Vitesse: ");
-									put_line(integer'image(vitesse));
-									
-									end loop;
-							end if;
-						end if;
-					else
-						if (nbCaseParcouru = nextStationPos)
+						if (road_stop = false)
 						then
-							while(vitesse > 0)
-							loop
-								vitesse := vitesse -1;
-								put("Nouvelle Vitesse: ");
-								put_line(integer'image(vitesse));
-							end loop;
-							
-							situation := 1;
-
-							put("Bus arrivee a la station");
-							put_line(integer'image(nextStationId));
-
-							Ivy.SendMsg("Bus id="&integer'image(id_bus)
-							&" line="&integer'image(ligne)
-							&" pos="&integer'image(portion)
-							&","&integer'image(nbCaseParcouru)
-							&" capacity="&integer'image(passager)
-							&" speed="&integer'image(vitesse)
-							&" status="&integer'image(situation));
-							road_stop := FALSE;
-							noStop := TRUE;
-
-							situation := 0;
-
-							
-						else
-			
-							--Affichage
-							put("Ancienne valeur de nbCaseParcouru: ");
-							put(integer'image(nbCaseParcouru));
-							put("/");
-							put_line(integer'image(nextStationPos));
-							
-							nbCaseParcouru := nbCaseParcouru + vitesse;
-							
-							--Affichage
-							put("Nouvelle valeur de nbCaseParcouru: ");
-							put(integer'image(nbCaseParcouru));
-							put("/");
-							put_line(integer'image(nextStationPos));
-							
-							
-							put("Ancienne Vitesse: ");
-							put_line(integer'image(vitesse));
-							
-							if (vitesse < (nextStationPos - nbCaseParcouru) and then vitesse < 14)--50km/h ~ 14m/S
-							then
-								vitesse := vitesse + 1 * sens;
-								put("Nouvelle Vitesse: ");
+							if ((nbCaseParcouru + vitesse) = nbCaseAParcourir)
+							then	
+								put_line("Bus en fin de route");
+								cpt := cpt + 1;
+	
+								nbCaseParcouru := 0;
+								portion := itineraire(cpt).num;
+								nbCaseAParcourir := itineraire(cpt).length;
+		
+								Ivy.SendMsg("Bus id="&integer'image(id_bus)
+								&" line="&integer'image(ligne)
+								&" pos="&integer'image(portion)
+								&","&integer'image(nbCaseParcouru)
+								&" capacity="&integer'image(passager)
+								&" speed="&integer'image(vitesse)
+								&" status="&integer'image(situation));
+		
+								select
+									when noStop =>
+									accept setNextStop ( 
+										Station_Id : in integer;
+										Station_pos : in integer)do
+									nextStationId := Station_Id;
+									nextStationPos := Station_pos;
+									road_stop := TRUE;
+									noStop := FALSE;
+									end setNextStop;
+								or
+									delay(0.2);
+								end select;
+							else
+				
+								--Affichage
+								put("Ancienne valeur de nbCaseParcouru: ");
+								put(integer'image(nbCaseParcouru));
+								put("/");
+								put_line(integer'image(nbCaseAParcourir));
+								
+								nbCaseParcouru := nbCaseParcouru + vitesse;
+								
+								--Affichage
+								put("Nouvelle valeur de nbCaseParcouru: ");
+								put(integer'image(nbCaseParcouru));
+								put("/");
+								put_line(integer'image(nbCaseAParcourir));
+								
+								
+								put("Ancienne Vitesse: ");
 								put_line(integer'image(vitesse));
 								
-							elsif (vitesse >= (nextStationPos - nbCaseParcouru))
+								if (vitesse < (nbCaseAParcourir - nbCaseParcouru) and then vitesse < 14)--50km/h ~ 14m/S
 								then
-									while(vitesse > (nextStationPos - nbCaseParcouru))
-									loop
-									vitesse := vitesse -1;
-									
+									vitesse := vitesse + 1 * sens;
 									put("Nouvelle Vitesse: ");
 									put_line(integer'image(vitesse));
 									
-									end loop;
+								elsif (vitesse > (nbCaseAParcourir - nbCaseParcouru))
+									then
+										while(vitesse > (nbCaseAParcourir - nbCaseParcouru))
+										loop
+										vitesse := vitesse -1;
+										put("Nouvelle Vitesse: ");
+										put_line(integer'image(vitesse));
+										
+										end loop;
+								end if;
+							end if;
+						else
+							if (nbCaseParcouru = nextStationPos)
+							then
+								while(vitesse > 0)
+								loop
+									vitesse := vitesse -1;
+									put("Nouvelle Vitesse: ");
+									put_line(integer'image(vitesse));
+								end loop;
+								
+								situation := 1;
+	
+								put("Bus arrivee a la station");
+								put_line(integer'image(nextStationId));
+	
+								Ivy.SendMsg("Bus id="&integer'image(id_bus)
+								&" line="&integer'image(ligne)
+								&" pos="&integer'image(portion)
+								&","&integer'image(nbCaseParcouru)
+								&" capacity="&integer'image(passager)
+								&" speed="&integer'image(vitesse)
+								&" status="&integer'image(situation));
+								road_stop := FALSE;
+								noStop := TRUE;
+	
+								situation := 0;
+	
+								
+							else
+				
+								--Affichage
+								put("Ancienne valeur de nbCaseParcouru: ");
+								put(integer'image(nbCaseParcouru));
+								put("/");
+								put_line(integer'image(nextStationPos));
+								
+								nbCaseParcouru := nbCaseParcouru + vitesse;
+								
+								--Affichage
+								put("Nouvelle valeur de nbCaseParcouru: ");
+								put(integer'image(nbCaseParcouru));
+								put("/");
+								put_line(integer'image(nextStationPos));
+								
+								
+								put("Ancienne Vitesse: ");
+								put_line(integer'image(vitesse));
+								
+								if (vitesse < (nextStationPos - nbCaseParcouru) and then vitesse < 14)--50km/h ~ 14m/S
+								then
+									vitesse := vitesse + 1 * sens;
+									put("Nouvelle Vitesse: ");
+									put_line(integer'image(vitesse));
+									
+								elsif (vitesse >= (nextStationPos - nbCaseParcouru))
+									then
+										while(vitesse > (nextStationPos - nbCaseParcouru))
+										loop
+										vitesse := vitesse -1;
+										
+										put("Nouvelle Vitesse: ");
+										put_line(integer'image(vitesse));
+										
+										end loop;
+								end if;
 							end if;
 						end if;
+						
+					else
+	-- 					Bus id=([0-9]+) EOL
+	
+						Ivy.SendMsg("Bus id="&integer'image(id_bus)&" EOL");
+	
+						put_line("Le Bus a fini son itinéraire");
+						estInitialise := FALSE;
+						cpt := 0;
 					end if;
+				elsif (situation = 2)
+				then
+					while(vitesse > 0)
+					loop
+					vitesse := vitesse -1;
 					
-				else
--- 					Bus id=([0-9]+) EOL
-
-					Ivy.SendMsg("Bus id="&integer'image(id_bus)&" EOL");
-
-					put_line("Le Bus a fini son itinéraire");
-					estInitialise := FALSE;
-					cpt := 0;
+					put("Nouvelle Vitesse: ");
+					put_line(integer'image(vitesse));
+					
+					end loop;
+					put_line("Emeute");
+				elsif (situation = 3)
+				then
+					while(vitesse > 0)
+					loop
+					vitesse := vitesse -1;
+					
+					put("Nouvelle Vitesse: ");
+					put_line(integer'image(vitesse));
+					
+					end loop;
+					put_line("Panne");
+				elsif (situation = 4)
+				then
+					while(vitesse > 1)
+					loop
+					vitesse := vitesse -1;
+					
+					put("Nouvelle Vitesse: ");
+					put_line(integer'image(vitesse));
+					end loop;
+					put_line("Bouchon");
 				end if;
+				
 			else 
 				put_line("Le Bus attends ses instructions");
 			end if;
@@ -341,6 +375,31 @@ begin
 	BUS.setSpeed(change);
 end Speed;
 
+procedure emeute is
+begin
+--	Bus id= ([0-9]+) emeute
+	Ivy.SendMsg("Bus id="&integer'image(id_bus)&" emeute");
+	situation := 2;
+end emeute;
+
+procedure panne is
+begin
+-- 	Bus id= ([0-9]+) panne
+	Ivy.SendMsg("Bus id="&integer'image(id_bus)&" panne");
+	situation := 3;
+end panne;
+
+procedure bouchon is
+begin
+-- 	Bus id= ([0-9]+) bouchon
+	Ivy.SendMsg("Bus id="&integer'image(id_bus)&" bouchon");
+	situation := 4;
+end bouchon;
+
+procedure ok is
+begin
+	situation := 0;
+end ok;
 
 procedure start is
 
@@ -422,6 +481,34 @@ begin
 	Ivy.BindMsg( 	MsgCallback => Bus_Cb.speed'access,
 			User_Data        => 0,
 			Regexp      => To_String(To_Unbounded_String("^Bus id="& integer'image(bus_num) &" speed=([+|-][0-9]+)"))
+		);
+	
+	delay(0.1);
+-- 	gui id=([0-9]+) emeute
+	Ivy.BindMsg( 	MsgCallback => Bus_Cb.emeute'access,
+			User_Data        => 0,
+			Regexp      => To_String(To_Unbounded_String("^gui id="& integer'image(bus_num) &" emeute"))
+		);
+
+	delay(0.1);
+-- 	gui id=([0-9]+) panne
+	Ivy.BindMsg( 	MsgCallback => Bus_Cb.panne'access,
+			User_Data        => 0,
+			Regexp      => To_String(To_Unbounded_String("^gui id="& integer'image(bus_num) &" panne"))
+		);
+
+	delay(0.1);
+-- 	gui id=([0-9]+) bouchon
+	Ivy.BindMsg( 	MsgCallback => Bus_Cb.bouchon'access,
+			User_Data        => 0,
+			Regexp      => To_String(To_Unbounded_String("^gui id="& integer'image(bus_num) &" bouchon"))
+		);
+
+	delay(0.1);
+-- 	gui id=([0-9]+) bouchon
+	Ivy.BindMsg( 	MsgCallback => Bus_Cb.ok'access,
+			User_Data        => 0,
+			Regexp      => To_String(To_Unbounded_String("^gui id="& integer'image(bus_num) &" ok"))
 		);
 
 	while (true)
