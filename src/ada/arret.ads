@@ -72,4 +72,6 @@ procedure storeBus	(id : in natural ;
 
 procedure setLignesCircuit (liste : in listeBus);
 
+procedure getAttente;
+
 end arret;

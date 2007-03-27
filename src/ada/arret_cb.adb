@@ -217,4 +217,13 @@ procedure attente(	app : AppClientPtr_T;
 	end if;
 end attente;
 
+procedure getAttente(	app : AppClientPtr_T;
+                	user_data : UserData_T;
+                	argc : C_Int_T;
+                	argv : C_Char_Etoile_Etoile_T) is
+begin
+	arret.getAttente;
+end getAttente;
+
+
 end Arret_Cb;
