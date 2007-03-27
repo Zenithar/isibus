@@ -15,6 +15,7 @@
 #include <QGraphicsScene>
 #include <QPixmap>
 #include <QLinkedList>
+#include <QPoint>
 
 #include <QtGui>
 
@@ -45,6 +46,8 @@ class IvyWorker : public QThread, public IvyApplicationCallback, public IvyMessa
 	signals:
 		void sigAddMessage(const QString &message);
 		void sigMoveBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse);
+		void sigRefreshStationInfo(const int &id,const int &id1,const int &h1,const QString &s1,const int &id2,const int &h2,const QString &s2,const int &id3,const int &h3,const QString &s3 );
+
 
 	public:
 		void OnApplicationConnected(IvyApplication *app);
@@ -53,6 +56,7 @@ class IvyWorker : public QThread, public IvyApplicationCallback, public IvyMessa
 		void OnDirectMessage (IvyApplication *app, int id, const char *arg );
 
 		void MoveBus (const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse);
+		void RefreshStationInfo(const int &id,const int &id1,const int &h1,const QString &s1,const int &id2,const int &h2,const QString &s2,const int &id3,const int &h3,const QString &s3 );
 	public:
 		Ivy *bus;	
 
@@ -79,11 +83,23 @@ public:
 
 	void initIvy();
 	
+
 private slots:
 	void addBus(int id);
+	void delBus();
+	void slowBus();
+	void accelBus();
+	void viewBusInfo();
+	void viewStationInfo();
+	void actionEmeute();
+	void actionBouchon();
+	void actionPanne();
+
+
 	void ajouterMessage(const QString &message);
+	void rafraichirArretInfo(const int &id,const int &id1,const int &h1,const QString &s1,const int &id2,const int &h2,const QString &s2,const int &id3,const int &h3,const QString &s3 );
 	void bougerBus(const int &id, const int &ligne,const int &route,const int &segment,const int &capacite,const int &vitesse);
-	
+
 private:
 	QHash<int, QList<QPixmap>* > mAnimation;
 	QGraphicsScene *field;
@@ -94,6 +110,9 @@ private:
 	
 	IvyWorker* worker;
 	pthread_mutex_t verrou;
+	QList<QString> nomarret;
+	int iDBusSelected;
+	int iDarretSelected;
 };
 
 }
