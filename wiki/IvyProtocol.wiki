@@ -15,6 +15,7 @@ Messages triggered by the ControlCenter :
 || gui id=([0-9]+) acceleter || int || || gui || Increase speed of the bus ||
 || gui id=([0-9]+) ralentir||  int || || gui || Decrease speed of bus ||
 || gui id=([0-9]+) delete||  int || || gui || Delete the bus ||
+|| gui route_id=([0-9]+) pbciruclation||  int || || gui || Blocked road ||
 
 = Bus =
 
