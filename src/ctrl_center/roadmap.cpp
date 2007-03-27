@@ -23,6 +23,12 @@ RoadMap::RoadMap()
 
 RoadMap::~RoadMap()
 {
+	cout << "Destruction du reseau routier" << endl;
+	
+	for(BusList::iterator it = m_BusList.begin();it != m_BusList.end(); it++)
+	{
+		delete it->second;
+	}
 }
 
 vector<string> RoadMap::split(const string &sep,string text)

@@ -29,8 +29,11 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 	
-	ControlCenter cc;
-	cc.loadMap(argv[1], true);
+	ControlCenter* cc = new ControlCenter();
+	cc->loadMap(argv[1], true);
 	
-	return cc.mainLoop();
+	cc->mainLoop();
+	
+	delete cc;
+	return 0;
 }
