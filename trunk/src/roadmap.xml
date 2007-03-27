@@ -25,7 +25,6 @@
 			<node roads="5,6,12"/>
 			<node roads="6,7"/>
 			<node roads="7,8"/>
-			<node roads="8,9"/>
 			<node roads="9,10"/>
 			<node roads="10,11"/>
 			<node roads="11,12"/>

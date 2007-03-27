@@ -27,7 +27,9 @@ namespace isibus
 			
 				void OnMessage(IvyApplication *app, int argc, const char **argv)
 				{
+#ifdef _DEBUG
 					cout << "[GPS] Bus[" << argv[0] << "] line: " << argv[1] << " pos:(" << argv[2] << ":" << argv[3] << ") capacity: " << argv[4] << " speed: " << argv[5] <<  endl;
+#endif
 					
 					Bus* temp = m_cc->m_RoadMap->getBusList()[atoi(argv[0])];
 					

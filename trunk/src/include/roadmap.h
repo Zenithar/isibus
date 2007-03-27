@@ -37,7 +37,7 @@ typedef std::map<int, isibus::Station*> StationList;
 typedef std::map<int, isibus::Bus*> BusList;
 
 typedef std::map<int, std::vector<isibus::Road*> > LinesList;
- 
+
 namespace isibus {
 
 /**

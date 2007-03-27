@@ -88,7 +88,7 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 		m_RoadList.insert(std::make_pair(atoi(xRoad.getAttribute("id")), temp));
 	}
 	
-	// Création du graphe
+	// Lecture des croisements
 	XMLNode xGraph=xCity.getChildNode("graph");
 	int nb_node = xGraph.nChildNode();
 	
@@ -112,10 +112,35 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 		{
 			if(verbose) {
 				cout << " + Connection " << node_id << " to road " << m_RoadList[atoi(roads[j].c_str())]->getName() << endl;
+				m_RoadList[atoi(roads[j].c_str())]->getNodes().push_back(node_id);
 			}
 		}
 		
 		node_id++;
+	}
+	
+	// Création du graphe
+	for(RoadList::iterator it=m_RoadList.begin(); it != m_RoadList.end(); it++)
+	{
+		vector<int> tab = (it->second)->getNodes();
+		
+		if(tab.size() > 2)
+		{
+			cout << "Roadmap Error ! Duplicate node declaration.";
+			return false;
+		}
+		
+		ni_t n1 = m_RoadGraph.find(tab[0]);
+		ni_t n2 = m_RoadGraph.find(tab[1]);
+		
+		n1->insert_edge(n2, (it->second));
+	}
+	
+	for (ni_t ni = m_RoadGraph.begin(); ni != m_RoadGraph.end(); ni++)
+	{
+		cout << "Node " << *ni << std::endl;
+		for (ei_t ei = ni->begin(); ei != ni->end(); ei++)
+			cout << "\t[" << -ei << "-->" << +ei << "] = " << ((Road*)(*ei))->getName() << std::endl;
 	}
 	
 	// Création des lignes de bus
