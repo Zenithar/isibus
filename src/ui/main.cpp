@@ -4,7 +4,6 @@
  #include <QPushButton>
  #include <QWidget>
 
-
 #include "Isibus.h"
 
 using namespace isibus;

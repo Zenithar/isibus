@@ -23,11 +23,11 @@
     <item row="0" column="1" >
      <widget class="QTabWidget" name="tabWidget" >
       <property name="currentIndex" >
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_etat_reseau" >
        <attribute name="title" >
-        <string>Etat du réseau</string>
+        <string>Présentation</string>
        </attribute>
        <layout class="QGridLayout" >
         <property name="margin" >
@@ -36,23 +36,42 @@
         <property name="spacing" >
          <number>6</number>
         </property>
+        <item row="1" column="0" >
+         <widget class="QTextEdit" name="textEdit" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="html" >
+           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Bienvenue sur la simulation d'un réseau urbain IsiBus.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Si vous voulez voir les informations d'un bus, dirigez-vous vers l'onglet "Propriétés du bus", vous pourrez de surcroît piloter le bus. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">L'onglet Arrêt quand à lui sert à afficher les informations relative à un arrêt sélectionné.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Enfin, l'onglet historique permet de voir tous les évènements se déroulants sur Ivy.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Le menu en haut permet de générer des perturbations sur un bus. Il faut noter que l'évènement se situe sur le bus sélectionné dans l'onglet "bus".&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Pour plus de renseignements: dirigez-vous sur http://code.google.com/p/isibus/&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">A bientôt !&lt;/p>&lt;/body>&lt;/html></string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0" >
-         <widget class="QTableWidget" name="tableWidget" >
-          <column>
-           <property name="text" >
-            <string>Ligne</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>Bus</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>Etat</string>
-           </property>
-          </column>
+         <widget class="QLabel" name="label_5" >
+          <property name="text" >
+           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:14pt; font-weight:600;">Bienvenu sur ISIBus !&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
        </layout>
@@ -405,6 +424,9 @@
       </widget>
      </widget>
     </item>
+    <item rowspan="2" row="0" column="0" >
+     <widget class="QGraphicsView" name="mainView" />
+    </item>
     <item row="1" column="1" >
      <widget class="QPushButton" name="addBusButton" >
       <property name="text" >
@@ -420,9 +442,6 @@
        </size>
       </property>
      </widget>
-    </item>
-    <item rowspan="2" row="0" column="0" >
-     <widget class="QGraphicsView" name="mainView" />
     </item>
    </layout>
   </widget>

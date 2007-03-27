@@ -1,4 +1,8 @@
+
 #include "Isibus.h"
+
+
+
 #include "../base/xmlParser.h"
 //#include "msgs.h"
 #include "../include/msg/ui/ui_msg.h"
@@ -286,7 +290,7 @@ void Isibus::wrapSprite( IsiSprite *s )
 
 /* Slots */
 
-void Isibus::addBus(int id)
+void Isibus::ajouterBus(int id)
 {
         // Création de l'objet graphique
 	BusSprite *newBus = new BusSprite( mAnimation.value(ID_BUS_LEFT_TO_RIGHT), field, ID_BUS_LEFT_TO_RIGHT, 2, 1, id );
@@ -298,37 +302,49 @@ void Isibus::addBus(int id)
 	newBus->setFrame(1);
 		
 	buses.push_back(newBus);
-	QString numbus;
-	numbus.setNum(id);
-	widget.cbBus->insertItem("Bus numero" + numbus,id);
+	widget.cbBus->insertItem("Bus numero" + QString::number(id),id);
 	newBus->show( );
 
 }
+
+void Isibus::addBus(){
+	//bus_creation_dialog * BCDlg = new bus_creation_dialog(this);
+	//BCDlg->show(this);
+}
+
 void Isibus::delBus(){
+	worker->bus->SendMsg(" gui id= %d delete ", iDBusSelected);
 	
 }
 void Isibus::slowBus(){
+	worker->bus->SendMsg(" gui id= %d ralentir ", iDBusSelected);
 
 }
 void Isibus::accelBus(){
+	worker->bus->SendMsg(" gui id= %d acceleter ", iDBusSelected);
 }
 void Isibus::viewBusInfo(){
+	
 	// recupération de l'id du bus courant
-
+	iDBusSelected = widget.cbBus->currentItem();
 	// envoie du message
 }
 
 void Isibus::viewStationInfo(){
 	// recupération de l'id de l'arret courant
-
+	iDarretSelected = widget.cb_arret->currentItem();
 	// envoie du message
+	worker->bus->SendMsg("gui getTimes station id= %d", iDarretSelected);
 }
 
 void Isibus::actionEmeute(){
+	worker->bus->SendMsg(" gui id= %d emeute ", iDBusSelected);
 }
 void Isibus::actionBouchon(){
+	worker->bus->SendMsg(" gui id= %d bouchon ", iDBusSelected);
 }
 void Isibus::actionPanne(){
+	worker->bus->SendMsg(" gui id= %d panne ", iDBusSelected);
 }
 
 
@@ -343,7 +359,7 @@ void Isibus::rafraichirArretInfo(const int &id,const int &id1,const int &h1,cons
 {
 	if(id1 != 0)
 	{
-		widget.gbBus1->setTitle("Bus numero" + id1);
+		widget.gbBus1->setTitle("Bus numero" + QString::number(id1));
 	}
 	else
 	{
@@ -351,7 +367,7 @@ void Isibus::rafraichirArretInfo(const int &id,const int &id1,const int &h1,cons
 	}
 	if(id2 != 0)
 	{
-		widget.gbBus1->setTitle("Bus numero" + id2);
+		widget.gbBus1->setTitle("Bus numero" + QString::number(id2));
 	}
 	else
 	{
@@ -359,7 +375,7 @@ void Isibus::rafraichirArretInfo(const int &id,const int &id1,const int &h1,cons
 	}
 	if(id3 != 0)
 	{
-		widget.gbBus1->setTitle("Bus numero" + id3);
+		widget.gbBus1->setTitle("Bus numero" + QString::number(id3));
 	}
 	else
 	{
@@ -439,7 +455,7 @@ void Isibus::bougerBus(const int &id, const int &ligne,const int &route,const in
 
 	if(flag == 0)
 	{
-		addBus(id);
+		ajouterBus(id);
 	}
 
 
@@ -458,7 +474,7 @@ IvyWorker::IvyWorker(QObject * parent):QThread(parent)
 	
 	bus->BindMsg("^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+)", new msg::uiMvBus( this, qobject_cast<Isibus*>(parent) ));	
 
-	bus->BindMsg("^Station id= ([0-9]+) time=(( [0-9]+, [0-9]+;)*) status=(( [0-9]+, [0-9]+;)*)", new msg::uiInfoStation( this, qobject_cast<Isibus*>(parent) ));	
+	bus->BindMsg("^Station id= ([0-9]+) time=(( [0-9]+, [0-9]+, [0-9]+;)*)", new msg::uiInfoStation( this, qobject_cast<Isibus*>(parent) ));	
 
 	bus->BindMsg("(.*)", new msg::UiMsg( this, qobject_cast<Isibus*>(parent) ));
 
