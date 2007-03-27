@@ -93,6 +93,7 @@ public:
 	void decStationPool(int app_id);
 	
 	Bus* registerBus(int capacity, int line);
+	void BusDie(int bus_id);
 	
 private:
 	/**

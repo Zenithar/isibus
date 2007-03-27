@@ -29,6 +29,7 @@ namespace isibus
 			{
 				cout << "Starting Bus " << argv[0] << endl;
 				Bus* temp = m_cc->incBusPool(atoi(argv[0]));
+				temp->setAppName(app->GetName());
 				
 				if(temp == NULL)
 				{
