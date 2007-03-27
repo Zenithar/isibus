@@ -28,6 +28,10 @@ const char *IvyApplication::GetHost(void)
 return IvyC::IvyGetApplicationHost( appptr );
 }
 
+void IvyApplication::Die(void)
+{
+	return IvyC::IvySendDieMsg( appptr );
+}
 
 
 

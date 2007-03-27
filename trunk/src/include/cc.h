@@ -92,6 +92,8 @@ public:
 	Station* incStationPool(int app_id); 
 	void decStationPool(int app_id);
 	
+	Bus* registerBus(int capacity, int line);
+	
 private:
 	/**
 	 * Thread d'execution de centre de controle
