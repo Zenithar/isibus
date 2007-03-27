@@ -27,6 +27,7 @@ Messages triggered by the Bus :
 || gui id=([0-9]+) emeute || int || || gui || Pb with passager ||
 || gui id=([0-9]+) panne||  int || || gui || Pb with engine ||
 || gui id=([0-9]+) bouchon ||  int || || gui || Pb with traffic ||
+|| gui id=([0-9]+) ok ||  int || || gui || traffic ok ||
 
 = Station =
 
