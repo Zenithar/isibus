@@ -53,7 +53,8 @@ public:
 	
 private:
 	vector<string> split(const string &sep,string text);
-
+	vector<Road*> dijkstra(int src, int dest);
+	
 	int		m_iNbRoads;
 	int		m_iNbBus;
 	int		m_iNbStations;
@@ -68,7 +69,7 @@ private:
 
 public:
 	string createLinePath(const int line);
-	vector<Road*> dijkstra(int src, int dest);
+	string StationPath(int s_id, int d_id);
 			
 	inline int getNbRoads() { return m_iNbRoads; }
 	inline int getNbBus() { return m_iNbBus; }
