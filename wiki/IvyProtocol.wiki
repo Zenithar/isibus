@@ -26,6 +26,7 @@ Messages triggered by the Bus :
 || `Station id=([0-9]+) bus_id=([0-9]+) len=([0-9]+)` || int, int, int || || Station || The station send his position, relative to the bus position on the common road portion. ||
 || gui id=([0-9]+) emeute || int || || gui || Pb with passager ||
 || gui id=([0-9]+) panne||  int || || gui || Pb with engine ||
+|| gui id=([0-9]+) bouchon ||  int || || gui || Pb with traffic ||
 
 = Station =
 
