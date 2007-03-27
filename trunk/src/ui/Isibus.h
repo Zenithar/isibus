@@ -29,6 +29,8 @@
 #include "IvyApplication.h"
 #include "roadmap.h"
 
+#include "bus_creation_dialog.h"
+
 #include <pthread.h>
 
 //#include "../base/xmlParser.h"
@@ -61,7 +63,7 @@ class IvyWorker : public QThread, public IvyApplicationCallback, public IvyMessa
 		Ivy *bus;	
 
 };
-	
+
 class Isibus : public QMainWindow
 {
 	Q_OBJECT
@@ -85,7 +87,8 @@ public:
 	
 
 private slots:
-	void addBus(int id);
+	void ajouterBus(int id);
+	void addBus();
 	void delBus();
 	void slowBus();
 	void accelBus();

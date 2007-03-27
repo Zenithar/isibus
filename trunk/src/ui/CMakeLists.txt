@@ -20,14 +20,17 @@ include_directories(
 set(isibus_sources
 	main.cpp
 	Isibus.cpp
+	bus_creation_dialog.cpp
 	../base/xmlParser.cpp
 	../base/IvyApplication.cxx
 	../base/Ivy.cxx
 )
 set(isibus_ui
 	Isibus.ui
+	bus_creation_dialog.ui
 )
 set(isibus_moc_classes
+	bus_creation_dialog.h
 	Isibus.h
 	sprites.h
 )
