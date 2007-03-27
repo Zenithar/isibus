@@ -24,7 +24,7 @@ Messages triggered by the Bus :
 
 || Protocol || Parameters || Callback Class || From || Description ||
 || `Bus_([0-9]+) id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)` || instance_id,int,int,int,string || || CC || Initialise the bus process, with control center data. Send the internal bus id, its capacity, and the affected line. ||
-|| `Station id=([0-9]+) bus_id=([0-9]+) len=([0-9]+)` || int, int, int || || Station || The station send his position, relative to the bus position on the common road portion. ||
+|| `Station id= ([0-9]+) bus_id= ([0-9]+) len= ([0-9]+)` || int, int, int || || Station || The station send his position, relative to the bus position on the common road portion. ||
 || gui id= ([0-9]+) emeute || int || || gui || Pb with passager ||
 || gui id= ([0-9]+) panne||  int || || gui || Pb with engine ||
 || gui id= ([0-9]+) bouchon ||  int || || gui || Pb with traffic ||
