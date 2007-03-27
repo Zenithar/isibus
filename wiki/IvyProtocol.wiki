@@ -43,7 +43,7 @@ Messages triggered by the Station :
 Messages triggered by the GUI :
 
 || Protocol || Parameters || Callback Class || From || Description ||
-|| `Station id= ([0-9]+) time=(( [0-9]+, [0-9]+;)*) status=(( [0-9]+, [0-9]+;)*)`  || int, [int, int]+ || || Station || Send the information from bus traffic to the GUI, & CC. ||
+|| `Station id= ([0-9]+) time=(( [0-9]+, [0-9]+, [0-9]+;)*)`  || int, [int, int]+ || || Station || Send the information from bus traffic to the GUI, & CC. ||
 
 = Scenario =
 
