@@ -17,7 +17,7 @@ Messages triggered by the ControlCenter :
 || gui id=([0-9]+) ralentir||  int || || gui || Decrease speed of bus ||
 || gui id=([0-9]+) delete||  int || || gui || Delete the bus ||
 || gui route_id=([0-9]+) pbciruclation||  int || || gui || Blocked road ||
-|| CC Station Path=([0-9]+):([0-9]+) || int, int || || gui/bus || Calculate a path between  two station. ||
+|| `CC Station Path=([0-9]+):([0-9]+)` || int, int || || gui/bus || Calculate a path between  two station. ||
 = Bus =
 
 Messages triggered by the Bus :
