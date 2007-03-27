@@ -10,8 +10,9 @@ Messages triggered by the ControlCenter :
 || `Bus id=([0-9]+) line=([0-9]+) pos=([0-9]+),([-]?[0-9]+) capacity=([0-9]+) speed=([0-9]+)` || int, int, int, int, int, int || BusPositionMsg || Bus || Send his position by giving the road id, and the distance on it. Positive distance means the bus is going away, and negative means it's coming back. And the capacity of the bus at the moment. Finally the instant speed.||
 || `Station_([0-9]+) Start` || instance_id || StationStartMsg || Station || Sended by the station process, give to all its instance number. ||
 || `gui createBus id=([0-9]+) passengers=([0-9]+) line=([0-9]+)` || int,int,int || || GUI || Ask to the command center to create a bus. ||
-|| Bus id=([0-9]+) emeute || int || || bus || Pb with passager ||
-|| Bus id=([0-9]+) panne||  int || || bus || Pb with engine ||
+|| Bus id= ([0-9]+) emeute || int || || bus || Pb with passager ||
+|| Bus id= ([0-9]+) panne||  int || || bus || Pb with engine ||
+|| Bus id= ([0-9]+) bouchon||  int || || bus || Pb with engine ||
 || gui id=([0-9]+) acceleter || int || || gui || Increase speed of the bus ||
 || gui id=([0-9]+) ralentir||  int || || gui || Decrease speed of bus ||
 || gui id=([0-9]+) delete||  int || || gui || Delete the bus ||
@@ -24,10 +25,10 @@ Messages triggered by the Bus :
 || Protocol || Parameters || Callback Class || From || Description ||
 || `Bus_([0-9]+) id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)` || instance_id,int,int,int,string || || CC || Initialise the bus process, with control center data. Send the internal bus id, its capacity, and the affected line. ||
 || `Station id=([0-9]+) bus_id=([0-9]+) len=([0-9]+)` || int, int, int || || Station || The station send his position, relative to the bus position on the common road portion. ||
-|| gui id=([0-9]+) emeute || int || || gui || Pb with passager ||
-|| gui id=([0-9]+) panne||  int || || gui || Pb with engine ||
-|| gui id=([0-9]+) bouchon ||  int || || gui || Pb with traffic ||
-|| gui id=([0-9]+) ok ||  int || || gui || traffic ok ||
+|| gui id= ([0-9]+) emeute || int || || gui || Pb with passager ||
+|| gui id= ([0-9]+) panne||  int || || gui || Pb with engine ||
+|| gui id= ([0-9]+) bouchon ||  int || || gui || Pb with traffic ||
+|| gui id= ([0-9]+) ok ||  int || || gui || traffic ok ||
 
 = Station =
 
