@@ -137,12 +137,6 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 			cout << "\t[" << -ei << "-->" << +ei << "] = " << ((Road*)(*ei))->getName() << std::endl;
 	}
 	
-	vector<Road*> ret = dijkstra(7, 9);
-	for(int i=0; i<ret.size(); i++)
-	{
-		cout << ret[i]->getID() << " " << ret[i]->getName() << endl;
-	}
-	
 	// Création des lignes de bus
 	XMLNode xLines=xMainNode.getChildNode("lines");
 	m_iNbLines = xLines.nChildNode();
@@ -225,6 +219,27 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 	return true;
 }
 
+string RoadMap :: StationPath(int s_id, int d_id)
+{
+	stringstream s;
+	
+	int road_s = m_StationList[s_id]->getRoadID();
+	int road_d = m_StationList[d_id]->getRoadID();
+	
+	vector<Road*> ret = dijkstra(m_RoadList[road_s]->getNodes()[0], m_RoadList[road_d]->getNodes()[0]);
+	
+	s << s_id << "-" << d_id << ":";
+	
+	for(int i=ret.size()-1; i>=0; i--)
+	{
+		s << ret[i]->getID() << "," << ret[i]->getLen() << ";";
+	}
+	
+	s << m_RoadList[road_d]->getID() << "," << m_RoadList[road_d]->getLen() << ";";
+	
+	return s.str();
+}
+
 vector<Road*> RoadMap :: dijkstra(int src, int dest)
 {    
 	vector<Road*> ret;
@@ -302,14 +317,10 @@ vector<Road*> RoadMap :: dijkstra(int src, int dest)
 		return ret;
 	}
     
-	std::cout << "Path from " << dest << " to " << src << std::endl;
-    
 	/* output the path (in reverse order) */
 	i = dest;
-	int sum = 0;
 	while (1)
 	{
-		std::cout << i << " ";
 		int j = i;
 	
 		/* t[i] is i's father */
@@ -319,12 +330,8 @@ vector<Road*> RoadMap :: dijkstra(int src, int dest)
 	    
 		/* add the edge cost */
 		ret.push_back(((Road*)*(m_RoadGraph.find(i)->find_edge(m_RoadGraph.find(j)))));
-		
-		sum += ((Road*)*(m_RoadGraph.find(i)->find_edge(m_RoadGraph.find(j))))->getLen(); 
 	}
-    
-	std::cout << std::endl;
-	std::cout << "Cost: " << sum << std::endl;
+
 	
 	return ret;
 }
