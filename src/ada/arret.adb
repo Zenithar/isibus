@@ -394,6 +394,10 @@ package body arret is
 			Regexp      => To_String(To_Unbounded_String("^Bus_([0-9]+) id=([0-9]+) passengers=([0-9]+) line=([0-9]):(([0-9]+,[0-9]+;)*)"))
 		   );
 
+		--Contacte le CC pour l'informer du départ du bus
+		delay(0.1);
+		Ivy.SendMsg(Id_station & natural'image(num_station)(2..natural'image(num_station)'LENGTH) & " Start");
+
 		while(true)
 		loop
 
