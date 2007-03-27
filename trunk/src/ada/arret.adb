@@ -21,7 +21,8 @@ package body arret is
 		ENTRY position	(id : natural ; distance : integer ;cs : integer);
 		ENTRY init (id : integer ; route : integer ; bus_line : listeBus ; pos_len : integer);
 		ENTRY setLignes ( liste : listeBus);
-	
+		ENTRY getAttente;	
+
 		function calc_time return boolean;
 		function isInit return boolean;
 		function hasThis(line : in integer) return boolean;
@@ -156,6 +157,41 @@ package body arret is
 	
 		--end remove;
 	
+		ENTRY getAttente when nb_bus_passant_par_l_arret > 0 is
+
+		i : integer := 0;
+		timeleft : integer;
+		buffer : Unbounded_String;
+
+		begin
+-- 			Station id= ([0-9]+) time=(( [0-9]+, [0-9]+;)*)
+			buffer := To_Unbounded_String("Station id=" & integer'image(Station_id) & " time=");
+			while ( i < nb_bus_passant_par_l_arret)
+			loop
+
+			if (liste_attente(i).dist >= 0)
+			then
+				buffer := To_Unbounded_String(To_String(buffer) & natural'image(liste_attente(i).bus_id) & ",");
+				if (liste_attente(i).speed /= 0)
+				then
+					--Calcul du temps
+					timeleft := liste_attente(i).dist / liste_attente(i).speed;
+					buffer := To_Unbounded_String(To_String(buffer) & integer'image(timeleft) & ";");
+				else
+					timeleft := liste_attente(i).dist / 14;
+					buffer := To_Unbounded_String(To_String(buffer) & integer'image(timeleft) & ";");
+				end if;
+				--Incrementation compteur de boucle
+				i := i + 1;
+			end if;
+			end loop;
+
+			Ivy.SendMsg(To_String(buffer));
+
+		end getAttente;
+
+
+
 		ENTRY position(id : natural ; distance : integer ;cs : integer) when TRUE is
 		
 		temp : a_bus;
@@ -296,6 +332,13 @@ package body arret is
 
 			if (bus_stop.isInit)
 			then
+-- 				gui getTimes station id= ([0-9]+)
+				delay(0.1);
+ 				Ivy.BindMsg( MsgCallback => Arret_Cb.getAttente'access,
+					User_Data        => 0,
+					Regexp      => To_String(To_Unbounded_String("^gui getTimes station id="
+							& integer'image(bus_stop.getStationId)))
+			);
 				--Tests
 				while(TRUE)
 				loop
@@ -355,7 +398,6 @@ package body arret is
 	dist : integer := 0;
 	liste_bus : bus_attendu;
 	cpt : integer := 1;
-	ptr : integer;
 
 
 	begin
@@ -438,6 +480,11 @@ package body arret is
 	begin
 		bus_stop.position(id , distance , cs);
 	end storeBus;
+
+	procedure getAttente is
+	begin
+		bus_stop.getAttente;
+	end;
 
 
 end arret;
