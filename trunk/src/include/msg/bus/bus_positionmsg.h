@@ -31,10 +31,9 @@ namespace isibus
 					cout << "[GPS] Bus[" << argv[0] << "] line: " << argv[1] << " pos:(" << argv[2] << ":" << argv[3] << ") capacity: " << argv[4] << " speed: " << argv[5] <<  endl;
 #endif
 					
-					Bus* temp = m_cc->m_RoadMap->getBusList()[atoi(argv[0])];
-					
 					pthread_mutex_lock(&verrou);
 					
+					Bus* temp = m_cc->m_RoadMap->getBusList()[atoi(argv[0])];
 					temp->setLine(atoi(argv[1]));
 					temp->setRoadID(atoi(argv[2]));
 					temp->setRoadDistance(atoi(argv[3]));
