@@ -27,6 +27,7 @@ namespace isibus
 			
 				void OnMessage(IvyApplication *app, int argc, const char **argv)
 				{
+					m_cc->BusDie(atoi(argv[0]));
 				}
 			
 			private:

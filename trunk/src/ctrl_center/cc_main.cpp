@@ -40,7 +40,7 @@ ControlCenter::ControlCenter()
 	bus->BindMsg( "^CC Station Path=([0-9]+):([0-9]+)", new msg::StationPathMsg(this) );
 	
 	bus->BindMsg( "^gui createBus passengers=([0-9]+) line=([0-9]+)", new msg::BusCreateMsg(this));
-	bus->BindMsg( "^ĝui deleteBus id=([0-9]+)", new msg::BusDeleteMsg(this));
+	bus->BindMsg( "^gui deleteBus id=([0-9]+)", new msg::BusDeleteMsg(this));
 	
 	bus->BindDirectMsg(this);
 }
@@ -72,7 +72,7 @@ Bus* ControlCenter :: incBusPool(int app_id)
 			cout << "Bus_" << app_id << " affected to bus id=" << iter->second->getID() << endl; 
 			
 			BusPool[app_id] = iter->second->getID();
-			m_nbRunningBus++;
+			m_nbRunningBus++;			
 			return iter->second;
 		}
 		i++; iter++;
@@ -118,6 +118,11 @@ Bus* ControlCenter :: registerBus(int capacity, int line)
 	cout << "[BUS] ID:" << b->getID() << " LINE:" << b->getLine() << endl;
 	
 	return b;
+}
+
+void ControlCenter :: BusDie(int bus_id)
+{
+	delete m_RoadMap->getBusList()[bus_id];
 }
 
 void ControlCenter :: OnMessage(IvyApplication *app, int argc, const char **argv)

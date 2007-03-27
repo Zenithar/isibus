@@ -14,6 +14,12 @@
 
 #include <stdlib.h>
 
+#include "Ivycpp.h"
+#include "IvyApplication.h"
+
+#include <string>
+using namespace std;
+
 namespace isibus
 {
 /**
@@ -37,7 +43,9 @@ public:
 		m_iRoadDistance = 0;
 	};
 
-        ~Bus();
+        ~Bus() {
+		IvyC::IvySendDieMsg(IvyC::IvyGetApplication( (char*)m_szAppName.c_str() ));
+	};
 
         int getID() const
         {
@@ -110,8 +118,19 @@ public:
 	}
 	
 	int getStatus() const
-	{
+	{	
 		return m_iStatus;
+	}
+
+	void setAppName(const string& theValue)
+	{
+	        m_szAppName = theValue;
+	}
+	
+
+	string getAppName() const
+	{
+	        return m_szAppName;
 	}
 	
 private:
@@ -122,6 +141,9 @@ private:
 	int m_iRoadID;
 	int m_iRoadDistance;
 	int m_iStatus;
+	
+	string m_szAppName;
+
 };
 
 }
