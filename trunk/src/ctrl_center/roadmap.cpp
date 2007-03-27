@@ -136,6 +136,8 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 			cout << "\t[" << -ei << "-->" << +ei << "] = " << ((Road*)(*ei))->getName() << std::endl;
 	}
 	
+	dijkstra(1, 7);
+	
 	// Création des lignes de bus
 	XMLNode xLines=xMainNode.getChildNode("lines");
 	m_iNbLines = xLines.nChildNode();
@@ -216,6 +218,104 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 	}
 	
 	return true;
+}
+
+void RoadMap :: dijkstra(int src, int dest)
+{    
+	int i;
+	
+	int n = m_RoadGraph.count_nodes();
+    
+	/* the distance array */
+	int *d = new int[n];
+	/* the parent array */
+	int *t = new int[n];
+	/* the selected array */
+	int *s = new int[n];
+    
+	/* assume weights << 30000 */
+	const int INF = 30000;
+    
+	/* initialize distance, parent and selected arrays */
+	for (i = 0; i < n; i++)
+	{
+		d[i] = INF;
+		t[i] = -1;
+		s[i] = 0;
+	}
+    
+	/* make sure src will be the first selected node */
+	d[src] = 0;
+     
+	/* while dest not selected */
+	while (1)
+	{
+		int imin = -1;
+		int dmin = INF;
+	
+		/* find the closest node to the selected set */
+		for (i = 0; i < n; i++)
+			if (!s[i] && 
+						  (imin == -1 || d[i] < dmin))
+		{
+			imin = i;
+			dmin = d[i];
+		}
+	
+		/* no such node found, there may be no path to it */
+		if (imin < 0)
+			break;
+	    
+		/* select node */
+		s[imin] = 1;
+	
+		/* find its iterator */
+		ni_t ni = m_RoadGraph.find(imin);
+	
+		/* browse through its edges */
+		for (ei_t ei = ni->begin(); ei != ni->end(); ei++)
+		{
+			/* relax its edges */
+			int dd = ((Road*)*ei)->getLen()+d[imin];
+			if (dd < d[*ei[1]])
+			{
+				d[*ei[1]] = dd;
+				t[*ei[1]] = imin;
+			}
+		}
+	
+		/* if dest reached, stop */
+		if (imin == dest)
+			break;
+	}
+    
+	if (s[dest] == 0)
+	{
+		std::cout << "Could not reach destination node " << dest << std::endl;
+		return;
+	}
+    
+	std::cout << "Path from " << dest << " to " << src << std::endl;
+    
+	/* output the path (in reverse order) */
+	i = dest;
+	int sum = 0;
+	while (1)
+	{
+		std::cout << i << " ";
+		int j = i;
+	
+		/* t[i] is i's father */
+		i = t[i];
+		if (i < 0)
+			break;
+	    
+		/* add the edge cost */
+		sum += ((Road*)*(m_RoadGraph.find(i)->find_edge(m_RoadGraph.find(j))))->getLen(); 
+	}
+    
+	std::cout << std::endl;
+	std::cout << "Cost: " << sum << std::endl;
 }
 
 } // isibus
