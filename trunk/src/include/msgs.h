@@ -20,6 +20,7 @@
 #include "msg/bus/bus_positionmsg.h"
 #include "msg/bus/bus_createmsg.h"
 #include "msg/bus/bus_deletemsg.h"
+#include "msg/bus/bus_eolmsg.h"
 
 /*********************************************************************************************
  * Station

@@ -35,7 +35,7 @@ ControlCenter::ControlCenter()
 	// Connexion aux services
 	bus->BindMsg( "^Bus_([0-9]+) Start", new msg::BusStartMsg(this) );
 	bus->BindMsg( "^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+) status= ([0-9]+)", new msg::BusPositionMsg(this) );
-	
+	bus->BindMsg( "^Bus id=([0-9]+) EOL", new msg::BusEolMsg(this));
 	bus->BindMsg( "^Station_([0-9]+) Start", new msg::StationStartMsg(this) );
 	bus->BindMsg( "^CC Station Path=([0-9]+):([0-9]+)", new msg::StationPathMsg(this) );
 	
