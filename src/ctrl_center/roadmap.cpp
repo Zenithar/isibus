@@ -127,6 +127,7 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 		ni_t n2 = m_RoadGraph.find(tab[1]);
 		
 		n1->insert_edge(n2, (it->second));
+		n2->insert_edge(n1, (it->second));
 	}
 	
 	for (ni_t ni = m_RoadGraph.begin(); ni != m_RoadGraph.end(); ni++)
@@ -136,7 +137,11 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 			cout << "\t[" << -ei << "-->" << +ei << "] = " << ((Road*)(*ei))->getName() << std::endl;
 	}
 	
-	dijkstra(1, 7);
+	vector<Road*> ret = dijkstra(7, 9);
+	for(int i=0; i<ret.size(); i++)
+	{
+		cout << ret[i]->getID() << " " << ret[i]->getName() << endl;
+	}
 	
 	// Création des lignes de bus
 	XMLNode xLines=xMainNode.getChildNode("lines");
@@ -220,8 +225,10 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 	return true;
 }
 
-void RoadMap :: dijkstra(int src, int dest)
+vector<Road*> RoadMap :: dijkstra(int src, int dest)
 {    
+	vector<Road*> ret;
+	
 	int i;
 	
 	int n = m_RoadGraph.count_nodes();
@@ -292,7 +299,7 @@ void RoadMap :: dijkstra(int src, int dest)
 	if (s[dest] == 0)
 	{
 		std::cout << "Could not reach destination node " << dest << std::endl;
-		return;
+		return ret;
 	}
     
 	std::cout << "Path from " << dest << " to " << src << std::endl;
@@ -311,11 +318,15 @@ void RoadMap :: dijkstra(int src, int dest)
 			break;
 	    
 		/* add the edge cost */
+		ret.push_back(((Road*)*(m_RoadGraph.find(i)->find_edge(m_RoadGraph.find(j)))));
+		
 		sum += ((Road*)*(m_RoadGraph.find(i)->find_edge(m_RoadGraph.find(j))))->getLen(); 
 	}
     
 	std::cout << std::endl;
 	std::cout << "Cost: " << sum << std::endl;
+	
+	return ret;
 }
 
 } // isibus
