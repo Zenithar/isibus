@@ -40,6 +40,7 @@ ControlCenter::ControlCenter()
 	bus->BindMsg( "^CC Station Path=([0-9]+):([0-9]+)", new msg::StationPathMsg(this) );
 	
 	bus->BindMsg( "^gui createBus passengers=([0-9]+) line=([0-9]+)", new msg::BusCreateMsg(this));
+	bus->BindMsg( "^ĝui deleteBus id=([0-9]+)", new msg::BusDeleteMsg(this));
 	
 	bus->BindDirectMsg(this);
 }
@@ -110,9 +111,11 @@ Bus* ControlCenter :: registerBus(int capacity, int line)
 	Bus* b = NULL;
 	
 	b = new Bus(getNbRunningBus()+1, capacity, line, m_RoadMap->getLineList()[line][0]->getID());
-		
+	
 	m_RoadMap->getBusList().insert(std::make_pair(b->getID(), b));
 	b->Start();
+	
+	cout << "[BUS] ID:" << b->getID() << " LINE:" << b->getLine() << endl;
 	
 	return b;
 }

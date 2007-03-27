@@ -68,7 +68,7 @@ public:
 
 	void Start()
 	{
-		system("lanceur_bus &");
+		system("./lanceur_bus > /dev/null &");
 	}
 
 	void setRoadDistance(int theValue)

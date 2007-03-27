@@ -25,6 +25,11 @@ public:
         Station(int id, int road_id, int len):m_iStation_id(id), m_iRoad_id(road_id), m_iRoadDistance(len) {};
 
         ~Station();
+	
+	void Start()
+	{
+		system("./lanceur_station > /dev/null &");
+	}
 
         int getID() const
         {
