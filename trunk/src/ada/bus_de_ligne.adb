@@ -64,8 +64,7 @@ nextStationPos : integer;
 
 noStop : boolean := TRUE;
 
---Incidents
-situation : boolean := TRUE;
+
 
 begin
 
@@ -94,6 +93,7 @@ begin
 				ligne := bus_line_id;
 				itineraire := bus_line;
 				nb_roads := nb_road;
+				situation := 0;
 				estInitialise := TRUE;
 				put_line("INNNNNIIIITIALLLLLISEEEE");
 			end init;
@@ -168,7 +168,8 @@ begin
 							&" pos="&integer'image(portion)
 							&","&integer'image(nbCaseParcouru)
 							&" capacity="&integer'image(passager)
-							&" speed="&integer'image(vitesse));
+							&" speed="&integer'image(vitesse)
+							&" status="&integer'image(situation));
 	
 							select
 								when noStop =>
@@ -230,6 +231,7 @@ begin
 								put_line(integer'image(vitesse));
 							end loop;
 							
+							situation := 1;
 
 							put("Bus arrivee a la station");
 							put_line(integer'image(nextStationId));
@@ -239,9 +241,12 @@ begin
 							&" pos="&integer'image(portion)
 							&","&integer'image(nbCaseParcouru)
 							&" capacity="&integer'image(passager)
-							&" speed="&integer'image(vitesse));
+							&" speed="&integer'image(vitesse)
+							&" status="&integer'image(situation));
 							road_stop := FALSE;
 							noStop := TRUE;
+
+							situation := 0;
 
 							
 						else
@@ -351,7 +356,6 @@ pos : integer;
 capacity : integer;
 speed : integer;
 
-
 --BODY
 begin
 	--Demarre le generateur
@@ -422,7 +426,7 @@ begin
 		BUS.getposition(bus_num,line,part,pos,capacity,speed);
 		if (part /= 0 and then pos /= 0)
 		then
-		Ivy.SendMsg("Bus id="&integer'image(bus_num)&" line="&integer'image(line)&" pos="&integer'image(part)&","&integer'image(pos)&" capacity="&integer'image(capacity)&" speed="&integer'image(speed));
+		Ivy.SendMsg("Bus id="&integer'image(bus_num)&" line="&integer'image(line)&" pos="&integer'image(part)&","&integer'image(pos)&" capacity="&integer'image(capacity)&" speed="&integer'image(speed)&" status="&integer'image(situation));
 		end if;
 	end loop;
 
