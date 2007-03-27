@@ -400,6 +400,7 @@ end bouchon;
 
 procedure ok is
 begin
+	Ivy.SendMsg("Bus id="&integer'image(id_bus)&" ok");
 	situation := 0;
 end ok;
 
