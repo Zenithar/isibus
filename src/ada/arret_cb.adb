@@ -49,7 +49,6 @@ procedure init(		app : AppClientPtr_T;
 		cur_char := Element(lines,cpt_char);
 		if ( cur_char = ',')
 		then
-			--put_line("Dans le ,");
 			tmp.num := integer'value(To_String(buffer));
 			put("Line : ");
 			put_line(integer'image(tmp.num));
@@ -68,14 +67,11 @@ procedure init(		app : AppClientPtr_T;
 	put_line(integer'image(tmp.num));
 	bus(cpt_bus) := tmp;
 
-	--PB here!!!
+
 	Chars_ptr_pointers.Increment(Tab_arg);
-        --put_line(Value(Tab_arg.all));
+
  	len := integer'value(Value(Tab_arg.all));
 
-	--put_line(integer'image(len));
-
---  	put_line("dsqdsqdqskjdhqsjdhqsjkdhqsjkfhsdjkghjskfghsfjdkghsjdkfghsjkd");
 
  	arret.init(Station_id,road,bus,len);
 
@@ -122,7 +118,6 @@ begin
 		status := integer'value(Value(Tab_arg.all));
 		Chars_ptr_pointers.Increment(Tab_arg);
 
--- 		put_line("Avant storeInformations");
 		arret.storeInformations(id,line,cur_road,cur_pos,cur_capacity,cur_speed,status);
 	end if;
 
@@ -183,14 +178,13 @@ procedure attente(	app : AppClientPtr_T;
 		--Recuperation de la ligne
 	
 		bus_line := To_Unbounded_String(Value(Tab_arg.all));
-		put_line(To_String(bus_line));	
+		--put_line(To_String(bus_line));	
 	
 		while ( (cpt_char <= Length(bus_line)) and then (cpt_road <= maxStation) )
 		loop
 			cur_char := Element(bus_line,cpt_char);
 			if ( cur_char = ',')
 			then
-				--put_line("Dans le ,");
 				tmp.num := integer'value(To_String(buffer));
 				put("Road : ");
 				put(integer'image(tmp.num));
@@ -198,7 +192,6 @@ procedure attente(	app : AppClientPtr_T;
 				Delete (buffer,1,Length(buffer));
 			elsif ( cur_char = ';')
 				then
-					--put_line("Dans le ;");
 					tmp.length := integer'value(To_String(buffer));
 					trajet(cpt_road) := tmp;
 					cpt_road := cpt_road + 1;
@@ -207,7 +200,6 @@ procedure attente(	app : AppClientPtr_T;
 					Delete (buffer,1,Length(buffer));
 				else
 					buffer := buffer & cur_char;
-					--put_line(To_String(buffer));
 			end if;
 			cpt_char := cpt_char + 1;
 		end loop;

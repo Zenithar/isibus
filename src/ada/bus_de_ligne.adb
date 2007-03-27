@@ -291,8 +291,10 @@ begin
 						
 					else
 	-- 					Bus id=([0-9]+) EOL
-	
+						vitesse := 0;
+						nbCaseParcouru := 0;
 						Ivy.SendMsg("Bus id="&integer'image(id_bus)&" EOL");
+						
 	
 						put_line("Le Bus a fini son itinéraire");
 						estInitialise := FALSE;

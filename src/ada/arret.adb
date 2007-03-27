@@ -23,7 +23,7 @@ package body arret is
 		ENTRY setLignes ( liste : listeBus);
 		ENTRY getAttente;	
 
-		function calc_time return boolean;
+		procedure calc_time;
 		function isInit return boolean;
 		function hasThis(line : in integer) return boolean;
 		function getRoad return integer;
@@ -125,76 +125,134 @@ package body arret is
 	
 		end maj;
 	
-		function calc_time return boolean is 
+		procedure calc_time is 
 		i : integer := 0;
 		timeleft : integer;
+
+		liste : bus_attendu;
+		x : a_bus;	
+		cpt : integer := 0;
+
 		begin
 		
 		while ( i < nb_bus_passant_par_l_arret)
 		loop
-			put("Bus numero: ");
-			put(natural'image(liste_attente(i).bus_id));
-			if (liste_attente(i).speed /= 0)
+
+			if (liste_attente(i).stat = 1 and then liste_attente(i).dist = 0)
 			then
-				put(" arrive dans: ");
+				--put("Bus numero: ");
+				--put(natural'image(liste_attente(i).bus_id));
+				--put(" arrive dans: ");
 				--Calcul du temps
 				timeleft := liste_attente(i).dist / liste_attente(i).speed;
-				put(integer'image(timeleft));
-				put_line(" secondes");
+				--put(integer'image(timeleft));
+				--put_line(" secondes");
+			
 			else
-				put_line("est arrete");
+				--put("Bus numero: ");
+				--put(natural'image(liste_attente(i).bus_id));
+				if (liste_attente(i).speed /= 0)
+				then
+					--put(" arrive dans: ");
+					--Calcul du temps
+					timeleft := liste_attente(i).dist / liste_attente(i).speed;
+					--put(integer'image(timeleft));
+					--put_line(" secondes");
+				--else
+					--put_line("est arrete");
+				end if;
+
+				x.bus_id := liste_attente(i).bus_id;
+				x.dist := liste_attente(i).dist;
+				x.speed := liste_attente(i).speed;
+				x.stop_signaled := liste_attente(i).stop_signaled;
+				x.stat := liste_attente(i).stat;
+
+				liste(cpt) := x;
+				cpt := cpt + 1;	
 			end if;
 			--Incrementation compteur de boucle
 			i := i + 1;
 		end loop;
+
+		nb_bus_passant_par_l_arret := cpt; 
+		liste_attente := liste;
 	
-		return true;
 		end calc_time;	
 	
-		--ENTRY remove (id : natural) when nb_bus_passant_par_l_arret /= 0 is
-	
-		--begin
-	
-		--end remove;
-	
-		ENTRY getAttente when nb_bus_passant_par_l_arret > 0 is
+		ENTRY getAttente when TRUE is
 
 		i : integer := 0;
 		timeleft : integer;
 		buffer : Unbounded_String;
 		tmp : Unbounded_String;
 
+		liste : bus_attendu;
+		x : a_bus;	
+		cpt : integer := 0;
+
 		begin
+			put_line("Demande d'information -> Temps d'attente");
 -- 			Station id= ([0-9]+) time=(( [0-9]+, [0-9]+;)*) status=(( [0-9]+, [0-9]+;)*)
 			buffer := To_Unbounded_String("Station id=" & integer'image(Station_id) & " time=");
-			tmp := To_Unbounded_String(" status=");
+			--put_line(integer'image(nb_bus_passant_par_l_arret));
 			while ( i < nb_bus_passant_par_l_arret)
 			loop
-
-			if (liste_attente(i).dist >= 0)
-			then
-				buffer := To_Unbounded_String(To_String(buffer) & natural'image(liste_attente(i).bus_id) & ",");
-				tmp := To_Unbounded_String(To_String(tmp) & natural'image(liste_attente(i).bus_id) & ",");
-
-				if ((liste_attente(i).speed = 0) and then (liste_attente(i).stat = 0))
+				if (liste_attente(i).dist = 0)
 				then
-					--Calcul du temps
-					timeleft := liste_attente(i).dist / 14;
-					buffer := To_Unbounded_String(To_String(buffer) & integer'image(timeleft) & ";");
 
-					tmp  := To_Unbounded_String(To_String(buffer) & integer'image(liste_attente(i).stat) & ";");
-				else
-					timeleft := liste_attente(i).dist / liste_attente(i).speed;
-					buffer := To_Unbounded_String(To_String(buffer) & integer'image(timeleft) & ";");
-
-					tmp  := To_Unbounded_String(To_String(tmp) & integer'image(liste_attente(i).stat) & ";");
+					--Infos
+					buffer := To_Unbounded_String(To_String(buffer) 
+						& natural'image(liste_attente(i).bus_id) 
+						& ", 0,"
+						& integer'image(liste_attente(i).stat) 
+						& ";");
+	
+				elsif (liste_attente(i).dist > 0)
+				then
+					buffer := To_Unbounded_String(To_String(buffer) 
+						& natural'image(liste_attente(i).bus_id) 
+						& ",");
+	
+					if ((liste_attente(i).speed = 0) and then (liste_attente(i).stat = 0))
+					then
+						--Calcul du temps
+						timeleft := liste_attente(i).dist / 14;
+						
+					else
+						timeleft := liste_attente(i).dist / liste_attente(i).speed;
+	
+					end if;
+	
+					buffer := To_Unbounded_String(To_String(buffer) 
+						& integer'image(timeleft) 
+						& "," 
+						& integer'image(liste_attente(i).stat) 
+						& ";");
+					--put_line(integer'image(timeleft));
+	
+					x.bus_id := liste_attente(i).bus_id;
+					x.dist := liste_attente(i).dist;
+					x.speed := liste_attente(i).speed;
+					x.stop_signaled := liste_attente(i).stop_signaled;
+					x.stat := liste_attente(i).stat;
+	
+					--Incrementation compteur de boucle
+					
+					liste(cpt) := x;
+					cpt := cpt + 1;
+	
 				end if;
-				--Incrementation compteur de boucle
 				i := i + 1;
-			end if;
 			end loop;
 
-			Ivy.SendMsg(To_String(buffer & tmp));
+			nb_bus_passant_par_l_arret := cpt; 
+			liste_attente := liste;
+			--put_line(integer'image(nb_bus_passant_par_l_arret));
+
+			
+
+			Ivy.SendMsg(To_String(buffer));
 
 		end getAttente;
 
@@ -236,10 +294,10 @@ package body arret is
 			temp.speed := cs;
 			temp.stat := status;
 
-			put("Position");
-			put(integer'image(temp.bus_id));
-			put(integer'image(temp.dist));
-			put_line(integer'image(temp.speed));
+-- 			put("Position");
+-- 			put(integer'image(temp.bus_id));
+-- 			put(integer'image(temp.dist));
+-- 			put_line(integer'image(temp.speed));
 
 			liste_attente(nb_bus_passant_par_l_arret) := temp;
 			nb_bus_passant_par_l_arret := nb_bus_passant_par_l_arret + 1;	
@@ -280,7 +338,6 @@ package body arret is
 	use Random_Id;
 	
 	-- DECLARATION POUR LE CORPS DE LA PROCEDURE
-	b : boolean;
 	
 	id : natural := 24;
 	d : integer := 50;
@@ -342,6 +399,7 @@ package body arret is
 
 			if (bus_stop.isInit)
 			then
+				put_line("Station Initialisée...");
 -- 				gui getTimes station id= ([0-9]+)
 				delay(0.1);
  				Ivy.BindMsg( MsgCallback => Arret_Cb.getAttente'access,
@@ -353,7 +411,7 @@ package body arret is
 				loop
 				delay(1.0);
 				bus_stop.maj;
-				b := bus_stop.calc_time;
+				bus_stop.calc_time;
 				end loop;
 				
 
@@ -411,43 +469,15 @@ package body arret is
 
 
 	begin
-		put_line("DEBUT");
--- 		liste_bus := bus_stop.getListe_attente;
--- 		for I in 0..liste_bus'LENGTH-1
--- 		loop
--- 			if (liste_bus(I).bus_id = id)
--- 			then
--- 				ptr := I;
--- 			end if;
--- 		end loop;
--- 		put_line("DEBUT");
--- 		if (not liste_bus(ptr).stop_signaled)
--- 		then
--- 			put_line("FALSE");
--- 		end if;
--- 		put_line("DEBUT");
 		
 			if ((cur_road = arret.getRoad) and then (cur_pos = 0))
 			then
--- 				if (liste_bus(ptr).stop_signaled)
--- 				then
--- 					null;
--- 				else
--- 					liste_bus(ptr).stop_signaled := TRUE;
--- 					if (liste_bus(ptr).stop_signaled)
--- 					then
--- 						put_line("TRUE");
--- 					end if;
--- 					put_line(boolean'image(liste_bus(ptr).stop_signaled));
--- 					bus_stop.setListe_attente(liste_bus);
--- 					put_line("SET");
-		-- 			Station id=([0-9]+) bus_id=([0-9]+) len=([0-9]+)
-					Ivy.SendMsg(	"Station id="&natural'image(bus_stop.getStationId)
-							&" bus_id="&integer'image(id)
-							&" len="&integer'image(bus_stop.getLen - cur_pos));
-				--end if;
+				Ivy.SendMsg(	"Station id="&natural'image(bus_stop.getStationId)
+						&" bus_id="&integer'image(id)
+						&" len="&integer'image(bus_stop.getLen - cur_pos));
+
 			end if;
--- 			PB HERE
+
 
 			lignes_passant := getLignes;
 
@@ -476,10 +506,6 @@ package body arret is
 			end loop;
 
 			dist := dist + bus_stop.getLen;
-			
--- 			put("HEEEY ");
--- 			put(integer'image(dist));
--- 			put_line(integer'image(cur_speed));
 
  			bus_stop.position(id , dist , cur_speed , cur_status);
 	end storeInformations;
