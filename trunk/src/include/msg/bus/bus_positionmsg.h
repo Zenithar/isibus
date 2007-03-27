@@ -38,6 +38,7 @@ namespace isibus
 					temp->setRoadDistance(atoi(argv[3]));
 					temp->setCapacity(atoi(argv[4]));
 					temp->setSpeed(atoi(argv[5]));
+					temp->setStatus(atoi(argv[6]));
 					
 					pthread_mutex_unlock(&verrou);
 				}

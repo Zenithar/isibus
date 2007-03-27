@@ -20,6 +20,14 @@ namespace isibus
 	Classe de stockage des informations associées au Bus.
 	@author Thibault Normand <thibault.normand@gmail.com>
 */
+
+enum BUS_STATUS {
+	RUNNING = 0,
+	ONSTATION = 1,
+	PBONBOARD = 2,
+	OUTOFORDER = 3
+};
+
 class Bus
 {
 public:
@@ -60,7 +68,7 @@ public:
 
 	void Start()
 	{
-		system("bus_de_ligne &");
+		system("lanceur_bus &");
 	}
 
 	void setRoadDistance(int theValue)
@@ -96,15 +104,24 @@ public:
 	        return m_iSpeed;
 	}
 	
+	void setStatus(int theValue)
+	{
+		m_iStatus = theValue;
+	}
 	
+	int getStatus() const
+	{
+		return m_iStatus;
+	}
 	
 private:
-        int m_iBus_id;
+        int m_iBus_id;	
         int m_iLine_id;
         int m_iCapacity;
 	int m_iSpeed;
 	int m_iRoadID;
 	int m_iRoadDistance;
+	int m_iStatus;
 };
 
 }
