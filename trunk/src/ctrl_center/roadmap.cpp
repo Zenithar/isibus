@@ -100,20 +100,13 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 	for(int i=0;i<nb_node;i++)
 	{
 		XMLNode xNode = xGraph.getChildNode("node", &xmlIterator);
-		
-		if(verbose) {
-			cout << "Connection [" << node_id << "] to roads (" << xNode.getAttribute("roads") << ")" << endl;
-		}
-		
+			
 		ni_t node = m_RoadGraph.insert(node_id);
 		
 		vector<string> roads = split(",", xNode.getAttribute("roads"));
 		for(int j=0; j<roads.size(); j++)
 		{
-			if(verbose) {
-				cout << " + Connection " << node_id << " to road " << m_RoadList[atoi(roads[j].c_str())]->getName() << endl;
-				m_RoadList[atoi(roads[j].c_str())]->getNodes().push_back(node_id);
-			}
+			m_RoadList[atoi(roads[j].c_str())]->getNodes().push_back(node_id);
 		}
 		
 		node_id++;
