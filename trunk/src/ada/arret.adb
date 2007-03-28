@@ -56,6 +56,7 @@ package body arret is
 	-- CORPS OBJET PROTEGE: arret de bus
 	protected body bus_stop is
 
+		
 		procedure setListe_attente (liste : in bus_attendu) is
 		begin
 			liste_attente := liste;
@@ -71,6 +72,7 @@ package body arret is
 			return isInitialized;
 		end isInit;
 
+		-- Permet de savoir si un arret se trouve sur la ligne passe en parametre
 		function hasThis(line : in  integer) return boolean is
 		result : boolean := FALSE;
 		begin
@@ -103,6 +105,7 @@ package body arret is
 			return bus;
 		end getLignes;
 
+		-- Permet de prevoir le deplacement des bus passant par l'arret
 		procedure maj is
 	
 		i : integer := 0;
@@ -125,6 +128,7 @@ package body arret is
 	
 		end maj;
 	
+		-- Permet de mettre a jour les temps d'attente
 		procedure calc_time is 
 		i : integer := 0;
 		timeleft : integer;
@@ -180,6 +184,7 @@ package body arret is
 	
 		end calc_time;	
 	
+		-- Permet d'envoyer les temps d'attente a gui
 		ENTRY getAttente when TRUE is
 
 		i : integer := 0;
@@ -192,7 +197,7 @@ package body arret is
 		cpt : integer := 0;
 
 		begin
-			put_line("Demande d'information -> Temps d'attente");
+			put_line("[ADA STATION] Demande d'information -> Temps d'attente");
 -- 			Station id= ([0-9]+) time=(( [0-9]+, [0-9]+;)*) status=(( [0-9]+, [0-9]+;)*)
 			buffer := To_Unbounded_String("Station id=" & integer'image(Station_id) & " time=");
 			--put_line(integer'image(nb_bus_passant_par_l_arret));
@@ -257,7 +262,7 @@ package body arret is
 		end getAttente;
 
 
-
+		-- Permet d'enregistrer la position d'un bus
 		ENTRY position(id : natural ; distance : integer ;cs : integer ; status : integer) when TRUE is
 		
 		temp : a_bus;
@@ -303,11 +308,13 @@ package body arret is
 			nb_bus_passant_par_l_arret := nb_bus_passant_par_l_arret + 1;	
 		-- il ne reste plus de places...
 		else
-			put_line("Station plaine!!!");
+			put_line("[ADA STATION] Station plaine!!!");
 		end if;
 	
 		end position;
 
+
+		-- Permet d'initialiser la station
 		ENTRY init (	id : in integer;
 				route : in integer;
 				bus_line : in listeBus;
@@ -326,11 +333,12 @@ package body arret is
 		ENTRY setLignes ( liste : listeBus) when TRUE is
 		begin
 			bus := liste;
-			put_line("Mise a jour setLignes ( liste : listeBus)");
+			put_line("[ADA STATION] Mise a jour setLignes ( liste : listeBus)");
 		end setLignes;
 
 	end bus_stop;
 
+	-- Procedure principale de l'arret
 	procedure start is			
 	
 	--Def du package utilise pour la generation d'id automatique
@@ -357,12 +365,12 @@ package body arret is
 		--Genere un nombre au hazard
 		num_station := Random_Id.Random(G);
 	
-		put_line(Id_station);
+		put_line("[ADA STATION] id = ");
 		put_line(natural'image(num_station));
 	
 		--Affichage de l'identifiant du bus	
-		put("RAAAAANNNNNNNDOOOOMMMMM -> ");
-		put_line(Id_station & natural'image(num_station)(2..natural'image(num_station)'LENGTH));
+		--put("RAAAAANNNNNNNDOOOOMMMMM -> ");
+		--put_line(Id_station & natural'image(num_station)(2..natural'image(num_station)'LENGTH));
 	
 		IvyBus:= GNAT.OS_Lib.Getenv("IVYBUS");
 		if IvyBus.all'length /= 0 then  --| La variable existe
@@ -400,17 +408,17 @@ package body arret is
 
 		while(true)
 		loop
-
+			-- Si la station est initialisé
 			if (bus_stop.isInit)
 			then
-				put_line("Station Initialisée...");
+				put_line("[ADA STATION] Station Initialisée...");
 -- 				gui getTimes station id= ([0-9]+)
 				delay(0.1);
  				Ivy.BindMsg( MsgCallback => Arret_Cb.getAttente'access,
 					User_Data        => 0,
 					Regexp      => To_String(To_Unbounded_String("^gui getTimes station id="& integer'image(bus_stop.getStationId)))
 			);
-				--Tests
+				-- La station est en marche
 				while(TRUE)
 				loop
 				delay(1.0);
@@ -420,14 +428,17 @@ package body arret is
 				
 
 			else
+				--Attendre l'initialisation
 				delay(1.0);
-				put_line("Attente d'initialisation...");
+				put_line("[ADA STATION] Attente d'initialisation...");
 			end if;
 
 		end loop;
 	
 	end start;
 
+	-- Appelle init de l'arret
+	-- Est appelé dans arret_cb.adb
 	procedure init (Station_id : in integer ;
 		road : in integer;
 		bus : in listeBus;
@@ -436,26 +447,36 @@ package body arret is
 		bus_stop.init(Station_id,road,bus,len);
 	end init;
 
+	-- Appelle hasThis de l'arret
+	-- Est appelé dans arret_cb.adb
 	function hasThis (line : integer) return boolean is
 	begin
 		return bus_stop.hasThis(line);
 	end hasThis;
 
+	-- Appelle getRoad de l'arret
+	-- Est appelé dans arret_cb.adb
 	function getRoad return integer is
 	begin
 		return bus_stop.getRoad;
 	end getRoad;
-
+	
+	-- Appelle getLignes de l'arret
+	-- Est appelé dans arret_cb.adb
 	function getLignes return listeBus is
 	begin
 		return bus_stop.getLignes;
 	end getLignes;
 
+	-- Appelle setLignesCircuit de l'arret
+	-- Est appelé dans arret_cb.adb
 	procedure setLignesCircuit (liste : in listeBus) is
 	begin
 		bus_stop.setLignes(liste);
 	end setLignesCircuit;
 
+	-- Appelle storeInformations de l'arret
+	-- Est appelé dans arret_cb.adb
 	procedure storeInformations(	id : in integer ;
 				line : in integer ;
 				cur_road : in integer;
@@ -468,7 +489,7 @@ package body arret is
 	bus_stop_road : integer;	
 
 	dist : integer := 0;
-	liste_bus : bus_attendu;
+	--liste_bus : bus_attendu;
 	cpt : integer := 1;
 
 
@@ -514,6 +535,8 @@ package body arret is
  			bus_stop.position(id , dist , cur_speed , cur_status);
 	end storeInformations;
 
+	-- Appelle getRoad de l'arret
+	-- Est appelé dans arret_cb.adb
 	procedure storeBus (id : in natural ;
 			distance : in integer ;
 			cs : in integer;
@@ -522,6 +545,8 @@ package body arret is
 		bus_stop.position(id , distance , cs , status);
 	end storeBus;
 
+	-- Appelle getRoad de l'arret
+	-- Est appelé dans arret_cb.adb
 	procedure getAttente is
 	begin
 		bus_stop.getAttente;
