@@ -48,6 +48,9 @@ vector<string> RoadMap::split(const string &sep,string text)
 	return words;
 }
 
+/**
+ * Retourne une chaine de caractère décrivant la route pour une ligne de bus.
+*/
 string RoadMap :: createLinePath(const int line)
 {
 	std::vector<isibus::Road*> rl;
@@ -64,6 +67,9 @@ string RoadMap :: createLinePath(const int line)
 	return ret.str();	
 }
 
+/**
+ * Charge le plan routier depuis un fichier XML
+*/
 bool RoadMap::loadMap(const std::string& filename, bool verbose)
 {
 	XMLNode xMainNode=XMLNode::openFileHelper(filename.c_str(), "isibus");
@@ -225,6 +231,9 @@ bool RoadMap::loadMap(const std::string& filename, bool verbose)
 	return true;
 }
 
+/**
+ * Calcul un chemin alternatif entre deux stations en utilisant l'algorithme de Dijkstra. (Shortest Path)
+*/
 string RoadMap :: StationPath(int s_id, int d_id)
 {
 	stringstream s;
