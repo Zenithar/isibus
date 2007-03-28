@@ -109,6 +109,8 @@ private:
 	
 	int	m_nbRunningStation;
 	std::map<int,int> StationPool;
+	
+	fstream filestr;
 };
 
 } // isibus

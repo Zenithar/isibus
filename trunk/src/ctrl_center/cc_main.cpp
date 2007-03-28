@@ -32,6 +32,8 @@ ControlCenter::ControlCenter()
 	bus = new Ivy( "isiBusCC", "isiBusCC READY", this);
 	bus->start(NULL);
 	
+	bus->BindMsg( "(.*)" , this);
+	
 	// Connexion aux services
 	bus->BindMsg( "^Bus_([0-9]+) Start", new msg::BusStartMsg(this) );
 	bus->BindMsg( "^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+) status= ([0-9]+)", new msg::BusPositionMsg(this) );
@@ -47,6 +49,11 @@ ControlCenter::ControlCenter()
 	bus->BindMsg( "^gui id= ([0-9]+) accelerer", new msg::BusSpeedUpMsg(this));
 	
 	bus->BindDirectMsg(this);
+	
+	filestr.open("cc.log", ios::out);
+	filestr << " <*********************************************************************************>" << endl;
+	filestr << " * ISIBUS CC Started !!! " << endl;
+	filestr << " <*********************************************************************************>" << endl;	
 }
 
 
@@ -54,6 +61,8 @@ ControlCenter::~ControlCenter()
 {
 	delete bus;
 	delete m_RoadMap;
+	
+	filestr.close();
 }
 
 void ControlCenter :: loadMap(const std::string& filename, bool verbose)
@@ -132,11 +141,7 @@ void ControlCenter :: BusDie(int bus_id)
 
 void ControlCenter :: OnMessage(IvyApplication *app, int argc, const char **argv)
 {
-	int i;
-	printf ("%s sent ",app->GetName());
-	for  (i = 0; i < argc; i++)
-		printf(" '%s'",argv[i]);
-	printf("\n");
+	filestr << app->GetName() << " : " << argv[0] << endl;
 }
 
 void ControlCenter :: OnApplicationConnected (IvyApplication *app)

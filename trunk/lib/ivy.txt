@@ -1,1 +1,34 @@
 http://www.tls.cena.fr/pii/produits/Ivy.html 
+
+* Installation
+
+apt-get install lipcre3 libpcre3-dev tkx8.3 tkx8.3-dev
+mkdir build
+cd build
+cmake ../src
+make
+make install
+
+cd bin
+cp -R ../../src/ui/pics .
+
+cd ../../src/ada
+make
+cp lanceur_arret ../../build/bin
+cp lanceur_bus ../../build/bin
+
+cd ../../build/bin
+
+./isibus_cc roadmap.xml
+
+* Lancement
+
+7 fois :
+./lanceur_arret
+
+3 fois :
+./lanceur_bus
+
+pour le monitoring :
+./ivyprobe
+
