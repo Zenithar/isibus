@@ -98,6 +98,7 @@ Station* ControlCenter :: incStationPool(int app_id)
 			cout << "Station_" << app_id << " affected to Station id=" << iter->second->getID() << endl; 
 			
 			StationPool[app_id] = iter->second->getID();
+			
 			m_nbRunningStation++;
 			return iter->second;
 		}
