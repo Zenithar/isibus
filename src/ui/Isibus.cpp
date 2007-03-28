@@ -117,9 +117,11 @@ Isibus::Isibus(QWidget *parent) : QMainWindow(parent)
 	connect(widget.actionCr_er_un_bouchon_sur_le_r_seau_routier, SIGNAL( triggered() ), SLOT( actionBouchon() ));
 	// Connect pour provoquer une panne
 	connect(widget.actionProvoquer_la_panne_d_un_bus, SIGNAL( triggered() ), SLOT( actionPanne() ));
+	// Connect pour provoquer une panne
+	connect(widget.actionAnnuler_les_v_nements, SIGNAL( triggered() ), SLOT( annuler() ));
 }
 
-/*
+
 vector<string> Isibus::split(const string &sep,string text)
 {
 	vector<string> words;
@@ -135,7 +137,7 @@ vector<string> Isibus::split(const string &sep,string text)
 
 	} while (text.length());
 	return words;
-}*/
+}
 
 
 
@@ -300,33 +302,40 @@ void Isibus::ajouterBus(int id)
         newBus->setPos(BG_W/2, BG_H/2 );
 	newBus->setZValue(2.0);
 	newBus->setFrame(1);
-		
+	cout<<"l'id du bus"<<id<<endl;	
 	buses.push_back(newBus);
-	widget.cbBus->insertItem("Bus numero" + QString::number(id),id);
+	widget.cbBus->addItem("Bus numero " + QString::number(id));
 	newBus->show( );
 
 }
 
 void Isibus::addBus(){
+	worker->bus->SendMsg("gui createBus passengers=%d line=%d", 30, 10);
 	//bus_creation_dialog * BCDlg = new bus_creation_dialog(this);
 	//BCDlg->show(this);
 }
-
+void Isibus::annuler()
+{
+	worker->bus->SendMsg("gui id= %d ok", iDBusSelected);
+}
 void Isibus::delBus(){
-	worker->bus->SendMsg(" gui id= %d delete ", iDBusSelected);
+	worker->bus->SendMsg("gui id= %d delete", iDBusSelected);
 	
 }
 void Isibus::slowBus(){
-	worker->bus->SendMsg(" gui id= %d ralentir ", iDBusSelected);
+	worker->bus->SendMsg("gui id= %d ralentir", iDBusSelected);
 
 }
 void Isibus::accelBus(){
-	worker->bus->SendMsg(" gui id= %d acceleter ", iDBusSelected);
+	worker->bus->SendMsg("gui id= %d accelerer", iDBusSelected);
 }
 void Isibus::viewBusInfo(){
 	
 	// recupération de l'id du bus courant
-	iDBusSelected = widget.cbBus->currentItem();
+	iDBusSelected = (widget.cbBus->currentItem());
+	iDBusSelected = buses.at(iDBusSelected)->id;
+
+	cout<<"l'id du bus est: "<<iDBusSelected<<endl;
 	// envoie du message
 }
 
@@ -338,13 +347,13 @@ void Isibus::viewStationInfo(){
 }
 
 void Isibus::actionEmeute(){
-	worker->bus->SendMsg(" gui id= %d emeute ", iDBusSelected);
+	worker->bus->SendMsg("gui id= %d emeute", iDBusSelected);
 }
 void Isibus::actionBouchon(){
-	worker->bus->SendMsg(" gui id= %d bouchon ", iDBusSelected);
+	worker->bus->SendMsg("gui id= %d bouchon", iDBusSelected);
 }
 void Isibus::actionPanne(){
-	worker->bus->SendMsg(" gui id= %d panne ", iDBusSelected);
+	worker->bus->SendMsg("gui id= %d panne", iDBusSelected);
 }
 
 
@@ -357,6 +366,8 @@ void Isibus::ajouterMessage(const QString& message)
 
 void Isibus::rafraichirArretInfo(const int &id,const int &id1,const int &h1,const QString &s1,const int &id2,const int &h2,const QString &s2,const int &id3,const int &h3,const QString &s3 )
 {
+
+		cout<<id<<";"<<id1<<";"<<h1<<";"<<";"<<id2<<";"<<h2<<";"<<";"<<id3<<";"<<h3<<";"<<endl;
 	if(id1 != 0)
 	{
 		widget.gbBus1->setTitle("Bus numero" + QString::number(id1));
@@ -367,19 +378,19 @@ void Isibus::rafraichirArretInfo(const int &id,const int &id1,const int &h1,cons
 	}
 	if(id2 != 0)
 	{
-		widget.gbBus1->setTitle("Bus numero" + QString::number(id2));
+		widget.gbBus2->setTitle("Bus numero" + QString::number(id2));
 	}
 	else
 	{
-		widget.gbBus1->setTitle("Pas de bus");
+		widget.gbBus2->setTitle("Pas de bus");
 	}
 	if(id3 != 0)
 	{
-		widget.gbBus1->setTitle("Bus numero" + QString::number(id3));
+		widget.gbBus3->setTitle("Bus numero" + QString::number(id3));
 	}
 	else
 	{
-		widget.gbBus1->setTitle("Pas de bus");
+		widget.gbBus3->setTitle("Pas de bus");
 	}
 
 	widget.lcdArretBus1->display(h1);	
@@ -407,14 +418,13 @@ void Isibus::bougerBus(const int &id, const int &ligne,const int &route,const in
 	widget.lcdn_segment->display(segment);
 	widget.slowBusButton->setEnabled(true);
 	widget.accelBusButton->setEnabled(true);
-	widget.delBusButton->setEnabled(true);
 	}
 	foreach	(BusSprite * bs, buses){
 			if(id == bs->id)
 			{
 				flag = 1;
 				foreach	(RoadCase * rc, roadcaselist){
-				cout<<"le bus X:"<< rc->x <<" Y:"<<rc->y<<"segment1:"<<(segment/50)<<"segment2:"<<rc->segment<<endl;
+				//cout<<"le bus X:"<< rc->x <<" Y:"<<rc->y<<"segment1:"<<(segment/50)<<"segment2:"<<rc->segment<<endl;
 				if(rc->idRoad == route)
 				{
 					if(flag == 1)
@@ -455,6 +465,7 @@ void Isibus::bougerBus(const int &id, const int &ligne,const int &route,const in
 
 	if(flag == 0)
 	{
+		cout<<"l'id dans bouger est:"<<id<<endl;
 		ajouterBus(id);
 	}
 
@@ -470,13 +481,13 @@ IvyWorker::IvyWorker(QObject * parent):QThread(parent)
 	bus = new Ivy( "isiBusUI", "isiBusUI READY", this);
 	bus->start(NULL);
 	
-	bus->BindMsg("(.*)", this);
+	//bus->BindMsg("(.*)", this);
 	
 	bus->BindMsg("^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+)", new msg::uiMvBus( this, qobject_cast<Isibus*>(parent) ));	
 
 	bus->BindMsg("^Station id= ([0-9]+) time=(( [0-9]+, [0-9]+, [0-9]+;)*)", new msg::uiInfoStation( this, qobject_cast<Isibus*>(parent) ));	
 
-	bus->BindMsg("(.*)", new msg::UiMsg( this, qobject_cast<Isibus*>(parent) ));
+	//bus->BindMsg("(.*)", new msg::UiMsg( this, qobject_cast<Isibus*>(parent) ));
 
 
 }

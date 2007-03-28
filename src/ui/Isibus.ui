@@ -472,6 +472,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionProvoquer_la_panne_d_un_bus" />
     <addaction name="actionProvoquer_une_m_eute_dans_un_bus" />
     <addaction name="actionCr_er_un_bouchon_sur_le_r_seau_routier" />
+    <addaction name="separator" />
+    <addaction name="actionAnnuler_les_v_nements" />
    </widget>
    <addaction name="menu_File" />
    <addaction name="menu_Gestion_d_v_nements" />
@@ -496,6 +498,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionCr_er_un_bouchon_sur_le_r_seau_routier" >
    <property name="text" >
     <string>Créer un &amp;bouchon sur le réseau routier</string>
+   </property>
+  </action>
+  <action name="actionAnnuler_les_v_nements" >
+   <property name="text" >
+    <string>Annuler les évènements</string>
    </property>
   </action>
  </widget>
