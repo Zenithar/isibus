@@ -24,7 +24,7 @@ int ControlCenter::mainLoop()
 
 ControlCenter::ControlCenter()
 {
-	m_nbRunningBus = 0;
+	http://www.opensuse.org/	m_nbRunningBus = 0;
 	BusPool.clear();
 	
 	m_RoadMap = new RoadMap();
@@ -36,11 +36,15 @@ ControlCenter::ControlCenter()
 	bus->BindMsg( "^Bus_([0-9]+) Start", new msg::BusStartMsg(this) );
 	bus->BindMsg( "^Bus id= ([0-9]+) line= ([0-9]+) pos= ([0-9]+), ([-]?[0-9]+) capacity= ([0-9]+) speed= ([0-9]+) status= ([0-9]+)", new msg::BusPositionMsg(this) );
 	bus->BindMsg( "^Bus id=([0-9]+) EOL", new msg::BusEolMsg(this));
+
 	bus->BindMsg( "^Station_([0-9]+) Start", new msg::StationStartMsg(this) );
 	bus->BindMsg( "^CC Station Path=([0-9]+):([0-9]+)", new msg::StationPathMsg(this) );
 	
 	bus->BindMsg( "^gui createBus passengers=([0-9]+) line=([0-9]+)", new msg::BusCreateMsg(this));
 	bus->BindMsg( "^gui deleteBus id=([0-9]+)", new msg::BusDeleteMsg(this));
+	
+	bus->BindMsg( "^gui id= ([0-9]+) ralentir", new msg::BusSpeedDownMsg(this));
+	bus->BindMsg( "^gui id= ([0-9]+) accelerer", new msg::BusSpeedUpMsg(this));
 	
 	bus->BindDirectMsg(this);
 }
@@ -90,7 +94,7 @@ Station* ControlCenter :: incStationPool(int app_id)
 	StationList::iterator iter = m_RoadMap->getStationList().begin();
 	int i = 0;
 	for( iter; iter != m_RoadMap->getStationList().end();) {
-		if(i >= getNbRunningBus()) {
+		if(i >= getNbRunningStation()) {
 			cout << "Station_" << app_id << " affected to Station id=" << iter->second->getID() << endl; 
 			
 			StationPool[app_id] = iter->second->getID();
