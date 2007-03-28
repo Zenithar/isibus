@@ -74,7 +74,7 @@ public:
 	void timerEvent(QTimerEvent * );
 	void wrapSprite( IsiSprite *s );
 	void genererCarte( bool verbose);
-	//vector<string> split(const string &sep,string text);
+	vector<string> split(const string &sep,string text);
 
 	void accelererBus(int coef);
 	void ralenirBus(int coef);
@@ -97,6 +97,7 @@ private slots:
 	void actionEmeute();
 	void actionBouchon();
 	void actionPanne();
+	void annuler();
 
 
 	void ajouterMessage(const QString &message);
@@ -107,7 +108,7 @@ private:
 	QHash<int, QList<QPixmap>* > mAnimation;
 	QGraphicsScene *field;
 	int  mTimerId;
-	QLinkedList<BusSprite*> buses;
+	QList<BusSprite*> buses;
 	Ui_Isibus widget;
         QList<RoadCase *> roadcaselist ;
 	
