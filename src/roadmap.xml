@@ -16,7 +16,7 @@
 			<road id="11" name="Impasse Fremond" type="2" len="900" axe="S" />
 			<road id="12" name="Rue de la Vilette" type="2" len="300" axe="E" />
 		</roads>
-	 
+		
 		<graph>
 			<node roads="1,4,5"/>
 			<node roads="1,2"/>
@@ -38,13 +38,13 @@
 	</lines>
 	
 	<stations>
-		<station id="1" road="1" lines="1,2" len="100"/>
-		<station id="2" road="2" lines="1,2" len="100"/>
-		<station id="3" road="3" lines="1" len="200"/>
-		<station id="4" road="5" lines="2" len="100"/>
-		<station id="5" road="6" lines="2,3" len="400"/>
-		<station id="6" road="7" lines="2,3" len="500"/>
-		<station id="7" road="10" lines="3" len="500"/>
+		<station id="1" road="1" lines="1,2" len="100" nameA="Le chat blanc"/>
+		<station id="2" road="2" lines="1,2" len="100" nameA="Le loup noir"/>
+		<station id="3" road="3" lines="1" len="200" nameA="Le chien assis"/>
+		<station id="4" road="5" lines="2" len="100" nameA="Nounours en peluche"/>
+		<station id="5" road="6" lines="2,3" len="400" nameA="Fureto-kun vif"/>
+		<station id="6" road="7" lines="2,3" len="500" nameA="La poule volante"/>
+		<station id="7" road="10" lines="3" len="500" nameA="Le cochon jaune"/>
 	</stations>
 	
 	<transport>
