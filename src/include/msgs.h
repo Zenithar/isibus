@@ -21,6 +21,8 @@
 #include "msg/bus/bus_createmsg.h"
 #include "msg/bus/bus_deletemsg.h"
 #include "msg/bus/bus_eolmsg.h"
+#include "msg/bus/bus_speeddownmsg.h"
+#include "msg/bus/bus_speedupmsg.h"
 
 /*********************************************************************************************
  * Station
