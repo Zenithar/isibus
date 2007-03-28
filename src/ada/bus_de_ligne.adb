@@ -34,9 +34,7 @@ task BUS is
 		entry setNextStop ( 
 				Station_Id : in integer;
 				Station_pos : in integer);
-		--entry sendPosition();
--- 		entry getSpeed(cs : out natural);
--- 		entry setSituation(situation : in boolean);
+
 end BUS;
 
 --BUS
@@ -52,7 +50,7 @@ itineraire : circuit;
 
 --Position du bus
 nbCaseParcouru : integer := 0;
-portion : integer;
+portion : integer := 0;
 nbCaseAParcourir :integer := 0;
 cpt : integer :=0;	
 
@@ -68,7 +66,7 @@ noStop : boolean := TRUE;
 begin
 
 	--Demarrage du bus
-	put_line("Demarrage du bus");						
+	put_line("[ADA BUS] Demarrage du bus");						
 
 	delay(0.1);
 
@@ -76,10 +74,11 @@ begin
 	loop
 
 		select
+			-- Detection d'un arret sur le troncon
 			accept position(nb : in integer ) do
 				nbCaseParcouru := nb;
 			end;
-			put_line("J'ai Attttttttrapppppppéééééé la position!!!!");
+			put_line("[ADA BUS] ARRET DETECTE");
 		or
 			accept init(	bus_id : in integer;
 					nb_passengers : in integer;
@@ -94,9 +93,10 @@ begin
 				nb_roads := nb_road;
 				situation := 0;
 				estInitialise := TRUE;
-				put_line("INNNNNIIIITIALLLLLISEEEE");
+				put_line("[ADA BUS] BUS INITIALISE");
 			end init;
 		or
+			-- Demander position pas procedure principale
 			accept getPosition (	id : out integer;
 						line : out integer;
 						part : out integer;
@@ -111,8 +111,9 @@ begin
 				speed := vitesse;
 			end getPosition;
 		or
+			-- Changement de vitesse pas CC
 			accept setSpeed ( change : in integer ) do
-				put_line("Speed Control");
+				put_line("[ADA BUS] Speed Control");
 				if (change > 0)
 				then
 					for I in 1..change
@@ -122,7 +123,7 @@ begin
 							exit;
 						else
 						vitesse := vitesse + 1;
-						put("Nouvelle Vitesse: ");
+						--put("Nouvelle Vitesse: ");
 						put_line(integer'image(vitesse));
 						end if;
 					end loop;
@@ -135,14 +136,13 @@ begin
 							exit;
 						else
 							vitesse := vitesse - 1;
-							put("Nouvelle Vitesse: ");
+							--put("Nouvelle Vitesse: ");
 							put_line(integer'image(vitesse));
 						end if;
 					end loop;
 				end if;
 			end setSpeed;
 		or
-			--arret1.position(nbCaseAParcourir-nbCaseParcouru,vitesse);
 			--le bus avance
 			delay (1.0);
 
@@ -156,7 +156,7 @@ begin
 						then
 							if ((nbCaseParcouru + vitesse) = nbCaseAParcourir)
 							then	
-								put_line("Bus en fin de route");
+								put_line("[ADA BUS] Bus en fin de troncon");
 								cpt := cpt + 1;
 	
 								nbCaseParcouru := 0;
@@ -187,37 +187,37 @@ begin
 							else
 				
 								--Affichage
-								put("Ancienne valeur de nbCaseParcouru: ");
-								put(integer'image(nbCaseParcouru));
-								put("/");
-								put_line(integer'image(nbCaseAParcourir));
-								
+-- 								put("Ancienne valeur de nbCaseParcouru: ");
+-- 								put(integer'image(nbCaseParcouru));
+-- 								put("/");
+-- 								put_line(integer'image(nbCaseAParcourir));
+-- 								
 								nbCaseParcouru := nbCaseParcouru + vitesse;
 								
 								--Affichage
-								put("Nouvelle valeur de nbCaseParcouru: ");
-								put(integer'image(nbCaseParcouru));
-								put("/");
-								put_line(integer'image(nbCaseAParcourir));
-								
-								
-								put("Ancienne Vitesse: ");
-								put_line(integer'image(vitesse));
-								
+-- 								put("Nouvelle valeur de nbCaseParcouru: ");
+-- 								put(integer'image(nbCaseParcouru));
+-- 								put("/");
+-- 								put_line(integer'image(nbCaseAParcourir));
+-- 								
+-- 								
+-- 								put("Ancienne Vitesse: ");
+-- 								put_line(integer'image(vitesse));
+-- 								
 								if (vitesse < (nbCaseAParcourir - nbCaseParcouru) and then vitesse < 14)--50km/h ~ 14m/S
 								then
 									vitesse := vitesse + 1 * sens;
-									put("Nouvelle Vitesse: ");
-									put_line(integer'image(vitesse));
-									
+-- 									put("Nouvelle Vitesse: ");
+-- 									put_line(integer'image(vitesse));
+-- 									
 								elsif (vitesse > (nbCaseAParcourir - nbCaseParcouru))
 									then
 										while(vitesse > (nbCaseAParcourir - nbCaseParcouru))
 										loop
 										vitesse := vitesse -1;
-										put("Nouvelle Vitesse: ");
-										put_line(integer'image(vitesse));
-										
+-- 										put("Nouvelle Vitesse: ");
+-- 										put_line(integer'image(vitesse));
+ 										
 										end loop;
 								end if;
 							end if;
@@ -227,13 +227,13 @@ begin
 								while(vitesse > 0)
 								loop
 									vitesse := vitesse -1;
-									put("Nouvelle Vitesse: ");
-									put_line(integer'image(vitesse));
-								end loop;
+-- 									put("Nouvelle Vitesse: ");
+-- 									put_line(integer'image(vitesse));
+ 								end loop;
 								
 								situation := 1;
 	
-								put("Bus arrivee a la station");
+								put("[ADA BUS] Bus arrivee a la station ID = ");
 								put_line(integer'image(nextStationId));
 	
 								Ivy.SendMsg("Bus id="&integer'image(id_bus)
@@ -252,37 +252,36 @@ begin
 							else
 				
 								--Affichage
-								put("Ancienne valeur de nbCaseParcouru: ");
-								put(integer'image(nbCaseParcouru));
-								put("/");
-								put_line(integer'image(nextStationPos));
-								
+-- 								put("Ancienne valeur de nbCaseParcouru: ");
+-- 								put(integer'image(nbCaseParcouru));
+-- 								put("/");
+-- 								put_line(integer'image(nextStationPos));
+-- 								
 								nbCaseParcouru := nbCaseParcouru + vitesse;
 								
 								--Affichage
-								put("Nouvelle valeur de nbCaseParcouru: ");
-								put(integer'image(nbCaseParcouru));
-								put("/");
-								put_line(integer'image(nextStationPos));
-								
-								
-								put("Ancienne Vitesse: ");
-								put_line(integer'image(vitesse));
-								
+-- 								put("Nouvelle valeur de nbCaseParcouru: ");
+-- 								put(integer'image(nbCaseParcouru));
+-- 								put("/");
+-- 								put_line(integer'image(nextStationPos));
+-- 								
+-- 								
+-- 								put("Ancienne Vitesse: ");
+-- 								put_line(integer'image(vitesse));
+-- 								
 								if (vitesse < (nextStationPos - nbCaseParcouru) and then vitesse < 14)--50km/h ~ 14m/S
 								then
 									vitesse := vitesse + 1 * sens;
-									put("Nouvelle Vitesse: ");
-									put_line(integer'image(vitesse));
-									
+-- 									put("Nouvelle Vitesse: ");
+-- 								put_line(integer'image(vitesse));		
 								elsif (vitesse >= (nextStationPos - nbCaseParcouru))
 									then
 										while(vitesse > (nextStationPos - nbCaseParcouru))
 										loop
 										vitesse := vitesse -1;
 										
-										put("Nouvelle Vitesse: ");
-										put_line(integer'image(vitesse));
+-- 									put("Nouvelle Vitesse: ");
+-- 									put_line(integer'image(vitesse));
 										
 										end loop;
 								end if;
@@ -296,7 +295,7 @@ begin
 						Ivy.SendMsg("Bus id="&integer'image(id_bus)&" EOL");
 						
 	
-						put_line("Le Bus a fini son itinéraire");
+						put_line("[ADA BUS] Le Bus a fini son itinéraire");
 						estInitialise := FALSE;
 						cpt := 0;
 					end if;
@@ -306,36 +305,36 @@ begin
 					loop
 					vitesse := vitesse -1;
 					
-					put("Nouvelle Vitesse: ");
-					put_line(integer'image(vitesse));
+					--put("Nouvelle Vitesse: ");
+					--put_line(integer'image(vitesse));
 					
 					end loop;
-					put_line("Emeute");
+					put_line("[ADA BUS] BUS Emeute");
 				elsif (situation = 3)
 				then
 					while(vitesse > 0)
 					loop
 					vitesse := vitesse -1;
 					
-					put("Nouvelle Vitesse: ");
-					put_line(integer'image(vitesse));
+-- 					put("Nouvelle Vitesse: ");
+-- 					put_line(integer'image(vitesse));
 					
 					end loop;
-					put_line("Panne");
+					put_line("[ADA BUS] BUS Panne");
 				elsif (situation = 4)
 				then
 					while(vitesse > 1)
 					loop
 					vitesse := vitesse -1;
 					
-					put("Nouvelle Vitesse: ");
-					put_line(integer'image(vitesse));
+-- 					put("Nouvelle Vitesse: ");
+-- 					put_line(integer'image(vitesse));
 					end loop;
-					put_line("Bouchon");
+					put_line("[ADA BUS] BUS Bouchon");
 				end if;
 				
 			else 
-				put_line("Le Bus attends ses instructions");
+				put_line("[ADA BUS] Le Bus attends ses instructions");
 			end if;
 			
 
@@ -430,12 +429,12 @@ begin
 	--Genere un nombre au hazard
 	num_bus := Random_Id.Random(G);
 
-	put_line(Id);
+	put_line("[ADA BUS] Bus =");
 	put_line(natural'image(num_bus));
 
 	--Affichage de l'identifiant du bus	
-	put("RAAAAANNNNNNNDOOOOMMMMM -> ");
-	put_line(Id & natural'image(num_bus)(2..natural'image(num_bus)'LENGTH));
+	--put("RAAAAANNNNNNNDOOOOMMMMM -> ");
+	--put_line(Id & natural'image(num_bus)(2..natural'image(num_bus)'LENGTH));
 
 	IvyBus:= GNAT.OS_Lib.Getenv("IVYBUS");
 	if IvyBus.all'length /= 0 then  --| La variable existe

@@ -1,6 +1,6 @@
 
 #include "Isibus.h"
-
+#include "bus_creation_dialog.h"
 
 
 #include "../base/xmlParser.h"
