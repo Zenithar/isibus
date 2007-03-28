@@ -341,7 +341,7 @@ void Isibus::viewBusInfo(){
 
 void Isibus::viewStationInfo(){
 	// recupération de l'id de l'arret courant
-	iDarretSelected = widget.cb_arret->currentItem();
+	iDarretSelected = widget.cb_arret->currentItem() + 1;
 	// envoie du message
 	worker->bus->SendMsg("gui getTimes station id= %d", iDarretSelected);
 }
